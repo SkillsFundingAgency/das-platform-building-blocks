@@ -1,0 +1,106 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "MySQLPaaSName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of MySQL PaaS instance"
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "B_Gen5_1"
+        },
+        "skuTier": {
+            "type": "string",
+            "defaultValue": "Basic"
+        },
+        "skuCapacity": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "version": {
+            "type": "string",
+            "defaultValue": "5.7"
+        },
+        "backupRetentionDays": {
+            "type": "int",
+            "defaultValue": 7
+        },
+        "geoRedundantBackup": {
+            "type": "string",
+            "defaultValue": "disabled"
+        },
+
+        "storageMB": {
+            "type": "int",
+            "defaultValue": 5120
+        },
+        "databaseName": {
+            "type": "string",
+            "defaultValue": "database01"
+        },
+        "firewallRulesName": {
+            "type": "string"
+
+        },
+        "startIpAddress": {
+            "type": "string"
+
+        },
+        "endIpAddress": {
+            "type": "string"
+
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2017-12-01",
+            "name": "[parameters('MySQLPaaSName')]",
+            "type": "Microsoft.DBforMySQL/servers",
+            "location": "[resourceGroup().location]",
+
+            "sku": {
+              "name": "[parameters('skuName')]",
+              "tier": "[parameters('skuTier')]",
+              "capacity": "[parameters('skuCapacity')]",
+              "family": "Gen5"
+            },
+            "properties": {
+              "version": "[parameters('version')]",
+              "sslEnforcement": "Enabled",
+              "storageProfile": {
+                "backupRetentionDays": "[parameters('backupRetentionDays')]",
+                "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
+                "storageMB": "[parameters('storageMB')]"
+              },
+              "createMode": "Default"
+            },
+            "tags": {},
+            "resources": [
+                {
+                    "name": "[parameters('databaseName')]",
+                    "type": "Microsoft.DBforMySQL/servers/databases",
+                    "apiVersion": "2017-12-01",
+                    "properties": {
+                      "charset": "string",
+                      "collation": "string"
+                    }
+                  },
+                  {
+                    "name": "[parameters('firewallRulesName')]",
+                    "type": "Microsoft.DBforMySQL/servers/firewallRules",
+                    "apiVersion": "2017-12-01",
+                    "properties": {
+                      "startIpAddress": "[parameters('startIpAddress')]",
+                      "endIpAddress": "[parameters('endIPAddress')]"
+                    }
+                  }
+            ]
+          }
+    ],
+
+    "outputs": {}
+}
