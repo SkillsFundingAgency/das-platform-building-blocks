@@ -10,7 +10,7 @@
         },
         "storageAccountLocation": {
             "type": "string",
-            "defaultValue": "North Europe",
+            "defaultValue": "[resourceGroup().location]",
             "metadata": {
                 "description": "Recommendation: If using to store backup data, choose the paired region for resilience"
             }
@@ -73,5 +73,12 @@
             }
           }
     ],
-    "outputs": {}
+    "outputs": {
+        "storageConnectionString": {
+            "type":"string",
+            "value": "[concat('DefaultEndPointProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+        }
+    }
 }
+
+
