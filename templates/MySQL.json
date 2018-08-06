@@ -85,8 +85,8 @@
                     "type": "databases",
                     "apiVersion": "2017-12-01",
                     "properties": {
-                      "charset": "string",
-                      "collation": "string"
+                      "charset": "UTF-8",
+                      "collation": "SQL_Latin1_General_CP1_CI_AS"
                     }
                   },
                   {
