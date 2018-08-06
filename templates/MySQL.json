@@ -2,7 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "MySQLPaaSName": {
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "type": "securestring"
+        },
+        "serverName": {
             "type": "string",
             "metadata": {
                 "description": "Name of MySQL PaaS instance"
@@ -33,7 +39,7 @@
             "defaultValue": "disabled"
         },
 
-        "storageMB": {
+        "skuSizeMB": {
             "type": "int",
             "defaultValue": 5120
         },
@@ -41,15 +47,15 @@
             "type": "string",
             "defaultValue": "database01"
         },
-        "firewallRulesName": {
+        "firewallRuleName": {
             "type": "string"
 
         },
-        "startIpAddress": {
+        "firewallStartIpAddress": {
             "type": "string"
 
         },
-        "endIpAddress": {
+        "firewallendIpAddress": {
             "type": "string"
 
         }
@@ -58,7 +64,7 @@
     "resources": [
         {
             "apiVersion": "2017-12-01",
-            "name": "[parameters('MySQLPaaSName')]",
+            "name": "[parameters('serverName')]",
             "type": "Microsoft.DBforMySQL/servers",
             "location": "[resourceGroup().location]",
 
@@ -69,12 +75,14 @@
               "family": "Gen5"
             },
             "properties": {
+              "administratorLogin": "[parameters('administratorLogin')]",
+              "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
               "version": "[parameters('version')]",
               "sslEnforcement": "Enabled",
               "storageProfile": {
                 "backupRetentionDays": "[parameters('backupRetentionDays')]",
                 "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
-                "storageMB": "[parameters('storageMB')]"
+                "storageMB": "[parameters('skuSizeMB')]"
               },
               "createMode": "Default"
             },
@@ -89,27 +97,23 @@
                       "collation": "SQL_Latin1_General_CP1_CI_AS"
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.DBforMySQL/servers/', parameters('MySQLPaaSName'))]"
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
                     ]
                   },
                   {
-                    "name": "[parameters('firewallRulesName')]",
+                    "name": "[parameters('firewallRuleName')]",
                     "type": "firewallRules",
                     "apiVersion": "2017-12-01",
                     "properties": {
-                      "startIpAddress": "[parameters('startIpAddress')]",
-                      "endIpAddress": "[parameters('endIPAddress')]"
+                      "startIpAddress": "[parameters('firewallStartIpAddress')]",
+                      "endIpAddress": "[parameters('FirewallEndIPAddress')]"
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.DBforMySQL/servers/', parameters('MySQLPaaSName'))]"
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
                     ]
                   }
-
-
             ]
-
           }
     ],
-
     "outputs": {}
 }
