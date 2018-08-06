@@ -82,7 +82,7 @@
             "resources": [
                 {
                     "name": "[parameters('databaseName')]",
-                    "type": "Microsoft.DBforMySQL/servers/databases",
+                    "type": "databases",
                     "apiVersion": "2017-12-01",
                     "properties": {
                       "charset": "string",
@@ -91,7 +91,7 @@
                   },
                   {
                     "name": "[parameters('firewallRulesName')]",
-                    "type": "Microsoft.DBforMySQL/servers/firewallRules",
+                    "type": "firewallRules",
                     "apiVersion": "2017-12-01",
                     "properties": {
                       "startIpAddress": "[parameters('startIpAddress')]",
