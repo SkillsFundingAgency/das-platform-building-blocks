@@ -57,11 +57,7 @@
 
             "sku": {
               "name": "[parameters('accountType')]",
-              "restrictions": [
-                {
-                  "reasonCode": "NotAvailableForSubscription"
-                }
-              ]
+
             },
             "kind": "[parameters('storageKind')]",
 
