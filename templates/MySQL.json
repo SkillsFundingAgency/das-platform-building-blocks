@@ -87,7 +87,10 @@
                     "properties": {
                       "charset": "UTF-8",
                       "collation": "SQL_Latin1_General_CP1_CI_AS"
-                    }
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('MySQLPaaSName'))]"
+                    ]
                   },
                   {
                     "name": "[parameters('firewallRulesName')]",
@@ -96,9 +99,15 @@
                     "properties": {
                       "startIpAddress": "[parameters('startIpAddress')]",
                       "endIpAddress": "[parameters('endIPAddress')]"
-                    }
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('MySQLPaaSName'))]"
+                    ]
                   }
+
+
             ]
+
           }
     ],
 
