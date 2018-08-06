@@ -56,7 +56,7 @@
             "location": "[parameters('storageAccountLocation')]",
 
             "sku": {
-              "name": "[parameters('accountType')]",
+              "name": "[parameters('accountType')]"
 
             },
             "kind": "[parameters('storageKind')]",
