@@ -43,30 +43,19 @@
             ]
         }
     },
-
-
     "variables": {},
-
-
     "resources": [
         {
             "apiVersion": "2018-02-01",
             "name": "[parameters('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[parameters('storageAccountLocation')]",
-
             "sku": {
               "name": "[parameters('accountType')]"
-
             },
             "kind": "[parameters('storageKind')]",
-
             "tags": {},
-            "identity": {
-              "type": "SystemAssigned"
-            },
             "properties": {
-
               "encryption": {
                 "services": {
                   "blob": {
@@ -77,21 +66,12 @@
                   }
                 },
                 "keySource": "Microsoft.Storage"
-
               },
-
               "accessTier": "[parameters('accessTier')]",
               "supportsHttpsTrafficOnly": true,
               "isHnsEnabled": false
             }
           }
-
-
-
-
     ],
-
     "outputs": {}
-
-
 }
