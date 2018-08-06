@@ -94,7 +94,7 @@
                     "apiVersion": "2017-12-01",
                     "properties": {
                       "charset": "utf8",
-                      "collation": "SQL_Latin1_General_CP1_CI_AS"
+                      "collation": "utf8_general_ci"
                     },
                     "dependsOn": [
                         "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
