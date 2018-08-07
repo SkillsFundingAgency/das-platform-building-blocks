@@ -111,13 +111,17 @@
         }
     ],
     "outputs": {
-        "Server Name" : {
+        "ServerName" : {
             "type": "string",
             "value": "[concat(parameters('serverName'),'.mysql.database.azure.com')]"
         },
-        "Server Admin Login Name" : {
+        "ServerAdmin LoginName" : {
             "type": "string",
             "value": "[concat(parameters('administratorLogin'), '@', parameters('serverName'))]"
+        },
+        "databaseName" : {
+            "type": "string",
+            "value": "[parameters('databaseName')]"
         }
     }
 }
