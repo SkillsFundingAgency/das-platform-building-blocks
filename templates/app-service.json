@@ -33,6 +33,10 @@
         "deployStagingSlot": {
             "type": "bool",
             "defaultValue": true
+        },
+        "virtualApplicationsPhysicalPath" : {
+            "type": "string",
+            "defaultValue": "site\\wwwroot"
         }
     },
     "variables": {
@@ -51,7 +55,20 @@
                 "siteConfig": {
                     "alwaysOn": true,
                     "appSettings": "[parameters('appServiceAppSettings')]",
-                    "connectionStrings": "[parameters('appServiceConnectionStrings')]"
+                    "connectionStrings": "[parameters('appServiceConnectionStrings')]",
+                    "virtualApplications": [
+                        {
+                          "virtualPath": "/",
+                          "physicalPath": "[parameters('virtualApplicationsPhysicalPath')]",
+                          "preloadEnabled": true,
+                          "virtualDirectories": [
+                            {
+                              "virtualPath": "",
+                              "physicalPath": ""
+                            }
+                          ]
+                        }
+                      ],
                 },
                 "httpsOnly": true
             },
