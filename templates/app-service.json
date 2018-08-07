@@ -61,12 +61,7 @@
                           "virtualPath": "/",
                           "physicalPath": "[parameters('virtualApplicationsPhysicalPath')]",
                           "preloadEnabled": true,
-                          "virtualDirectories": [
-                            {
-                              "virtualPath": "",
-                              "physicalPath": ""
-                            }
-                          ]
+                          "virtualDirectories": []
                         }
                       ]
                 },
