@@ -38,7 +38,6 @@
             "type": "string",
             "defaultValue": "disabled"
         },
-
         "skuSizeMB": {
             "type": "int",
             "defaultValue": 5120
@@ -49,15 +48,12 @@
         },
         "firewallRuleName": {
             "type": "string"
-
         },
         "firewallStartIpAddress": {
             "type": "string"
-
         },
         "firewallendIpAddress": {
             "type": "string"
-
         }
     },
     "variables": {},
@@ -67,24 +63,23 @@
             "name": "[parameters('serverName')]",
             "type": "Microsoft.DBforMySQL/servers",
             "location": "[resourceGroup().location]",
-
             "sku": {
-              "name": "[parameters('skuName')]",
-              "tier": "[parameters('skuTier')]",
-              "capacity": "[parameters('skuCapacity')]",
-              "family": "Gen5"
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuTier')]",
+                "capacity": "[parameters('skuCapacity')]",
+                "family": "Gen5"
             },
             "properties": {
-              "administratorLogin": "[parameters('administratorLogin')]",
-              "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-              "version": "[parameters('version')]",
-              "sslEnforcement": "Enabled",
-              "storageProfile": {
-                "backupRetentionDays": "[parameters('backupRetentionDays')]",
-                "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
-                "storageMB": "[parameters('skuSizeMB')]"
-              },
-              "createMode": "Default"
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "version": "[parameters('version')]",
+                "sslEnforcement": "Enabled",
+                "storageProfile": {
+                    "backupRetentionDays": "[parameters('backupRetentionDays')]",
+                    "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
+                    "storageMB": "[parameters('skuSizeMB')]"
+                },
+                "createMode": "Default"
             },
             "tags": {},
             "resources": [
@@ -93,27 +88,36 @@
                     "type": "databases",
                     "apiVersion": "2017-12-01",
                     "properties": {
-                      "charset": "utf8",
-                      "collation": "utf8_general_ci"
+                        "charset": "utf8",
+                        "collation": "utf8_general_ci"
                     },
                     "dependsOn": [
                         "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
                     ]
-                  },
-                  {
+                },
+                {
                     "name": "[parameters('firewallRuleName')]",
                     "type": "firewallRules",
                     "apiVersion": "2017-12-01",
                     "properties": {
-                      "startIpAddress": "[parameters('firewallStartIpAddress')]",
-                      "endIpAddress": "[parameters('FirewallEndIPAddress')]"
+                        "startIpAddress": "[parameters('firewallStartIpAddress')]",
+                        "endIpAddress": "[parameters('FirewallEndIPAddress')]"
                     },
                     "dependsOn": [
                         "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
                     ]
-                  }
+                }
             ]
-          }
+        }
     ],
-    "outputs": {}
+    "outputs": {
+        "Server Name" : {
+            "type": "string",
+            "value": "[concat(parameters('serverName'),'.mysql.database.azure.com')]"
+        },
+        "Server Admin Login Name" : {
+            "type": "string",
+            "value": "[concat(parameters('administratorLogin'), '@', parameters('serverName'))]"
+        }
+    }
 }
