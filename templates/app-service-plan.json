@@ -32,6 +32,17 @@
                 "Premium"
             ],
             "defaultValue": "Standard"
+        },
+        "operatingSystem":{
+            "type": "string",
+            "defaultValue" : "app",
+            "allowedValues": [
+                "app",
+                "linux"
+            ],
+            "metadata": {
+                "description" : "Provide hosting environment either Windows=app  or Linux=linux"
+            }
         }
     },
     "variables": {
@@ -71,7 +82,8 @@
             "name": "[parameters('appServicePlanName')]",
             "location": "[resourceGroup().location]",
             "properties": "[if(variables('DeployToASE'), variables('ASPResourceProperties').WithASE, variables('ASPResourceProperties').WithoutASE)]",
-            "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]"
+            "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]",
+            "kind": "[parameters('operatingSystem')]"
         }
     ],
     "outputs": {
