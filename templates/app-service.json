@@ -34,7 +34,7 @@
             "type": "bool",
             "defaultValue": true
         },
-        "virtualApplicationsPhysicalPath" : {
+        "virtualApplicationsPhysicalPath": {
             "type": "string",
             "defaultValue": "site\\wwwroot"
         }
@@ -58,14 +58,15 @@
                     "connectionStrings": "[parameters('appServiceConnectionStrings')]",
                     "virtualApplications": [
                         {
-                          "virtualPath": "/",
-                          "physicalPath": "[parameters('virtualApplicationsPhysicalPath')]",
-                          "preloadEnabled": true,
-                          "virtualDirectories": []
+                            "virtualPath": "/",
+                            "physicalPath": "[parameters('virtualApplicationsPhysicalPath')]",
+                            "preloadEnabled": true,
+                            "virtualDirectories": []
                         }
-                      ]
+                    ]
                 },
-                "httpsOnly": true
+                "httpsOnly": true,
+                "phpVersion": "5.6"
             },
             "resources": [
                 {
@@ -81,6 +82,14 @@
                             "connectionStrings": "[parameters('appServiceConnectionStrings')]"
                         }
                     },
+                    "dependsOn": [
+                        "[parameters('appServiceName')]"
+                    ]
+                },
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "ComposerExtension",
+                    "type": "siteextensions",
                     "dependsOn": [
                         "[parameters('appServiceName')]"
                     ]
