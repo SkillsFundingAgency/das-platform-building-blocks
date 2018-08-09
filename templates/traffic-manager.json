@@ -16,7 +16,7 @@
                 "Weighted",
                 "Geographic"
             ],
-            "defaultValue": "Performance"
+            "defaultValue": "Priority"
         },
         "targetResource": {
             "type": "string"
