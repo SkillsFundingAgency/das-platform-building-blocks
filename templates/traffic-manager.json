@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "trafficManagerProfileDnsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify a traffic manager profile name"
+            }
+        },
+        "trafficRoutingMethod": {
+            "type": "string",
+            "allowedValues": [
+                "Performance",
+                "Priority",
+                "Weighted",
+                "Geographic"
+            ],
+            "defaultValue": "Performance"
+        },
+        "targetResource": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('trafficManagerProfileDnsName')]",
+            "type": "Microsoft.Network/trafficManagerProfiles",
+            "apiVersion": "2017-05-01",
+            "tags": {},
+            "location": "global",
+            "properties": {
+                "profileStatus": "Enabled",
+                "trafficRoutingMethod": "[parameters('trafficRoutingMethod')]",
+                "dnsConfig": {
+                    "relativeName": "[parameters('trafficManagerProfileDnsName')]",
+                    "ttl": 60
+                },
+                "monitorConfig": {
+                    "protocol": "HTTPS",
+                    "port": 443,
+                    "path": "/",
+                    "intervalInSeconds": 30,
+                    "timeoutInSeconds": 10,
+                    "toleratedNumberOfFailures": 3
+                },
+                "endpoints": [
+                    {
+                        "name": "[parameters('trafficManagerProfileDnsName')]",
+                        "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+                        "properties": {
+                            "targetResourceId": "[resourceID('Microsoft.Web/sites', parameters('targetResource'))]",
+                            "target": "[concat(parameters('targetResource'),'.azurewebsites.net')]",
+                            "endpointStatus": "Enabled",
+                            "weight": 1,
+                            "priority": 1,
+                            "endpointLocation": "[resourceGroup().location]"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
