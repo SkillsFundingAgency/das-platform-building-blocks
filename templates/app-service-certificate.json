@@ -28,7 +28,7 @@
     "outputs": {
         "CertificateThumbprint": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-08-01').Thumbprint]"
+            "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-03-01').Thumbprint]"
         }
     }
 }
