@@ -5,6 +5,14 @@
         "appServicePlanName": {
             "type": "string"
         },
+        "aspLocation": {
+            "type": "string",
+            "allowedValues": [
+                "North Europe",
+                "West Europe"
+            ],
+            "defaultValue": "West Europe"
+        },
         "aseHostingEnvironmentName": {
             "type": "string",
             "defaultValue": ""
@@ -69,7 +77,7 @@
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2016-09-01",
             "name": "[parameters('appServicePlanName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('aspLocation')]",
             "properties": "[if(variables('DeployToASE'), variables('ASPResourceProperties').WithASE, variables('ASPResourceProperties').WithoutASE)]",
             "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]"
         }
