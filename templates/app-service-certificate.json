@@ -10,19 +10,33 @@
         },
         "keyVaultResourceGroup": {
             "type": "string"
+        },
+        "serverFarmId": {
+            "type": "string",
+            "defaultValue": ""
+        }       
+    },
+    "variables": {
+        "deployToASE": "[greater(length(parameters('serverFarmId')), 0)]",
+        "aspResourceProperties": {
+            "WithASE": {
+                "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "keyVaultSecretName": "[parameters('keyVaultCertificateName')]",
+                "serverFarmId": "[parameters('serverFarmId')]"                
+            },
+            "WithoutASE": {
+                "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "keyVaultSecretName": "[parameters('keyVaultCertificateName')]"
+            }
         }
     },
-    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Web/certificates",
             "name": "[parameters('keyVaultCertificateName')]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-01",
-            "properties": {
-                "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "keyVaultSecretName": "[parameters('keyVaultCertificateName')]"
-            }
+            "properties": "[if(variables('deployToASE'), variables('ASPResourceProperties').WithASE, variables('ASPResourceProperties').WithoutASE)]"
         }
     ],
     "outputs": {
