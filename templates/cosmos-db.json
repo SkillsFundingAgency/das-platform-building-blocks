@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cosmosDbName": {
+            "type": "string"
+        },
+        "cosmosDbType": {
+            "type": "string",
+            "allowedValues": [
+                "GlobalDocumentDB",
+                "MongoDB"
+            ]
+        },
+        "defaultConsistencyLevel": {
+            "type": "string",
+            "allowedValues": [
+                "Eventual",
+                "Session",
+                "BoundedStaleness",
+                "Strong",
+                "ConsistentPrefix"
+            ]
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('cosmosDbName')]",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "apiVersion": "2015-04-08",
+            "location": "[resourceGroup().location]",
+            "kind": "[parameters('cosmosDbType')]",
+            "properties": {
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
+                },
+                "databaseAccountOfferType": "Standard"
+            }
+        }
+    ],
+    "outputs": {
+        "PrimaryMasterKey": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbName')), '2015-04-08').primaryMasterKey]"
+        }
+    }
+}
