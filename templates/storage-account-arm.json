@@ -32,7 +32,10 @@
                 "Hot",
                 "Cool",
                 ""
-            ]
+            ],
+            "metadata": {
+                "description": "This setting is required if using BlobStorage as the storageKind, otherwise can be left blank"
+            }
         },
         "storageKind": {
             "type": "string",
@@ -52,34 +55,34 @@
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[parameters('storageAccountLocation')]",
             "sku": {
-              "name": "[parameters('accountType')]"
+                "name": "[parameters('accountType')]"
             },
             "kind": "[parameters('storageKind')]",
             "tags": {},
             "properties": {
-              "encryption": {
-                "services": {
-                  "blob": {
-                    "enabled": true
-                  },
-                  "file": {
-                    "enabled": true
-                  }
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
                 },
-                "keySource": "Microsoft.Storage"
-              },
-              "accessTier": "[parameters('accessTier')]",
-              "supportsHttpsTrafficOnly": true
+                "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
+                "supportsHttpsTrafficOnly": true
             }
-          }
+        }
     ],
     "outputs": {
         "storageKey": {
-            "type":"string",
+            "type": "string",
             "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
         },
         "storageConnectionString": {
-            "type":"string",
+            "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
         }
     }
