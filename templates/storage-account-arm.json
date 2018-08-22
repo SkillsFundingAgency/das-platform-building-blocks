@@ -27,15 +27,16 @@
         },
         "accessTier": {
             "type": "string",
-            "defaultValue": "Hot",
+            "defaultValue": "",
             "allowedValues": [
                 "Hot",
-                "Cool"
+                "Cool",
+                ""
             ]
         },
         "storageKind": {
             "type": "string",
-            "defaultValue": "BlobStorage",
+            "defaultValue": "Storage",
             "allowedValues": [
                 "Storage",
                 "StorageV2",
@@ -68,8 +69,7 @@
                 "keySource": "Microsoft.Storage"
               },
               "accessTier": "[parameters('accessTier')]",
-              "supportsHttpsTrafficOnly": true,
-              "isHnsEnabled": false
+              "supportsHttpsTrafficOnly": true
             }
           }
     ],
