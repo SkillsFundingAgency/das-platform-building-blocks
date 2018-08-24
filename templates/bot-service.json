@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "botServiceName": {
+            "type": "string"
+        },
+        "botServiceSku": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Standard"
+            ]
+        },
+        "botEndpoint": {
+            "type": "string"
+        },
+        "microsoftAppId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "skuMapping": {
+            "Free": "F0",
+            "Standard": "S1"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('botServiceName')]",
+            "type": "Microsoft.BotService/botServices",
+            "apiVersion": "2017-12-01",
+            "location": "global",
+            "sku": {
+                "name": "[variables('skuMapping')[parameters('botServiceSku')]]"
+            },
+            "kind": "bot",
+            "properties": {
+                "name": "[parameters('botServiceName')]",
+                "displayName": "[parameters('botServiceName')]",
+                "endpoint": "[parameters('botEndpoint')]",
+                "msaAppId": "[parameters('microsoftAppId')]"
+            },
+            "dependsOn": []
+        }
+    ],
+    "outputs": {}
+}
