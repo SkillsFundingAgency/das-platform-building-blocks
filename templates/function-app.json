@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "type": "string"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "appServicePlanResourceGroup": {
+            "type": "string"
+        },
+        "functionAppAppSettings": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "functionAppConnectionStrings": {
+            "type": "array",
+            "defaultValue": []
+        }
+    },
+    "variables": {
+        "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('functionAppName')]",
+            "type": "Microsoft.Web/sites",
+            "kind": "functionapp",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[variables('appServicePlanId')]",
+                "clientAffinityEnabled": false,
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": "[parameters('functionAppAppSettings')]",
+                    "connectionStrings": "[parameters('functionAppConnectionStrings')]"
+                },
+                "httpsOnly": true
+            }
+        }
+    ],
+    "outputs": {}
+}
