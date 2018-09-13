@@ -32,6 +32,10 @@
         "InstrumentationKey": {
             "type": "string",
             "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
+        },
+        "AppId": {
+            "type": "string",
+            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).AppId]"
         }
     }
 }
