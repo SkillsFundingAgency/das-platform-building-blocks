@@ -21,7 +21,14 @@
         },
         "appServiceVirtualApplications": {
             "type": "array",
-            "defaultValue": []
+            "defaultValue": [
+                {
+                  "virtualPath": "/",
+                  "physicalPath": "site\\wwwroot",
+                  "preloadEnabled": true,
+                  "virtualDirectories": null
+                }
+            ]
         },
         "customHostName": {
             "type": "string",
