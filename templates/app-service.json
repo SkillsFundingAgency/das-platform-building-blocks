@@ -19,6 +19,17 @@
             "type": "array",
             "defaultValue": []
         },
+        "appServiceVirtualApplications": {
+            "type": "array",
+            "defaultValue": [
+                {
+                  "virtualPath": "/",
+                  "physicalPath": "site\\wwwroot",
+                  "preloadEnabled": true,
+                  "virtualDirectories": null
+                }
+            ]
+        },
         "customHostName": {
             "type": "string",
             "defaultValue": ""
@@ -51,7 +62,8 @@
                 "siteConfig": {
                     "alwaysOn": true,
                     "appSettings": "[parameters('appServiceAppSettings')]",
-                    "connectionStrings": "[parameters('appServiceConnectionStrings')]"
+                    "connectionStrings": "[parameters('appServiceConnectionStrings')]",
+                    "virtualApplications": "[parameters('appServiceVirtualApplications')]"
                 },
                 "httpsOnly": true
             },
@@ -66,7 +78,8 @@
                         "clientAffinityEnabled": false,
                         "siteConfig": {
                             "appSettings": "[parameters('appServiceAppSettings')]",
-                            "connectionStrings": "[parameters('appServiceConnectionStrings')]"
+                            "connectionStrings": "[parameters('appServiceConnectionStrings')]",
+                            "virtualApplications": "[parameters('appServiceVirtualApplications')]"
                         }
                     },
                     "dependsOn": [
