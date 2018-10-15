@@ -22,7 +22,7 @@
         "cdnEndPointName": {
             "type": "string"
         },
-        "storageAccountLocation":{
+        "storageAccountResourceGroup": {
             "type": "string"
         },
         "storageAccountName": {
@@ -30,8 +30,7 @@
         }
     },
     "variables": {
-        "storageAccountId": "[resourceId(parameters('storageAccountLocation'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-
+        "storageAccountId": "[resourceId(parameters('storageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
     },
     "resources": [
         {
@@ -79,7 +78,6 @@
                             }
                         ]
                     }
-
                 }
             ],
             "dependsOn": [
@@ -89,7 +87,7 @@
         }
     ],
     "outputs": {
-        "hostName":{
+        "hostName": {
             "type": "string",
             "value": "[reference(parameters('cdnEndPointName')).hostname]"
         },

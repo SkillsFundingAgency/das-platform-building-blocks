@@ -87,7 +87,7 @@
         },
         "storageAccountName": {
             "type": "string",
-            "value": "[resourceId(parameters('storageAccountLocation'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
         }
     }
 }
