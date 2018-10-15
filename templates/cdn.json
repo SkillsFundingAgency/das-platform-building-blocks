@@ -82,7 +82,7 @@
             ],
             "dependsOn": [
                 "[parameters('cdnProfileName')]",
-                "[parameters('storageAccountName')]"
+                "[variables('storageAccountId')]"
             ]
         }
     ],
