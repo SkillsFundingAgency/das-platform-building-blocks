@@ -50,6 +50,10 @@
                     "apiVersion": "2017-10-12",
                     "location": "[resourceGroup().location]",
                     "tags": {},
+                    "dependsOn": [
+                        "[parameters('cdnProfileName')]",
+                        "[variables('storageAccountId')]"
+                    ],
                     "properties": {
                         "originHostHeader": "string",
                         "contentTypesToCompress": [
@@ -80,10 +84,7 @@
                     }
                 }
             ],
-            "dependsOn": [
-                "[parameters('cdnProfileName')]",
-                "[variables('storageAccountId')]"
-            ]
+            "dependsOn": []
         }
     ],
     "outputs": {
