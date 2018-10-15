@@ -51,8 +51,7 @@
                     "location": "[resourceGroup().location]",
                     "tags": {},
                     "dependsOn": [
-                        "[parameters('cdnProfileName')]",
-                        "[variables('storageAccountId')]"
+                        "[parameters('cdnProfileName')]"
                     ],
                     "properties": {
                         "originHostHeader": "string",
