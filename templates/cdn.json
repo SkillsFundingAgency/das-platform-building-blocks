@@ -1,8 +1,101 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0",
-    "parameters": {},
-    "variables": {},
-    "resources": [],
-    "outputs": {}
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cdnProfileName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Content Delivery Name profile"
+            }
+        },
+        "cdnPricingTier": {
+            "type": "string",
+            "defaultValue": "Standard_Verizon",
+            "allowedValues": [
+                "Premium_Verizon",
+                "Custom_Verizon",
+                "Standard_Verizon",
+                "Standard_Akamai",
+                "Standard_Microsoft"
+            ]
+        },
+        "cdnEndPointName": {
+            "type": "string"
+        },
+        "storageAccountLocation":{
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageAccountId": "[resourceId(parameters('storageAccountLocation'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+
+    },
+    "resources": [
+        {
+            "name": "[parameters('cdnProfileName')]",
+            "type": "Microsoft.Cdn/profiles",
+            "apiVersion": "2017-10-12",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "sku": {
+                "name": "[parameters('cdnPricingTier')]"
+            },
+            "properties": {},
+            "resources": [
+                {
+                    "name": "[parameters('cdnEndPointName')]",
+                    "type": "endpoints",
+                    "apiVersion": "2017-10-12",
+                    "location": "[resourceGroup().location]",
+                    "tags": {},
+                    "properties": {
+                        "originHostHeader": "string",
+                        "contentTypesToCompress": [
+                            "text/plain",
+                            "text/html",
+                            "text/css",
+                            "text/javascript",
+                            "application/x-javascript",
+                            "application/javascript",
+                            "application/json",
+                            "application/xml"
+                        ],
+                        "isCompressionEnabled": true,
+                        "isHttpAllowed": true,
+                        "isHttpsAllowed": true,
+                        "queryStringCachingBehavior": "IgnoreQueryString",
+                        "optimizationType": "GeneralWebDelivery",
+                        "origins": [
+                            {
+                                "name": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                                "properties": {
+                                    "hostName": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                                    "httpPort": 80,
+                                    "httpsPort": 443
+                                }
+                            }
+                        ]
+                    }
+
+                }
+            ],
+            "dependsOn": [
+                "[parameters('cdnProfileName')]",
+                "[parameters('storageAccountName')]"
+            ]
+        }
+    ],
+    "outputs": {
+        "hostName":{
+            "type": "string",
+            "value": "[reference(parameters('cdnEndPointName')).hostname]"
+        },
+        "originHostHeader": {
+            "type": "string",
+            "value": "[reference(parameters('cdnEndPointName')).originHostHeader]"
+        }
+    }
 }
