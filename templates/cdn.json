@@ -54,7 +54,7 @@
                         "[parameters('cdnProfileName')]"
                     ],
                     "properties": {
-                        "originHostHeader": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                        "originHostHeader": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                         "contentTypesToCompress": [
                             "text/plain",
                             "text/html",
@@ -74,7 +74,7 @@
                             {
                                 "name": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
                                 "properties": {
-                                    "hostName": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                                    "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                                     "httpPort": 80,
                                     "httpsPort": 443
                                 }
