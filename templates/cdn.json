@@ -69,9 +69,9 @@
                         "optimizationType": "GeneralWebDelivery",
                         "origins": [
                             {
-                                "name": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                                "name": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
                                 "properties": {
-                                    "hostName": "[replace(replace(reference(variables('storageAccountId')).primaryEndpoints.blob,'https://',''),'/','')]",
+                                    "hostName": "[concat(parameters('storageAccountName'), '.blob.core.windows.net')]",
                                     "httpPort": 80,
                                     "httpsPort": 443
                                 }
