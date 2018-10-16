@@ -78,7 +78,7 @@
                 "optimizationType": "[parameters('optimizationType')]",
                 "origins": [
                     {
-                        "name": "[replace(parameters('originHostname'), '.', '-')]",
+                        "name": "[parameters('storageAccountName')]",
                         "properties": {
                             "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                             "httpPort": 80,
