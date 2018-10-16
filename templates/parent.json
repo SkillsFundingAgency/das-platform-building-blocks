@@ -71,13 +71,20 @@
                 "Standard_Microsoft"
             ]
         },
+        "cdnProfileResourceGroup": {
+            "type": "string"
+        },
         "cdnEndPointName": {
+            "type": "string"
+        },
+        "cdnEndPointResourceGroup": {
             "type": "string"
         }
     },
     "variables": {
         "storageAccountArmTemplateUri": "[concat(parameters('templateBaseUrl'), '/storage-account-arm.json', parameters('containerSasToken'))]",
-        "cdnTemplateUri": "[concat(parameters('templateBaseUrl'), '/cdn.json', parameters('containerSasToken'))]"
+        "cdnProfileTemplateUri": "[concat(parameters('templateBaseUrl'), '/cdn-profile.json', parameters('containerSasToken'))]",
+        "cdnEndPointTemplateUri": "[concat(parameters('templateBaseUrl'), '/cdn-endpoint.json', parameters('containerSasToken'))]"
     },
     "resources": [
         {
@@ -112,12 +119,12 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "cdn",
+            "name": "cdn-profile",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('cdnTemplateUri')]",
+                    "uri": "[variables('cdnProfileTemplateUri')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -126,15 +133,39 @@
                     },
                     "cdnPricingTier": {
                         "value": "[parameters('cdnPricingTier')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "cdn-endpoint",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('cdnEndPointTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "cdnProfileName": {
+                        "value": "[parameters('cdnProfileName')]"
+                    },
+                    "cdnProfileResourceGroup": {
+                        "value": "[parameters('cdnProfileResourceGroup')]"
                     },
                     "cdnEndPointName": {
                         "value": "[parameters('cdnEndPointName')]"
                     },
-                    "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
+                    "cdnEndPointResourceGroup": {
+                        "value": "[parameters('cdnEndPointResourceGroup')]"
                     },
                     "storageAccountResourceGroup": {
                         "value": "[parameters('storageAccountResourceGroup')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
                     }
                 }
             },

@@ -1,0 +1,84 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cdnProfileName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Content Delivery Name profile"
+            }
+        },
+        "cdnProfileResourceGroup": {
+            "type": "string"
+        },
+        "cdnEndPointName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the endpoint has to be unique"
+            }
+        },
+        "cdnEndPointResourceGroup": {
+            "type": "string"
+        },
+        "storageAccountResourceGroup": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageAccountId": "[resourceId(parameters('storageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "cdnProfileId": "[resourceId(parameters('cdnProfileResourceGroup'), 'Microsoft.cdn/profiles', parameters('cdnProfileName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('cdnEndPointName')]",
+            "type": "Microsoft.Cdn/profiles/endpoints",
+            "apiVersion": "2017-10-12",
+            "location": "[parameters('cdnEndpointResourceGroup')]",
+            "tags": {},
+            "dependsOn": [
+                "[variables('cdnProfileId')]"
+            ],
+            "properties": {
+                "originHostHeader": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
+                "contentTypesToCompress": [
+                    "text/plain",
+                    "text/html",
+                    "text/css",
+                    "text/javascript",
+                    "application/x-javascript",
+                    "application/javascript",
+                    "application/json",
+                    "application/xml"
+                ],
+                "isCompressionEnabled": true,
+                "isHttpAllowed": true,
+                "isHttpsAllowed": true,
+                "queryStringCachingBehavior": "IgnoreQueryString",
+                "optimizationType": "GeneralWebDelivery",
+                "origins": [
+                    {
+                        "name": "[parameters('storageAccountName')]",
+                        "properties": {
+                            "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
+                            "httpPort": 80,
+                            "httpsPort": 443
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "hostName": {
+            "type": "string",
+            "value": "[reference(parameters('cdnEndPointName')).hostname]"
+        },
+        "originHostHeader": {
+            "type": "string",
+            "value": "[reference(parameters('cdnEndPointName')).originHostHeader]"
+        }
+    }
+}
