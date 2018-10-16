@@ -25,7 +25,7 @@
         {
             "name": "[parameters('cdnProfileName')]",
             "type": "Microsoft.Cdn/profiles",
-            "apiVersion": "2017-10-12",
+            "apiVersion": "2018-04-02",
             "location": "[resourceGroup().location]",
             "tags": {},
             "sku": {

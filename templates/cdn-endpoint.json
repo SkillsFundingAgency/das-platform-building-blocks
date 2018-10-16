@@ -20,22 +20,42 @@
         "cdnEndPointResourceGroup": {
             "type": "string"
         },
+        "originHostName": {
+            "type": "string"
+        },
         "storageAccountResourceGroup": {
             "type": "string"
         },
         "storageAccountName": {
             "type": "string"
+        },
+        "optimizationType": {
+            "type": "string",
+            "defaultValue": "GeneralWebDelivery",
+            "allowedValues": [
+                "GeneralWebDelivery",
+                "GeneralMediaStreaming",
+                "VideoOnDemandMediaStreaming",
+                "LargeFileDownload",
+                "DynamicSiteAcceleration"
+            ]
+        },
+        "customDomainName": {
+            "defaultValue": "",
+            "type": "string"
         }
     },
     "variables": {
         "storageAccountId": "[resourceId(parameters('storageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-        "cdnProfileId": "[resourceId(parameters('cdnProfileResourceGroup'), 'Microsoft.cdn/profiles', parameters('cdnProfileName'))]"
+        "cdnProfileId": "[resourceId(parameters('cdnProfileResourceGroup'), 'Microsoft.cdn/profiles', parameters('cdnProfileName'))]",
+        "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
+        "CustomDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]"
     },
     "resources": [
         {
-            "name": "[parameters('cdnEndPointName')]",
+            "name": "[variables('fullEndpointName')]",
             "type": "Microsoft.Cdn/profiles/endpoints",
-            "apiVersion": "2017-10-12",
+            "apiVersion": "2018-04-02",
             "location": "[parameters('cdnEndpointResourceGroup')]",
             "tags": {},
             "dependsOn": [
@@ -57,18 +77,30 @@
                 "isHttpAllowed": true,
                 "isHttpsAllowed": true,
                 "queryStringCachingBehavior": "IgnoreQueryString",
-                "optimizationType": "GeneralWebDelivery",
+                "optimizationType": "[parameters('optimizationType')]",
+
                 "origins": [
                     {
-                        "name": "[parameters('storageAccountName')]",
+                        "name": "[replace(parameters('originHostname'), '.', '-')]",
                         "properties": {
                             "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                             "httpPort": 80,
                             "httpsPort": 443
                         }
+                    },
+                    {
+                        "apiVersion": "2018-04-02",
+                        "condition": "[variables('CustomDomainEnabled')]",
+                        "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
+                        "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+                        "properties": {
+                            "hostName": "[parameters('customDomainName')]"
+                        }
                     }
                 ]
+
             }
+
         }
     ],
     "outputs": {

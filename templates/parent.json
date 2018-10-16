@@ -79,6 +79,24 @@
         },
         "cdnEndPointResourceGroup": {
             "type": "string"
+        },
+        "originHostName": {
+            "type": "string"
+        },
+        "optimizationType": {
+            "type": "string",
+            "defaultValue": "GeneralWebDelivery",
+            "allowedValues": [
+                "GeneralWebDelivery",
+                "GeneralMediaStreaming",
+                "VideoOnDemandMediaStreaming",
+                "LargeFileDownload",
+                "DynamicSiteAcceleration"
+            ]
+        },
+        "customDomainName": {
+            "defaultValue": "",
+            "type": "string"
         }
     },
     "variables": {
@@ -166,6 +184,15 @@
                     },
                     "storageAccountName": {
                         "value": "[parameters('storageAccountName')]"
+                    },
+                    "optimizationType" : {
+                        "value": "[parameters('optimizationType')]"
+                    },
+                    "customDomainName": {
+                        "value": "[parameters('customDomainName')]"
+                    },
+                    "originHostName": {
+                        "value": "[parameters('originHostName')]"
                     }
                 }
             },
