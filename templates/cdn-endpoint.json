@@ -58,9 +58,7 @@
             "apiVersion": "2018-04-02",
             "location": "[resourceGroup().location]",
             "tags": {},
-            "dependsOn": [
-                "[variables('cdnProfileId')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "originHostHeader": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                 "contentTypesToCompress": [
@@ -78,7 +76,6 @@
                 "isHttpsAllowed": true,
                 "queryStringCachingBehavior": "IgnoreQueryString",
                 "optimizationType": "[parameters('optimizationType')]",
-
                 "origins": [
                     {
                         "name": "[replace(parameters('originHostname'), '.', '-')]",
@@ -98,9 +95,7 @@
                         }
                     }
                 ]
-
             }
-
         }
     ],
     "outputs": {
