@@ -90,7 +90,7 @@
                 "hostName": "[parameters('customDomainName')]"
             },
             "dependsOn": [
-                "[variables('fullEndpointName')]"
+                "[resourceId('Microsoft.Cdn/profiles/endpoints',parameters('cdnProfileName') , parameters('cdnEndPointName'))]"
             ]
         }
     ],
