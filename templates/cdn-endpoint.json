@@ -77,18 +77,22 @@
                             "httpPort": 80,
                             "httpsPort": 443
                         }
-                    },
-                    {
-                        "apiVersion": "2017-10-12",
-                        "condition": "[variables('CustomDomainEnabled')]",
-                        "type": "customDomains",
-                        "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
-                        "properties": {
-                            "hostName": "[parameters('customDomainName')]"
-                        }
                     }
+
                 ]
-            }
+
+            },
+            "resources": [
+                {
+                    "apiVersion": "2017-10-12",
+                    "condition": "[variables('CustomDomainEnabled')]",
+                    "type": "customDomains",
+                    "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+                    "properties": {
+                        "hostName": "[parameters('customDomainName')]"
+                    }
+                }
+            ]
         }
     ],
     "outputs": {
