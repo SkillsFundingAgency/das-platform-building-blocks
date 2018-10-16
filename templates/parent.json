@@ -197,7 +197,8 @@
                 }
             },
             "dependsOn": [
-                "storage-account-arm"
+                "storage-account-arm",
+                "cdn-profile"
             ]
         }
     ]
