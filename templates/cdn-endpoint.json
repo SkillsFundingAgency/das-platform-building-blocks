@@ -56,7 +56,7 @@
             "name": "[variables('fullEndpointName')]",
             "type": "Microsoft.Cdn/profiles/endpoints",
             "apiVersion": "2018-04-02",
-            "location": "[parameters('cdnEndpointResourceGroup').location]",
+            "location": "[resourceGroup().location]",
             "tags": {},
             "dependsOn": [
                 "[variables('cdnProfileId')]"
