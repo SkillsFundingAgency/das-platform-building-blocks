@@ -88,7 +88,7 @@
                     {
                         "apiVersion": "2017-10-12",
                         "condition": "[variables('CustomDomainEnabled')]",
-                        "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
+                        "type": "customDomains",
                         "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
                         "properties": {
                             "hostName": "[parameters('customDomainName')]"
