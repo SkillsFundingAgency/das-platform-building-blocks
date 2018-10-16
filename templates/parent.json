@@ -20,9 +20,6 @@
                 "description": "Recommendation: If using to store backup data, choose the paired region for resilience"
             }
         },
-        "storageAccountResourceGroup": {
-            "type": "string"
-        },
         "accountType": {
             "type": "string",
             "defaultValue": "Standard_LRS",
