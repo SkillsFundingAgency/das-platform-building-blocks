@@ -167,12 +167,6 @@
                     "cdnEndPointName": {
                         "value": "[parameters('cdnEndPointName')]"
                     },
-                    "storageAccountResourceGroup": {
-                        "value": "[parameters('storageAccountResourceGroup')]"
-                    },
-                    "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
-                    },
                     "optimizationType": {
                         "value": "[parameters('optimizationType')]"
                     },

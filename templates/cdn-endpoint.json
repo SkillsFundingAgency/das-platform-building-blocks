@@ -17,12 +17,6 @@
         "originHostName": {
             "type": "string"
         },
-        "storageAccountResourceGroup": {
-            "type": "string"
-        },
-        "storageAccountName": {
-            "type": "string"
-        },
         "optimizationType": {
             "type": "string",
             "defaultValue": "GeneralWebDelivery",
@@ -40,9 +34,9 @@
         }
     },
     "variables": {
-        "storageAccountId": "[resourceId(parameters('storageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
         "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
-        "CustomDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]"
+        "CustomDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
+        "originHostName": "[replace(replace(parameters('originHostName'),'https://',''),'/','')]"
     },
     "resources": [
         {
@@ -53,7 +47,7 @@
             "tags": {},
             "dependsOn": [],
             "properties": {
-                "originHostHeader": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
+                "originHostHeader": "[variables('originHostName')]",
                 "contentTypesToCompress": [
                     "text/plain",
                     "text/html",
@@ -73,7 +67,7 @@
                     {
                         "name": "[replace(parameters('originHostname'), '.', '-')]",
                         "properties": {
-                            "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
+                            "hostName": "[variables('originHostName')]",
                             "httpPort": 80,
                             "httpsPort": 443
                         }
