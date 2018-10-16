@@ -8,17 +8,11 @@
                 "description": "Name of Content Delivery Name profile"
             }
         },
-        "cdnProfileResourceGroup": {
-            "type": "string"
-        },
         "cdnEndPointName": {
             "type": "string",
             "metadata": {
                 "description": "Name of the endpoint has to be unique"
             }
-        },
-        "cdnEndPointResourceGroup": {
-            "type": "string"
         },
         "originHostName": {
             "type": "string"
@@ -47,7 +41,6 @@
     },
     "variables": {
         "storageAccountId": "[resourceId(parameters('storageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-        "cdnProfileId": "[resourceId(parameters('cdnProfileResourceGroup'), 'Microsoft.cdn/profiles', parameters('cdnProfileName'))]",
         "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
         "CustomDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]"
     },
@@ -78,7 +71,7 @@
                 "optimizationType": "[parameters('optimizationType')]",
                 "origins": [
                     {
-                        "name": "[parameters('storageAccountName')]",
+                        "name": "[replace(parameters('originHostname'), '.', '-')]",
                         "properties": {
                             "hostName": "[replace(replace(reference(variables('storageAccountId'),'2018-02-01' ).primaryEndpoints.blob,'https://',''),'/','')]",
                             "httpPort": 80,

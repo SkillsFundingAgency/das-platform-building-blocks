@@ -71,13 +71,7 @@
                 "Standard_Microsoft"
             ]
         },
-        "cdnProfileResourceGroup": {
-            "type": "string"
-        },
         "cdnEndPointName": {
-            "type": "string"
-        },
-        "cdnEndPointResourceGroup": {
             "type": "string"
         },
         "originHostName": {
@@ -170,14 +164,8 @@
                     "cdnProfileName": {
                         "value": "[parameters('cdnProfileName')]"
                     },
-                    "cdnProfileResourceGroup": {
-                        "value": "[parameters('cdnProfileResourceGroup')]"
-                    },
                     "cdnEndPointName": {
                         "value": "[parameters('cdnEndPointName')]"
-                    },
-                    "cdnEndPointResourceGroup": {
-                        "value": "[parameters('cdnEndPointResourceGroup')]"
                     },
                     "storageAccountResourceGroup": {
                         "value": "[parameters('storageAccountResourceGroup')]"
@@ -185,7 +173,7 @@
                     "storageAccountName": {
                         "value": "[parameters('storageAccountName')]"
                     },
-                    "optimizationType" : {
+                    "optimizationType": {
                         "value": "[parameters('optimizationType')]"
                     },
                     "customDomainName": {
