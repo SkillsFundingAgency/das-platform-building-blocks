@@ -78,23 +78,19 @@
                             "httpsPort": 443
                         }
                     }
-
                 ]
-
+            }
+        },
+        {
+            "apiVersion": "2017-10-12",
+            "condition": "[variables('CustomDomainEnabled')]",
+            "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
+            "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+            "properties": {
+                "hostName": "[parameters('customDomainName')]"
             },
-            "resources": [
-                {
-                    "apiVersion": "2017-10-12",
-                    "condition": "[variables('CustomDomainEnabled')]",
-                    "type": "customDomains",
-                    "name": "[if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder')]",
-                    "properties": {
-                        "hostName": "[parameters('customDomainName')]"
-                    },
-                    "dependsOn": [
-                        "[variables('fullEndpointName')]"
-                    ]
-                }
+            "dependsOn": [
+                "[variables('fullEndpointName')]"
             ]
         }
     ],
