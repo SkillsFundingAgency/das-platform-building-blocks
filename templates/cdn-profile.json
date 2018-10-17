@@ -36,11 +36,5 @@
             "dependsOn": []
         }
     ],
-    "outputs": {
-        "cdnProfileName": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.cdn/profiles', parameters('cdnProfileName'))]"
-
-        }
-    }
+    "outputs": {}
 }
