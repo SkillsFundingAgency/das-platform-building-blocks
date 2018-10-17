@@ -5,7 +5,7 @@
         "cdnProfileName": {
             "type": "string",
             "metadata": {
-                "description": "Name of Content Delivery Name (CDN) profile"
+                "description": "Name of Content Delivery Network (CDN) profile"
             }
         },
         "cdnSKU": {

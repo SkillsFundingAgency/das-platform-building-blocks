@@ -5,7 +5,7 @@
         "cdnProfileName": {
             "type": "string",
             "metadata": {
-                "description": "Name of Content Delivery Name profile"
+                "description": "Name of Content Delivery Network profile"
             }
         },
         "cdnEndPointName": {
@@ -39,7 +39,7 @@
     },
     "variables": {
         "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
-        "CustomDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
+        "customDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
         "originHostName": "[replace(replace(parameters('originHostName'),'https://',''),'/','')]"
     },
     "resources": [
@@ -79,9 +79,9 @@
         },
         {
             "apiVersion": "2017-10-12",
-            "condition": "[variables('CustomDomainEnabled')]",
+            "condition": "[variables('customDomainEnabled')]",
             "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
-            "name": "[concat(variables('fullEndpointName'), '/', if(variables('CustomDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+            "name": "[concat(variables('fullEndpointName'), '/', if(variables('customDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
             "properties": {
                 "hostName": "[parameters('customDomainName')]"
             },
