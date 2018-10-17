@@ -35,6 +35,16 @@
         "isHttpAllowed": {
             "type": "bool",
             "defaultValue": false
+        },
+        "queryStringCachingBehavior": {
+            "type": "string",
+            "defaultValue": "IgnoreQueryString",
+            "allowedValues": [
+                "NotSet",
+                "IgnoreQueryString",
+                "UseQueryString",
+                "BypassCaching"
+            ]
         }
     },
     "variables": {
@@ -63,7 +73,7 @@
                 "isCompressionEnabled": true,
                 "isHttpAllowed": "[parameters('isHttpAllowed')]",
                 "isHttpsAllowed": true,
-                "queryStringCachingBehavior": "IgnoreQueryString",
+                "queryStringCachingBehavior": "[parameters('queryStringCachingBehavior')]",
                 "optimizationType": "[parameters('optimizationType')]",
                 "origins": [
                     {
