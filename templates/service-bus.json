@@ -19,9 +19,18 @@
             "metadata": {
                 "description": "The messaging tier for service Bus namespace"
             }
+        },
+        "serviceBusQueues": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Names of service bus queues to create within the namespace"
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]"
+    },
     "resources": [
         {
             "apiVersion": "2017-04-01",
@@ -60,6 +69,20 @@
                     ]
                 }
             ]
+        },
+        {
+            "apiVersion": "2017-04-01",
+            "condition": "[variables('deployQueues')]",
+            "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deployQueues'), parameters('serviceBusQueues')[copyIndex()], 'placeholder'))]",
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "properties": {},
+            "dependsOn": [
+                "[parameters('serviceBusNamespaceName')]"
+            ],
+            "copy": {
+                "name": "sbQueueCopy",
+                "count": "[if(variables('deployQueues'), length(parameters('serviceBusQueues')), 1)]"
+            }
         }
     ],
     "outputs": {
