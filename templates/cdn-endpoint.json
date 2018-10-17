@@ -48,8 +48,6 @@
             "type": "Microsoft.Cdn/profiles/endpoints",
             "apiVersion": "2017-10-12",
             "location": "[resourceGroup().location]",
-            "tags": {},
-            "dependsOn": [],
             "properties": {
                 "originHostHeader": "[variables('originHostName')]",
                 "contentTypesToCompress": [
