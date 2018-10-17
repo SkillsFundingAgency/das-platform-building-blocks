@@ -45,6 +45,10 @@
                 "UseQueryString",
                 "BypassCaching"
             ]
+        },
+        "originPath": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -60,6 +64,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "originHostHeader": "[variables('originHostName')]",
+                "originPath": "[parameters('originPath')]",
                 "contentTypesToCompress": [
                     "text/plain",
                     "text/html",
