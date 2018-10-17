@@ -30,10 +30,7 @@
             "tags": {},
             "sku": {
                 "name": "[parameters('cdnSKU')]"
-            },
-            "properties": {},
-            "resources": [],
-            "dependsOn": []
+            }
         }
     ],
     "outputs": {}
