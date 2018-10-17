@@ -29,8 +29,12 @@
             ]
         },
         "customDomainName": {
-            "defaultValue": "",
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
+        },
+        "isHttpAllowed": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -59,7 +63,7 @@
                     "application/xml"
                 ],
                 "isCompressionEnabled": true,
-                "isHttpAllowed": true,
+                "isHttpAllowed": "[parameters('isHttpAllowed')]",
                 "isHttpsAllowed": true,
                 "queryStringCachingBehavior": "IgnoreQueryString",
                 "optimizationType": "[parameters('optimizationType')]",
@@ -89,13 +93,9 @@
         }
     ],
     "outputs": {
-        "hostName": {
+        "endpointHostName": {
             "type": "string",
             "value": "[reference(parameters('cdnEndPointName')).hostname]"
-        },
-        "originHostHeader": {
-            "type": "string",
-            "value": "[reference(parameters('cdnEndPointName')).originHostHeader]"
         }
     }
 }
