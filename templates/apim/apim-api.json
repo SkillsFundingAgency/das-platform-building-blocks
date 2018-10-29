@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiManagementServiceName": {
+            "type": "string"
+        },
+        "productName": {
+            "type": "string"
+        },
+        "apiName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('apiName'))]",
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2018-01-01",
+            "properties": {
+                "displayName": "[parameters('apiName')]",
+                "path": "exampleapipath",
+                "protocols": [
+                    "https"
+                ]
+            }
+        },
+        {
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'), '/', parameters('apiName'))]",
+            "type": "Microsoft.ApiManagement/service/products/apis",
+            "apiVersion": "2018-01-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiName'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
