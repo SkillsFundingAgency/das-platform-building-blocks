@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiManagementServiceName": {
+            "type": "string"
+        },
+        "loggerName": {
+            "type": "string"
+        },
+        "loggerType": {
+            "type": "string",
+            "allowedValues": [
+                "azureEventHub",
+                "applicationInsights"
+            ]
+        },
+        "loggerCredentials": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('loggerName'))]",
+            "type": "Microsoft.ApiManagement/service/loggers",
+            "apiVersion": "2018-01-01",
+            "properties": {
+                "loggerType": "[parameters('loggerType')]",
+                "credentials": "[parameters('loggerCredentials')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
