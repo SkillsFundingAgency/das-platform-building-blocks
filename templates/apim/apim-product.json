@@ -5,18 +5,37 @@
         "apiManagementServiceName": {
             "type": "string"
         },
-        "productName": {
+        "productResourceName": {
+            "type": "string"
+        },
+        "productDisplayName": {
+            "type": "string"
+        },
+        "productDescription": {
+            "type": "string"
+        },
+        "productSubscriptionRequired": {
+            "type": "bool"
+        },
+        "productApprovalRequired": {
+            "type": "bool"
+        },
+        "productState": {
             "type": "string"
         }
     },
     "variables": {},
     "resources": [
         {
-            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'))]",
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productResourceName'))]",
             "type": "Microsoft.ApiManagement/service/products",
             "apiVersion": "2018-01-01",
             "properties": {
-                "displayName": "[parameters('productName')]"
+                "displayName": "[parameters('productDisplayName')]",
+                "description": "[parameters('productDescription')]",
+                "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
+                "approvalRequired": "[parameters('productApprovalRequired')]",
+                "state": "[parameters('productState')]"
             }
         }
     ],
