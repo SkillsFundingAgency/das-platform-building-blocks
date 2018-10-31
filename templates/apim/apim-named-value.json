@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiManagementServiceName": {
+            "type": "string"
+        },
+        "namedValueName": {
+            "type": "string"
+        },
+        "namedValueValue": {
+            "type": "securestring"
+        },
+        "namedValueIsSecret": {
+            "type": "bool"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('namedValueName'))]",
+            "type": "Microsoft.ApiManagement/service/properties",
+            "apiVersion": "2018-01-01",
+            "properties": {
+                "displayName": "[parameters('namedValueName')]",
+                "secret": "[parameters('namedValueIsSecret')]",
+                "value": "[parameters('namedValueValue')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
