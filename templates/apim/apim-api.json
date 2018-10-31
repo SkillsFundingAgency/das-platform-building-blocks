@@ -8,30 +8,46 @@
         "productName": {
             "type": "string"
         },
-        "apiName": {
+        "apiResourceName": {
+            "type": "string"
+        },
+        "apiDisplayName": {
+            "type": "string"
+        },
+        "apiDescription": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "apiPath": {
+            "type": "string"
+        },
+        "apiSwaggerUrl": {
             "type": "string"
         }
     },
     "variables": {},
     "resources": [
         {
-            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('apiName'))]",
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('apiResourceName'))]",
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2018-01-01",
             "properties": {
-                "displayName": "[parameters('apiName')]",
-                "path": "exampleapipath",
+                "description": "[parameters('apiDescription')]",
+                "displayName": "[parameters('apiDisplayName')]",
+                "path": "[parameters('apiPath')]",
+                "contentFormat": "swagger-link-json",
+                "contentValue": "[parameters('apiSwaggerUrl')]",
                 "protocols": [
                     "https"
                 ]
             }
         },
         {
-            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'), '/', parameters('apiName'))]",
+            "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'), '/', parameters('apiResourceName'))]",
             "type": "Microsoft.ApiManagement/service/products/apis",
             "apiVersion": "2018-01-01",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiName'))]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiResourceName'))]"
             ]
         }
     ],
