@@ -29,6 +29,17 @@
                 "Standard",
                 "Premium"
             ]
+        },
+        "dataMaskingExemptPrincipals": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "dataMaskingRules": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Object array where object is of type DataMaskingRuleProperties: https://docs.microsoft.com/en-us/azure/templates/microsoft.sql/servers/databases/datamaskingpolicies/rules#DataMaskingRuleProperties"
+            }
         }
     },
     "variables": {
@@ -74,6 +85,27 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Default')]",
+            "condition": "[greater(length(parameters('dataMaskingRules')), 0)]",
+            "type": "Microsoft.Sql/servers/databases/dataMaskingPolicies",
+            "apiVersion": "2014-04-01",
+            "properties": {
+                "dataMaskingState": "Enabled",
+                "exemptPrincipals": "[parameters('dataMaskingExemptPrincipals')]"
+            }
+        },
+        {
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Default/', if(greater(length(parameters('dataMaskingRules')), 0), concat(parameters('dataMaskingRules')[copyIndex()].schemaName, parameters('dataMaskingRules')[copyIndex()].tableName, parameters('dataMaskingRules')[copyIndex()].columnName),'placeholder'))]",
+            "condition": "[greater(length(parameters('dataMaskingRules')), 0)]",
+            "type": "Microsoft.Sql/servers/databases/dataMaskingPolicies/rules",
+            "apiVersion": "2014-04-01",
+            "properties": "[parameters('dataMaskingRules')[copyIndex()]]",
+            "copy": {
+                "name": "dataMaskingRuleCopy",
+                "count": "[if(greater(length(parameters('dataMaskingRules')), 0), length(parameters('dataMaskingRules')), 1)]"
+            }
         }
     ],
     "outputs": {}
