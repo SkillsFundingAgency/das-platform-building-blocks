@@ -32,7 +32,10 @@
         },
         "dataMaskingExemptPrincipals": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Semi-colon separated list of database principals who are exempt from the following data masking rules"
+            }
         },
         "dataMaskingRules": {
             "type": "array",
