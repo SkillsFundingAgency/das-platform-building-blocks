@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseName": {
+            "type": "string"
+        },
+        "sqlServerName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "databaseSizeBytes": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "databaseTier": {
+            "type": "string",
+            "defaultValue": "",
+            "allowedValues": [
+                "",
+                "Basic",
+                "Standard",
+                "Premium"
+            ]
+        }
+    },
+    "variables": {
+        "deployToElasticPool": "[greater(length(parameters('elasticPoolName')), 0)]",
+        "databaseSettings": {
+            "nonElasticPool": {
+                "sku": {
+                    "name": "[parameters('databaseSkuName')]",
+                    "tier": "[parameters('databaseTier')]"
+                },
+                "properties": {
+                    "maxSizeBytes": "[parameters('databaseSizeBytes')]"
+                }
+            },
+            "elasticPool": {
+                "sku": {
+                    "name": "ElasticPool"
+                },
+                "properties": {
+                    "elasticPoolId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/elasticPools/', parameters('elasticPoolName'))]"
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'))]",
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2017-10-01-preview",
+            "location": "[resourceGroup().location]",
+            "sku": "[if(variables('deployToElasticPool'), variables('databaseSettings').elasticPool.sku, variables('databaseSettings').nonElasticPool.sku)]",
+            "properties": "[if(variables('deployToElasticPool'), variables('databaseSettings').elasticPool.properties, variables('databaseSettings').nonElasticPool.properties)]",
+            "resources": [
+                {
+                    "name": "current",
+                    "type": "transparentDataEncryption",
+                    "apiVersion": "2014-04-01",
+                    "properties": {
+                        "status": "Enabled"
+                    },
+                    "dependsOn": [
+                        "[parameters('databaseName')]"
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
