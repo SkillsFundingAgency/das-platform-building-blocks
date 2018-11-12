@@ -18,9 +18,21 @@
         "functionAppConnectionStrings": {
             "type": "array",
             "defaultValue": []
+        },
+        "customHostName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "certificateThumbprint": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+            }
         }
     },
     "variables": {
+        "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
         "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
     },
     "resources": [
@@ -40,6 +52,20 @@
                 },
                 "httpsOnly": true
             }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "condition": "[variables('UseCustomHostname')]",
+            "name": "[concat(parameters('functionAppName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint": "[parameters('certificateThumbprint')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+            ]
         }
     ],
     "outputs": {}
