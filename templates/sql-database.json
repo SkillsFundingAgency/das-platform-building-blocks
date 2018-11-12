@@ -43,6 +43,34 @@
             "metadata": {
                 "description": "Object array where object is of type DataMaskingRuleProperties: https://docs.microsoft.com/en-us/azure/templates/microsoft.sql/servers/databases/datamaskingpolicies/rules#DataMaskingRuleProperties"
             }
+        },
+        "diagnosticsRetentionDays": {
+            "type": "int",
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "descrtiption": "The number of days that diagnostic logs will be stored for. Default value is forever, max is 1 year."
+            }
+        },
+        "logAnalyticsSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().id]",
+            "metadata": {
+                "description": "The id of the subscription for the Log Analytics Workspace. This defaults to the current subscription."
+            }
+        },
+        "logAnalyticsResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "The resource group of the Log Analytics Workspace."
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Log Analytics Workspace."
+            }
         }
     },
     "variables": {
@@ -65,7 +93,18 @@
                     "elasticPoolId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Sql/servers/', parameters('sqlServerName'), '/elasticPools/', parameters('elasticPoolName'))]"
                 }
             }
-        }
+        },
+        "diagnosticsSettings": [
+            "QueryStoreRuntimeStatistics",
+            "QueryStoreWaitStatistics",
+            "Errors",
+            "DatabaseWaitStatistics",
+            "Timeouts",
+            "Blocks",
+            "SQLInsights",
+            "AutomaticTuning",
+            "Deadlocks"
+        ]
     },
     "resources": [
         {
@@ -87,6 +126,41 @@
                         "[parameters('databaseName')]"
                     ]
                 }
+            ]
+        },
+        {
+            "type": "Microsoft.Sql/servers/databases/providers/diagnosticSettings",
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Microsoft.Insights/service')]",
+            "apiVersion": "2017-05-01-preview",
+            "properties": {
+                "workspaceId": "[resourceId(parameters('logAnalyticsSubscriptionId'), parameters('logAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/Workspaces',parameters('logAnalyticsWorkspaceName'))]",
+                "copy": [
+                    {
+                        "name": "logs",
+                        "count": "[length(variables('diagnosticsSettings'))]",
+                        "input": {
+                            "category": "[variables('diagnosticsSettings')[copyIndex('logs')]]",
+                            "enabled": true,
+                            "retentionPolicy": {
+                                "days": "[parameters('diagnosticsRetentionDays')]",
+                                "enabled": true
+                            }
+                        }
+                    }
+                ],
+                "metrics": [
+                    {
+                        "timeGrain": "AllMetrics",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticsRetentionDays')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[parameters('databaseName')]"
             ]
         },
         {
