@@ -55,7 +55,7 @@
         },
         "logAnalyticsSubscriptionId": {
             "type": "string",
-            "defaultValue": "[subscription().id]",
+            "defaultValue": "[subscription().subscriptionId]",
             "metadata": {
                 "description": "The id of the subscription for the Log Analytics Workspace. This defaults to the current subscription."
             }
