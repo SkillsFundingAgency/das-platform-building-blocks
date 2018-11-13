@@ -65,7 +65,8 @@
                         ]
                     },
                     "dependsOn": [
-                        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+                        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]",
+                        "[resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('serviceBusNamespaceName'), 'ReadWrite')]"
                     ]
                 }
             ]
