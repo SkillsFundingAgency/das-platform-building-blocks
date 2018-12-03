@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "hubName": {
+      "type": "string"
+    },
+    "eventHubNamespaceName": {
+      "type": "string"
+    },
+    "messageRetentionInDays": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "partitionCount": {
+      "type": "int",
+      "defaultValue": 1
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('hubName'))]",
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "properties": {
+        "messageRetentionInDays": "[parameters('messageRetentionInDays')]",
+        "partitionCount": "[parameters('partitionCount')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "ReadWrite",
+          "type": "AuthorizationRules",
+          "properties": {
+            "rights": [
+              "Send",
+              "Listen"
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('hubName'))]"
+          ]
+        },
+        {
+          "apiVersion": "2017-04-01",
+          "name": "Read",
+          "type": "AuthorizationRules",
+          "properties": {
+            "rights": [
+              "Listen"
+            ]
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('eventHubNamespaceName'), parameters('hubName'))]",
+            "[resourceId('Microsoft.EventHub/namespaces/eventhubs/AuthorizationRules', parameters('eventHubNamespaceName'), parameters('hubName'), 'ReadWrite')]"
+          ]
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "HubEndpoint": {
+      "type": "string",
+      "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/AuthorizationRules', parameters('eventHubNamespaceName'), parameters('hubName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+    },
+    "HubEndpointReadOnly": {
+      "type": "string",
+      "value": "[listkeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/AuthorizationRules', parameters('eventHubNamespaceName'), parameters('hubName'), 'Read'), '2017-04-01').primaryConnectionString]"
+    }
+  }
+}
