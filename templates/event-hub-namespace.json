@@ -14,8 +14,21 @@
     },
     "eventHubCapacity": {
       "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 20
+    },
+    "isAutoInflateEnabled": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "maximumThroughputUnits": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 20,
       "metadata": {
-        "description": "Value must be 0 to 20"
+       "description": "Upper limit for Auto Inflate scaling" 
       }
     }
   },
@@ -31,7 +44,10 @@
         "tier": "[parameters('eventHubTier')]",
         "capacity": "[parameters('eventHubCapacity')]"
       },
-      "properties": {}
+      "properties": {
+        "isAutoInflateEnabled": "[parameters('isAutoInflateEnabled')]",
+        "maximumThroughputUnits": "[parameters('maximumThroughputUnits')]"
+      }
     }
   ],
   "outputs": {}
