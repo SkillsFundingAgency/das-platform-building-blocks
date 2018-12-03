@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "eventHubNamespaceName": {
+      "type": "string"
+    },
+    "eventHubTier": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ]
+    },
+    "eventHubCapacity": {
+      "type": "int",
+      "metadata": {
+        "description": "Value must be 0 to 20"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('eventHubNamespaceName')]",
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2017-04-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('eventHubTier')]",
+        "tier": "[parameters('eventHubTier')]",
+        "capacity": "[parameters('eventHubCapacity')]"
+      },
+      "properties": {}
+    }
+  ],
+  "outputs": {}
+}
