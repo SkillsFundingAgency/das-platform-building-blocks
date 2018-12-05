@@ -8,6 +8,12 @@
                 "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
             }
         },
+        "sqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the SQL Server  instance"
+            }
+        },
         "sqlServerAdminPassword": {
             "type": "securestring",
             "metadata": {
@@ -40,18 +46,17 @@
         }
     },
     "variables": {
-        "sqlServerName": "[toLower(concat('das-',parameters('EnvironmentName'),'-shared-sql'))]",
-        "auditPolicyName": "[concat(variables('sqlServerName'), '-DefaultAuditPolicy')]",
-        "securityAlertPolicyName": "[concat(variables('sqlServerName'), '-DefaultSecurityAlert')]"
+        "auditPolicyName": "[concat(parameters('sqlServerName'), '-DefaultAuditPolicy')]",
+        "securityAlertPolicyName": "[concat(parameters('sqlServerName'), '-DefaultSecurityAlert')]"
     },
     "resources": [
         {
-            "name": "[variables('sqlServerName')]",
+            "name": "[parameters('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
             "properties": {
-                "administratorLogin": "[concat('d', uniqueString(resourceGroup().id, guid(variables('sqlServerName'))))]",
+                "administratorLogin": "[concat('d', uniqueString(resourceGroup().id, guid(parameters('sqlServerName'))))]",
                 "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]"
             },
             "resources": [
@@ -60,7 +65,7 @@
                     "type": "auditingSettings",
                     "name": "[variables('AuditPolicyName')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]"
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
                     ],
                     "properties": {
                         "state": "Enabled",
@@ -74,8 +79,8 @@
                     "type": "securityAlertPolicies",
                     "name": "[variables('SecurityAlertPolicyName')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]",
-                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'), '/auditingSettings/', variables('AuditPolicyName'))]"
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]",
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/auditingSettings/', variables('AuditPolicyName'))]"
                     ],
                     "properties": {
                         "state": "Enabled",
@@ -99,7 +104,7 @@
                         "tenantId": "[subscription().tenantId]"
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', variables('sqlServerName'))]"
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
                     ]
                 }
             ]
