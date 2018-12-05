@@ -1,0 +1,38 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure SQL Server"
+            }
+        },
+        "sqlServerUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Administrator username that will connect to the instance "
+            }
+        },
+        "sqlServerPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Administrator password"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('sqlServerName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlServerUsername')]",
+                "administratorLoginPassword": "[parameters('sqlServerPassword')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
