@@ -64,9 +64,7 @@
                     "apiVersion": "2015-05-01-preview",
                     "type": "auditingSettings",
                     "name": "[variables('AuditPolicyName')]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
-                    ],
+                    "dependsOn": [],
                     "properties": {
                         "state": "Enabled",
                         "storageEndpoint": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/')]",
@@ -103,9 +101,7 @@
                         "sid": "[parameters('sqlServerActiveDirectoryAdminObjectId')]",
                         "tenantId": "[subscription().tenantId]"
                     },
-                    "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
-                    ]
+                    "dependsOn": []
                 }
             ]
         }
