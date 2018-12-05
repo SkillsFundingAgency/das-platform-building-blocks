@@ -2,22 +2,22 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "environmentName": {
-            "type": "string",
-            "metadata": {
-                "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
-            }
-        },
         "sqlServerName": {
             "type": "string",
             "metadata": {
-                "description": "Name of the SQL Server  instance"
+                "description": "Name of the Azure SQL Server  instance"
+            }
+        },
+        "sqlServerAdminUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Azure SQL Server Administrator (SA) username "
             }
         },
         "sqlServerAdminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Name of the shared Key Vault for storing the SQL password"
+                "description": "The Azure SQL Server Administrator (SA) password"
             }
         },
         "sqlServerActiveDirectoryAdminLogin": {
@@ -38,7 +38,7 @@
                 "description": "The email address that threat alerts will be sent to"
             }
         },
-        "sharedARMStorageName": {
+        "sqlStorageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "Name of the shared storage account for the environment"
@@ -56,7 +56,7 @@
             "apiVersion": "2015-05-01-preview",
             "location": "[resourceGroup().location]",
             "properties": {
-                "administratorLogin": "[concat('d', uniqueString(resourceGroup().id, guid(parameters('sqlServerName'))))]",
+                "administratorLogin": "[parameters('sqlServerAdminUserName')]",
                 "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]"
             },
             "resources": [
@@ -69,8 +69,8 @@
                     ],
                     "properties": {
                         "state": "Enabled",
-                        "storageEndpoint": "[concat('https://', parameters('sharedARMStorageName'), '.blob.core.windows.net/')]",
-                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sharedARMStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                        "storageEndpoint": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/')]",
+                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
                         "retentionDays": "90"
                     }
                 },
@@ -88,8 +88,8 @@
                         "emailAddresses": "[parameters('threatDetectionEmailAddress')]",
                         "emailAccountAdmins": "Disabled",
                         "retentionDays": "90",
-                        "storageEndpoint": "[concat('https://', parameters('SharedARMStorageName'), '.blob.core.windows.net/')]",
-                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('SharedARMStorageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                        "storageEndpoint": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/')]",
+                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
                     }
                 },
                 {
