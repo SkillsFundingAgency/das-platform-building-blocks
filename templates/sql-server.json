@@ -41,7 +41,7 @@
         "sqlStorageAccountName": {
             "type": "string",
             "metadata": {
-                "description": "Name of the shared storage account for the environment"
+                "description": "Name of the SQL logs storage account for the environment"
             }
         }
     },
