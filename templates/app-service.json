@@ -79,6 +79,15 @@
             "metadata": {
               "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
             }                 
+        },
+        "appKind": {
+            "type": "string",
+            "defaultValue": "app",
+            "allowedValues": [
+                "web",
+                "app",
+                "api"
+            ]
         }
     },
     "variables": {
@@ -91,6 +100,7 @@
         {
             "name": "[parameters('appServiceName')]",
             "type": "Microsoft.Web/sites",
+            "kind": "[parameters('appKind')]",
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
