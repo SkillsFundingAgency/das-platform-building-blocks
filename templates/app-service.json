@@ -44,16 +44,63 @@
         "deployStagingSlot": {
             "type": "bool",
             "defaultValue": true
+        },
+        "ipSecurityRestrictions": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+              "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
+            }                  
+        },
+        "appServiceSlotAppSettings": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
+              }                  
+        },        
+        "appServiceSlotSettingAppSettings": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+              "description": "List of app settings to set as slot specific: [\"EnvironmentName\", \"ReadOnly\"]"
+            }                 
+        },
+        "appServiceSlotConnectionStrings": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
+              }                  
+        },          
+        "appServiceSlotSettingConnectionStrings": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+              "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
+            }                 
+        },
+        "appKind": {
+            "type": "string",
+            "defaultValue": "app",
+            "allowedValues": [
+                "web",
+                "app",
+                "api"
+            ]
         }
     },
     "variables": {
         "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
-        "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
+        "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]"
     },
     "resources": [
         {
             "name": "[parameters('appServiceName')]",
             "type": "Microsoft.Web/sites",
+            "kind": "[parameters('appKind')]",
             "apiVersion": "2016-08-01",
             "location": "[resourceGroup().location]",
             "properties": {
@@ -63,7 +110,8 @@
                     "alwaysOn": true,
                     "appSettings": "[parameters('appServiceAppSettings')]",
                     "connectionStrings": "[parameters('appServiceConnectionStrings')]",
-                    "virtualApplications": "[parameters('appServiceVirtualApplications')]"
+                    "virtualApplications": "[parameters('appServiceVirtualApplications')]",
+                    "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
                 },
                 "httpsOnly": true
             },
@@ -77,15 +125,29 @@
                     "properties": {
                         "clientAffinityEnabled": false,
                         "siteConfig": {
-                            "appSettings": "[parameters('appServiceAppSettings')]",
-                            "connectionStrings": "[parameters('appServiceConnectionStrings')]",
-                            "virtualApplications": "[parameters('appServiceVirtualApplications')]"
+                            "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings'), parameters('appServiceAppSettings'))]",
+                            "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings'), parameters('appServiceConnectionStrings'))]",
+                            "virtualApplications": "[parameters('appServiceVirtualApplications')]",
+                            "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
                         }
                     },
                     "dependsOn": [
                         "[parameters('appServiceName')]"
                     ]
-                }
+                },
+                {
+                    "condition": "[parameters('deployStagingSlot')]",
+                    "name": "slotconfignames",
+                    "type": "config",
+                    "apiVersion": "2016-08-01",
+                    "properties": {
+                      "appSettingNames": "[parameters('appServiceSlotSettingAppSettings')]",
+                      "connectionStringNames": "[parameters('appServiceSlotSettingConnectionStrings')]"
+                    },
+                    "dependsOn": [
+                        "[parameters('appServiceName')]"
+                    ]                    
+                  }                
             ],
             "dependsOn": []
         },
