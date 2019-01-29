@@ -61,7 +61,7 @@ Reduce the number of parameters needed by setting the Azure resource names with 
         ...
     }
     ```
-    3. Use the variable for the name parameter of the resource as follows:
+3. Use the variable for the name parameter of the resource as follows:
 
     ```json
     "parameters": {
