@@ -37,9 +37,11 @@
     ]
 }
 ```
-3. Reduce the number of parameters needed by setting the Azure resource names with variables:
+## Azure resource naming
 
-    a. Set a resourceEnvironmentName parameter as follows:
+Reduce the number of parameters needed by setting the Azure resource names with variables:
+
+1. Set the resourceEnvironmentName parameter as follows:
 
     ```json
     "parameters": {
@@ -49,7 +51,7 @@
             ...
     }
     ```
-    b. Set the variable of the Azure resource names as follows:
+2. Set the variable of the Azure resource names as follows:
 
     ```json
     "variables": {
@@ -59,7 +61,7 @@
         ...
     }
     ```
-    c. Use the variable for the name parameter of the resource as follows:
+    3. Use the variable for the name parameter of the resource as follows:
 
     ```json
     "parameters": {
