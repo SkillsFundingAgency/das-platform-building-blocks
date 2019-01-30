@@ -2,7 +2,7 @@
 
 ## Usage
 
-1. Set the root 'Raw' path of the Azure Resource templates as a variable as follows:
+1. Set the root 'Raw' path of the Azure Resource templates as a top-level variable as follows:
 
 ```json
 "variables": {
@@ -39,9 +39,9 @@
 ```
 ## Azure resource naming
 
-Reduce the number of parameters needed by setting the Azure resource names with variables:
+Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
 
-1. Set the resourceEnvironmentName parameter as follows:
+1. Set the top-level resourceEnvironmentName parameter as follows:
 
     ```json
     "parameters": {
@@ -51,7 +51,7 @@ Reduce the number of parameters needed by setting the Azure resource names with 
             ...
     }
     ```
-2. Set the variable of the Azure resource names as follows:
+2. Set the top-level variable of the resourceNamePrefix and Azure resource names as follows:
 
     ```json
     "variables": {
@@ -61,7 +61,7 @@ Reduce the number of parameters needed by setting the Azure resource names with 
         ...
     }
     ```
-3. Use the variable for the name parameter of the resource as follows:
+3. Within the properties section of the resource deployment section use the resource name variable for the name parameter of the resource as follows:
 
     ```json
     "parameters": {
