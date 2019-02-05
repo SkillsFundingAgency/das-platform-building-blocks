@@ -15,7 +15,7 @@
 ```json
 {
     "apiVersion": "2017-05-10",
-    "name": "<Name for the resource deployment>",
+    "name": "app-service",
     "type": "Microsoft.Resources/deployments",
     "properties": {
         "mode": "Incremental", //or Complete
@@ -24,10 +24,10 @@
             "contentVersion": "1.0.0.0"
         },
         "parameters": {
-            "Parameter1": {
+            "parameter1": {
                 "value": "<Your value>"
             },
-            "Parameter2": {
+            "parameter2": {
                 "value": "<Your value>"
             }
         }
@@ -41,13 +41,16 @@
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
 
-1. Set the top-level resourceEnvironmentName parameter as follows:
+1. Set the top-level resourceEnvironmentName and serviceName parameters as follows:
 
     ```json
     "parameters": {
         "resourceEnvironmentName": {
                 "type": "string"
             },
+        "serviceName": {
+            "type": "string"
+        },
             ...
     }
     ```
@@ -56,12 +59,13 @@ Reduce the number of top-level parameters needed by setting the Azure resource n
     ```json
     "variables": {
         ...
-        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName')))]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-<service abbreviation>-as')]",
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+        "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]",
+        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
         ...
     }
     ```
-3. Within the properties section of the resource deployment section use the resource name variable for the name parameter of the resource as follows:
+3. Within the properties section of the resource deployment section, use the resource name variable for the name parameter of the resource as follows:
 
     ```json
     "parameters": {
@@ -71,3 +75,22 @@ Reduce the number of top-level parameters needed by setting the Azure resource n
         ...
     }
     ```
+4. Set the the top-level output of the generated variable that will be used in the release pipeline as follows:
+
+    ```json
+    "outputs": {
+        "AppServiceName": {
+            "type": "string",
+            "value": "[variables('appServiceName')]"
+        },
+        ...
+    }
+    ```
+## Property name formatting
+
+The convention of property name formatting, as used in the examples above:
+
+1. Parameters: camelCase (matching the release pipeline override template parameters)
+2. Variables: camelCase
+3. Resource Deployments: lowercase-with-hyphens
+4. Outputs: PascalCase (matching the release pipeline variables)
