@@ -6,7 +6,7 @@
             "type": "string",
             "metadata": {
                 "description": "The prefix for the firewall rule name, it will be appended by the IP address"
-            }
+            }        
         },
         "ipAddresses": {
             "type": "array",
@@ -25,7 +25,7 @@
     "variables": {},
     "resources": [
         {
-            "name": "[concat(parameters('serverName'), '/', parameters('firewallRuleNamePrefix') , '-', parameters('ipAddresses')[copyIndex()])]",
+            "name": "[concat(parameters('serverName'), '/', parameters('firewallRuleNamePrefix'), parameters('ipAddresses')[copyIndex()])]",
             "type": "Microsoft.Sql/servers/firewallRules",
             "apiVersion": "2015-05-01-preview",
             "properties": {
