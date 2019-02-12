@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "firewallRuleName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name for a single firewall rule or the name prefix for multiple rules"
+            }
+        },
+        "ipAddresses": {
+            "type": "array",
+            "minLength": 1,
+            "metadata": {
+                "description": "Array of IP addresses to whitelist against a SQL server"
+            }
+        },
+        "serverName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the server to add firewall rules to"
+            }
+        }
+    },
+    "variables": {
+        "requiresSuffix": "[greater(length(parameters('ipAddresses')), 1)]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('serverName'), '/', if(variables('requiresSuffix'), concat(parameters('firewallRuleName'), '-', copyIndex()), parameters('firewallRuleName')))]",
+            "type": "Microsoft.Sql/servers/firewallRules",
+            "apiVersion": "2015-05-01-preview",
+            "properties": {
+                "startIpAddress": "[parameters('ipAddresses')[copyIndex()]]",
+                "endIpAddress": "[parameters('ipAddresses')[copyIndex()]]"
+            },
+            "copy": {
+                "count": "[length(parameters('ipAddresses'))]",
+                "mode": "Parallel",
+                "name": "firewallRuleCopy"
+            }
+        }
+    ],
+    "outputs": {}
+}
