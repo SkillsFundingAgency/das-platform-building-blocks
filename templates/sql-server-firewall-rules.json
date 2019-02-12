@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "firewallRuleName": {
+        "firewallRuleNamePrefix": {
             "type": "string",
             "metadata": {
-                "description": "The name for a single firewall rule or the name prefix for multiple rules"
+                "description": "The prefix for the firewall rule name, it will be appended by the IP address"
             }
         },
         "ipAddresses": {
@@ -22,12 +22,10 @@
             }
         }
     },
-    "variables": {
-        "requiresSuffix": "[greater(length(parameters('ipAddresses')), 1)]"
-    },
+    "variables": {},
     "resources": [
         {
-            "name": "[concat(parameters('serverName'), '/', if(variables('requiresSuffix'), concat(parameters('firewallRuleName'), '-', copyIndex()), parameters('firewallRuleName')))]",
+            "name": "[concat(parameters('serverName'), '/', parameters('firewallRuleNamePrefix') , '-', parameters('ipAddresses')[copyIndex()])]",
             "type": "Microsoft.Sql/servers/firewallRules",
             "apiVersion": "2015-05-01-preview",
             "properties": {
