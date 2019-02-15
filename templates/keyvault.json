@@ -5,14 +5,12 @@
         "keyVaultName": {
             "type": "string"
         },
-        "servicePrincipalObjectId": {
-            "type": "string"
-        },
-        "secretName": {
-            "type": "string"
-        },
-        "secretValue": {
-            "type": "string"
+        "keyVaultAccessPolicies": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of objects with the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/2018-02-14/vaults#AccessPolicyEntry"
+            }
         }
     },
     "variables": {},
@@ -20,39 +18,16 @@
         {
             "type": "Microsoft.KeyVault/vaults",
             "name": "[parameters('keyVaultName')]",
-            "apiVersion": "2015-06-01",
+            "apiVersion": "2018-02-14",
             "location": "[resourceGroup().location]",
             "properties": {
-                "accessPolicies": [
-                    {
-                        "objectId": "[parameters('servicePrincipalObjectId')]",
-                        "tenantId": "[subscription().tenantId]",
-                        "permissions": {
-                            "secrets": [
-                                "Get",
-                                "List",
-                                "Set"
-                            ]
-                        }
-                    }
-                ],
+                "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
                 "tenantId": "[subscription().tenantId]",
                 "sku": {
                     "name": "Standard",
                     "family": "A"
                 }
             }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(parameters('keyVaultName'), '/',  parameters('secretName'))]",
-            "apiVersion": "2015-06-01",
-            "properties": {
-                "value": "[parameters('secretValue')]"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
-            ]
         }
     ],
     "outputs": {
