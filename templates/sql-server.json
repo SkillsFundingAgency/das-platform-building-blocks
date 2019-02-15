@@ -43,11 +43,30 @@
             "metadata": {
                 "description": "Name of the SQL logs storage account for the environment"
             }
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the OMS workspace that will collect audit events"
+            }
+        },
+        "omsWorkspaceResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the OMS workspace resource group that will collect audit events"
+            }
+        },
+        "omsWorkspaceSubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the OMS workspace subscription that will collect audit events"
+            }
         }
     },
     "variables": {
         "auditPolicyName": "[concat(parameters('sqlServerName'), '-DefaultAuditPolicy')]",
-        "securityAlertPolicyName": "[concat(parameters('sqlServerName'), '-DefaultSecurityAlert')]"
+        "securityAlertPolicyName": "[concat(parameters('sqlServerName'), '-DefaultSecurityAlert')]",
+        "diagnosticSettingName": "SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1"
     },
     "resources": [
         {
@@ -60,6 +79,39 @@
                 "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]"
             },
             "resources": [
+                {
+                    "type": "databases",
+                    "apiVersion": "2014-04-01",
+                    "location": "[resourceGroup().location]",
+                    "name": "master",
+                    "properties": {},
+                    "dependsOn": [
+                        "[parameters('sqlServerName')]"
+                    ]
+                },
+                {
+                    "type": "databases/providers/diagnosticSettings",
+                    "name": "[concat('master/microsoft.insights/',variables('diagnosticSettingName'))]",
+                    "apiVersion": "2017-05-01-preview",
+                    "properties": {
+                        "name": "[variables('diagnosticSettingName')]",
+                        "workspaceId": "[resourceId(parameters('omsWorkspaceSubscriptionId'), parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+                        "logs": [
+                            {
+                                "category": "SQLSecurityAuditEvents",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/databases/master')]",
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+                    ]
+                },
                 {
                     "apiVersion": "2015-05-01-preview",
                     "type": "auditingSettings",
