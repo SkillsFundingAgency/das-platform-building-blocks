@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "type": "string"
+        },
+        "elasticPoolEdition": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ]
+        },
+        "elasticPoolDtu": {
+            "type": "int",
+            "defaultValue": 50
+        },
+        "elasticPoolMinDtu": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "elasticPoolMaxDtu": {
+            "type": "int",
+            "defaultValue": 20
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers/elasticpools",
+            "apiVersion": "2014-04-01",
+            "name": "[concat(parameters('sqlServerName'), '/', parameters('elasticPoolName'))]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "edition": "[parameters('elasticPoolEdition')]",
+                "dtu": "[parameters('elasticPoolDtu')]",
+                "databaseDtuMin": "[parameters('elasticPoolMinDtu')]",
+                "databaseDtuMax": "[parameters('elasticPoolMaxDtu')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
