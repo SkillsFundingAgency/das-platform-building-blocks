@@ -1,0 +1,42 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "armVnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the arm vnet"
+            }
+        },
+        "armVnetAddressSpaceCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "CIDR for the address space of the ARM Vnet"
+            }
+        },
+        "subnetConfiguration": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of objects in the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks#Subnet"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('armVnetName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('armVnetAddressSpaceCIDR')]"
+                    ]
+                },
+                "subnets": "[parameters('subnetConfiguration')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
