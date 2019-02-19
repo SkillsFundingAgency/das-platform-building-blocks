@@ -66,6 +66,7 @@
     "variables": {
         "auditPolicyName": "[concat(parameters('sqlServerName'), '-DefaultAuditPolicy')]",
         "securityAlertPolicyName": "[concat(parameters('sqlServerName'), '-DefaultSecurityAlert')]",
+        "vulnerabilityAssessmentName": "[concat(parameters('sqlServerName'), '/Default')]",
         "diagnosticSettingName": "SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1",
         "storageEndpointFQDN": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/')]"
     },
@@ -165,10 +166,10 @@
         },
         {
             "type": "Microsoft.Sql/servers/vulnerabilityAssessments",
-            "name": "[concat(parameters('sqlServerName'), '/Default')]",
             "apiVersion": "2018-06-01-preview",
+            "name": "[variables('vulnerabilityAssessmentName')]",
             "properties": {
-                "storageContainerPath": "[concat(variables('storageEndpointFQDN'), '/vulnerability-assessment/')]",
+                "storageContainerPath": "[concat(variables('storageEndpointFQDN'), 'vulnerability-assessment/')]",
                 "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
                 "recurringScans": {
                     "isEnabled": true,
