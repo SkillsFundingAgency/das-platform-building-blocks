@@ -44,22 +44,22 @@
                 "description": "Name of the SQL logs storage account for the environment"
             }
         },
-        "omsWorkspaceName": {
+        "logAnalyticsWorkspaceName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the OMS workspace that will collect audit events"
+                "description": "The name of the Log Analytics workspace that will collect audit events"
             }
         },
-        "omsWorkspaceResourceGroupName": {
+        "logAnalyticsWorkspaceResourceGroup": {
             "type": "string",
             "metadata": {
-                "description": "The name of the OMS workspace resource group that will collect audit events"
+                "description": "The name of the Log Analytics workspace resource group that will collect audit events"
             }
         },
-        "omsWorkspaceSubscriptionId": {
+        "logAnalyticsWorkspaceSubscriptionId": {
             "type": "string",
             "metadata": {
-                "description": "The id of the OMS workspace subscription that will collect audit events"
+                "description": "The id of the Log Analytics workspace subscription that will collect audit events"
             }
         }
     },
@@ -96,7 +96,7 @@
                     "apiVersion": "2017-05-01-preview",
                     "properties": {
                         "name": "[variables('diagnosticSettingName')]",
-                        "workspaceId": "[resourceId(parameters('omsWorkspaceSubscriptionId'), parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+                        "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceSubscriptionId'), parameters('logAnalyticsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
                         "logs": [
                             {
                                 "category": "SQLSecurityAuditEvents",
@@ -164,8 +164,8 @@
             ]
         },
         {
-            "type": "vulnerabilityAssessments",
-            "name": "[concat(parameters('sqlServerName'), '-vulnerability-assessments')]",
+            "type": "Microsoft.Sql/servers/vulnerabilityAssessments",
+            "name": "[concat(parameters('sqlServerName'), '/Default')]",
             "apiVersion": "2018-06-01-preview",
             "properties": {
                 "storageContainerPath": "[concat(variables('storageEndpointFQDN'), '/vulnerability-assessment/')]",
@@ -177,7 +177,10 @@
                         "[parameters('threatDetectionEmailAddress')]"
                     ]
                 }
-            }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+            ]
         }
     ],
     "outputs": {}
