@@ -37,6 +37,10 @@
     ]
 }
 ```
+## Template file name and location in the application's repository
+
+Name the template as `template.json` and store in a top-level folder named `azure`.
+
 ## Azure resource naming
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
