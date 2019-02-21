@@ -41,6 +41,16 @@
 
 Name the template as `template.json` and store in a top-level folder named `azure`.
 
+## Branching strategy
+
+1. Always do your work in a new branch.
+
+2. Do not ever commit straight to master.
+
+3. Submit a pull request to the team when you are ready for review.
+
+4. After the pull request is approved and the branch merged to master, delete the branch you made.
+
 ## Azure resource naming
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
