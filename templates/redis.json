@@ -1,37 +1,37 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "redisCacheName": {
-        "type": "string",
-      },
-      "redisCacheSKU": {
-        "type": "string"
-      },
-      "redisCacheFamily": {
-        "type": "string"
-      },
-      "redisCacheCapacity": {
-        "type": "int"
-      },
-      "enableNonSslPort": {
-        "type": "bool"
-      }
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "redisCacheName": {
+      "type": "string"
     },
-    "resources": [
-      {
-        "apiVersion": "2015-08-01",
-        "name": "[parameters('redisCacheName')]",
-        "type": "Microsoft.Cache/Redis",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "enableNonSslPort": "[parameters('enableNonSslPort')]",
-          "sku": {
-            "capacity": "[parameters('redisCacheCapacity')]",
-            "family": "[parameters('redisCacheFamily')]",
-            "name": "[parameters('redisCacheSKU')]"
-          }
+    "redisCacheSKU": {
+      "type": "string"
+    },
+    "redisCacheFamily": {
+      "type": "string"
+    },
+    "redisCacheCapacity": {
+      "type": "int"
+    },
+    "enableNonSslPort": {
+      "type": "bool"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('redisCacheName')]",
+      "type": "Microsoft.Cache/Redis",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "enableNonSslPort": "[parameters('enableNonSslPort')]",
+        "sku": {
+          "capacity": "[parameters('redisCacheCapacity')]",
+          "family": "[parameters('redisCacheFamily')]",
+          "name": "[parameters('redisCacheSKU')]"
         }
       }
-    ]
-  }
+    }
+  ]
+}
