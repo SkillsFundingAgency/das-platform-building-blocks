@@ -1,47 +1,55 @@
-# das-platform-building-blocks
+# Platform Building Blocks: Styles and Conventions
 
-## Usage
+## Table of contents
+1. [Usage](#Usage)
+2. [Branching](#Branching)
+3. [Resource naming](#Resource-naming)
+4. [Property name formatting](#Property-name-formatting)
 
-1. Set the root 'Raw' path of the Azure Resource templates as a top-level variable as follows:
+### Usage
 
-```json
-"variables": {
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        ...
-}
-```
-2. Select the Azure Resource template you wish to use, (eg. https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json) by setting the concatenation of the deploymentUrlBase variable and the file name as the uri of the templateLink property as follows:
+1. In the root of the applications repository, create a new directory named `azure`
 
-```json
-{
-    "apiVersion": "2017-05-10",
-    "name": "app-service",
-    "type": "Microsoft.Resources/deployments",
-    "properties": {
-        "mode": "Incremental", //or Complete
-        "templateLink": {
-            "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
-            "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-            "parameter1": {
-                "value": "<Your value>"
+2. Within the directory Create a new template named `template.json`
+
+
+2. Set the root 'Raw' path of the Azure Resource templates as a top-level variable as follows:
+
+    ```json
+    "variables": {
+            "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/"
+    }
+    ```
+
+3. Select the Azure Resource template you wish to use, (eg. https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json) by setting the concatenation of the deploymentUrlBase variable and the file name as the uri of the templateLink property as follows:
+
+    ```json
+    {
+        "apiVersion": "2017-05-10",
+        "name": "app-service",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+            "mode": "Incremental", //or Complete
+            "templateLink": {
+                "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+                "contentVersion": "1.0.0.0"
             },
-            "parameter2": {
-                "value": "<Your value>"
+            "parameters": {
+                "parameter1": {
+                    "value": "<Your value>"
+                },
+                "parameter2": {
+                    "value": "<Your value>"
+                }
             }
-        }
-    },
-    "dependsOn":[
-        "<Any dependencies>"
-    ]
-}
-```
-## Template file name and location in the application's repository
+        },
+        "dependsOn":[
+            "<Any dependencies>"
+        ]
+    }
+    ```
 
-Name the template as `template.json` and store in a top-level folder named `azure`.
-
-## Branching strategy
+## Branching
 
 1. Always do your work in a new branch.
 
@@ -51,11 +59,11 @@ Name the template as `template.json` and store in a top-level folder named `azur
 
 4. After the pull request is approved and the branch merged to master, delete the branch you made.
 
-## Azure resource naming
+## Resource naming
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
 
-1. Set the top-level resourceEnvironmentName and serviceName parameters as follows:
+1. Set the top-level ```resourceEnvironmentName``` and ```serviceName``` parameters as follows:
 
     ```json
     "parameters": {
@@ -68,7 +76,8 @@ Reduce the number of top-level parameters needed by setting the Azure resource n
             ...
     }
     ```
-2. Set the top-level variable of the resourceNamePrefix and Azure resource names as follows:
+
+2. Set the top-level variable of the ```resourceNamePrefix``` and Azure resource names as follows:
 
     ```json
     "variables": {
