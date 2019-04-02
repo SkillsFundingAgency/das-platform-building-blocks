@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "failoverGroupName": {
+      "type": "string"
+    },
+    "primarySqlServerName": {
+      "type": "string"
+    },
+    "secondarySqlServerName": {
+      "type": "string"
+    },
+    "databases": {
+      "type": "array",
+      "metadata": {
+        "description": "String array of database resource IDs"
+      }
+    },
+    "failoverPolicy": {
+      "type": "string",
+      "defaultValue": "Manual",
+      "allowedValues": [
+        "Manual"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[toLower(concat(parameters('primarySqlServerName'), '/', parameters('failoverGroupName')))]",
+      "type": "Microsoft.Sql/servers/failoverGroups",
+      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "readWriteEndpoint": {
+          "failoverPolicy": "[parameters('failoverPolicy')]"
+        },
+        "partnerServers": [
+          {
+            "id": "[resourceId('Microsoft.Sql/servers', parameters('secondarySqlServerName'))]"
+          }
+        ],
+        "databases": "[parameters('databases')]"
+      }
+    }
+  ],
+  "outputs": {}
+}
