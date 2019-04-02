@@ -8,6 +8,14 @@
         "description": "Name of the Azure SQL Server  instance"
       }
     },
+    "sqlServerLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "westeurope",
+        "northeurope"
+      ]
+    },
     "sqlServerAdminUserName": {
       "type": "string",
       "metadata": {
@@ -73,7 +81,7 @@
       "name": "[parameters('sqlServerName')]",
       "type": "Microsoft.Sql/servers",
       "apiVersion": "2015-05-01-preview",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('sqlServerLocation')]",
       "properties": {
         "administratorLogin": "[parameters('sqlServerAdminUserName')]",
         "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]"
@@ -82,7 +90,7 @@
         {
           "type": "databases",
           "apiVersion": "2014-04-01",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('sqlServerLocation')]",
           "name": "master",
           "properties": {},
           "dependsOn": [
@@ -148,7 +156,7 @@
           "type": "administrators",
           "name": "activeDirectory",
           "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('sqlServerLocation')]",
           "properties": {
             "administratorType": "ActiveDirectory",
             "login": "[parameters('sqlServerActiveDirectoryAdminLogin')]",
