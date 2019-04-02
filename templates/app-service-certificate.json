@@ -1,48 +1,48 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "keyVaultCertificateName": {
-            "type": "string"
-        },
-        "keyVaultName": {
-            "type": "string"
-        },
-        "keyVaultResourceGroup": {
-            "type": "string"
-        },
-        "serverFarmId": {
-            "type": "string",
-            "defaultValue": ""
-        }       
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultCertificateName": {
+      "type": "string"
     },
-    "variables": {
-        "includeServerFarmId": "[greater(length(parameters('serverFarmId')), 0)]",
-        "certificateResourceProperties": {
-            "withServerFarmId": {
-                "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "keyVaultSecretName": "[parameters('keyVaultCertificateName')]",
-                "serverFarmId": "[parameters('serverFarmId')]"                
-            },
-            "withoutServerFarmId": {
-                "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "keyVaultSecretName": "[parameters('keyVaultCertificateName')]"
-            }
-        }
+    "keyVaultName": {
+      "type": "string"
     },
-    "resources": [
-        {
-            "type": "Microsoft.Web/certificates",
-            "name": "[parameters('keyVaultCertificateName')]",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-01",
-            "properties": "[if(variables('includeServerFarmId'), variables('certificateResourceProperties').withServerFarmId, variables('certificateResourceProperties').withoutServerFarmId)]"
-        }
-    ],
-    "outputs": {
-        "certificateThumbprint": {
-            "type": "string",
-            "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-03-01').Thumbprint]"
-        }
+    "keyVaultResourceGroup": {
+      "type": "string"
+    },
+    "serverFarmId": {
+      "type": "string",
+      "defaultValue": ""
     }
+  },
+  "variables": {
+    "includeServerFarmId": "[greater(length(parameters('serverFarmId')), 0)]",
+    "certificateResourceProperties": {
+      "withServerFarmId": {
+        "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "keyVaultSecretName": "[parameters('keyVaultCertificateName')]",
+        "serverFarmId": "[parameters('serverFarmId')]"
+      },
+      "withoutServerFarmId": {
+        "keyVaultId": "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "keyVaultSecretName": "[parameters('keyVaultCertificateName')]"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/certificates",
+      "name": "[parameters('keyVaultCertificateName')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-01",
+      "properties": "[if(variables('includeServerFarmId'), variables('certificateResourceProperties').withServerFarmId, variables('certificateResourceProperties').withoutServerFarmId)]"
+    }
+  ],
+  "outputs": {
+    "certificateThumbprint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyVaultCertificateName')), '2016-03-01').Thumbprint]"
+    }
+  }
 }

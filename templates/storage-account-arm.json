@@ -1,89 +1,89 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "storageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the storage account"
-            }
-        },
-        "storageAccountLocation": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "Recommendation: If using to store backup data, choose the paired region for resilience"
-            }
-        },
-        "accountType": {
-            "type": "string",
-            "defaultValue": "Standard_LRS",
-            "allowedValues": [
-                "Standard_LRS",
-                "Standard_GRS",
-                "Standard_RAGRS",
-                "Premium_LRS"
-            ]
-        },
-        "accessTier": {
-            "type": "string",
-            "defaultValue": "",
-            "allowedValues": [
-                "Hot",
-                "Cool",
-                ""
-            ],
-            "metadata": {
-                "description": "This setting is required if using BlobStorage as the storageKind, otherwise can be left blank"
-            }
-        },
-        "storageKind": {
-            "type": "string",
-            "defaultValue": "Storage",
-            "allowedValues": [
-                "Storage",
-                "StorageV2",
-                "BlobStorage"
-            ]
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account"
+      }
     },
-    "variables": {},
-    "resources": [
-        {
-            "apiVersion": "2018-02-01",
-            "name": "[parameters('storageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "location": "[parameters('storageAccountLocation')]",
-            "sku": {
-                "name": "[parameters('accountType')]"
-            },
-            "kind": "[parameters('storageKind')]",
-            "tags": {},
-            "properties": {
-                "encryption": {
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        },
-                        "file": {
-                            "enabled": true
-                        }
-                    },
-                    "keySource": "Microsoft.Storage"
-                },
-                "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
-                "supportsHttpsTrafficOnly": true
-            }
-        }
-    ],
-    "outputs": {
-        "storageKey": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-        },
-        "storageConnectionString": {
-            "type": "string",
-            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-        }
+    "storageAccountLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Recommendation: If using to store backup data, choose the paired region for resilience"
+      }
+    },
+    "accountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "accessTier": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "Hot",
+        "Cool",
+        ""
+      ],
+      "metadata": {
+        "description": "This setting is required if using BlobStorage as the storageKind, otherwise can be left blank"
+      }
+    },
+    "storageKind": {
+      "type": "string",
+      "defaultValue": "Storage",
+      "allowedValues": [
+        "Storage",
+        "StorageV2",
+        "BlobStorage"
+      ]
     }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[parameters('storageAccountLocation')]",
+      "sku": {
+        "name": "[parameters('accountType')]"
+      },
+      "kind": "[parameters('storageKind')]",
+      "tags": {},
+      "properties": {
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        },
+        "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
+        "supportsHttpsTrafficOnly": true
+      }
+    }
+  ],
+  "outputs": {
+    "storageKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+    },
+    "storageConnectionString": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+    }
+  }
 }

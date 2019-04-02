@@ -1,58 +1,58 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "keyVaultName": {
-            "type": "string"
-        },
-        "keyVaultAccessPolicies": {
-            "type": "array",
-            "defaultValue": [],
-            "metadata": {
-                "description": "Array of objects with the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/2018-02-14/vaults#AccessPolicyEntry"
-            }
-        },
-        "enabledForDiskEncryption": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "enabledForTemplateDeployment": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "enableSoftDelete": {
-            "type": "bool",
-            "defaultValue": false
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultName": {
+      "type": "string"
     },
-    "variables": {},
-    "resources": [
-        {
-            "type": "Microsoft.KeyVault/vaults",
-            "name": "[parameters('keyVaultName')]",
-            "apiVersion": "2018-02-14",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
-                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-                "enableSoftDelete": "[parameters('enableSoftDelete')]",
-                "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
-                "tenantId": "[subscription().tenantId]",
-                "sku": {
-                    "name": "Standard",
-                    "family": "A"
-                }
-            }
-        }
-    ],
-    "outputs": {
-        "KeyVaultUri": {
-            "type": "string",
-            "value": "[reference(parameters('keyVaultName')).vaultUri]"
-        },
-        "KeyVaultResourceId": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
-        }
+    "keyVaultAccessPolicies": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Array of objects with the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/2018-02-14/vaults#AccessPolicyEntry"
+      }
+    },
+    "enabledForDiskEncryption": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "enabledForTemplateDeployment": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "enableSoftDelete": {
+      "type": "bool",
+      "defaultValue": false
     }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "name": "[parameters('keyVaultName')]",
+      "apiVersion": "2018-02-14",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "enableSoftDelete": "[parameters('enableSoftDelete')]",
+        "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "KeyVaultUri": {
+      "type": "string",
+      "value": "[reference(parameters('keyVaultName')).vaultUri]"
+    },
+    "KeyVaultResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+    }
+  }
 }

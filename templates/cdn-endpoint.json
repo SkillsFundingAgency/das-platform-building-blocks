@@ -1,114 +1,114 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "cdnProfileName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of Content Delivery Network profile"
-            }
-        },
-        "cdnEndPointName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the endpoint has to be unique"
-            }
-        },
-        "originHostName": {
-            "type": "string"
-        },
-        "optimizationType": {
-            "type": "string",
-            "defaultValue": "GeneralWebDelivery",
-            "allowedValues": [
-                "GeneralWebDelivery",
-                "GeneralMediaStreaming",
-                "VideoOnDemandMediaStreaming",
-                "LargeFileDownload",
-                "DynamicSiteAcceleration"
-            ]
-        },
-        "customDomainName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "isHttpAllowed": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "queryStringCachingBehavior": {
-            "type": "string",
-            "defaultValue": "IgnoreQueryString",
-            "allowedValues": [
-                "NotSet",
-                "IgnoreQueryString",
-                "UseQueryString",
-                "BypassCaching"
-            ]
-        },
-        "originPath": {
-            "type": "string",
-            "defaultValue": ""
-        }
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "cdnProfileName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Content Delivery Network profile"
+      }
     },
-    "variables": {
-        "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
-        "customDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
-        "originHostName": "[replace(replace(parameters('originHostName'),'https://',''),'/','')]"
+    "cdnEndPointName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the endpoint has to be unique"
+      }
     },
-    "resources": [
-        {
-            "name": "[variables('fullEndpointName')]",
-            "type": "Microsoft.Cdn/profiles/endpoints",
-            "apiVersion": "2017-10-12",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "originHostHeader": "[variables('originHostName')]",
-                "originPath": "[parameters('originPath')]",
-                "contentTypesToCompress": [
-                    "text/plain",
-                    "text/html",
-                    "text/css",
-                    "text/javascript",
-                    "application/x-javascript",
-                    "application/javascript",
-                    "application/json",
-                    "application/xml"
-                ],
-                "isCompressionEnabled": true,
-                "isHttpAllowed": "[parameters('isHttpAllowed')]",
-                "isHttpsAllowed": true,
-                "queryStringCachingBehavior": "[parameters('queryStringCachingBehavior')]",
-                "optimizationType": "[parameters('optimizationType')]",
-                "origins": [
-                    {
-                        "name": "[replace(parameters('originHostname'), '.', '-')]",
-                        "properties": {
-                            "hostName": "[variables('originHostName')]",
-                            "httpPort": 80,
-                            "httpsPort": 443
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "apiVersion": "2017-10-12",
-            "condition": "[variables('customDomainEnabled')]",
-            "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
-            "name": "[concat(variables('fullEndpointName'), '/', if(variables('customDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
-            "properties": {
-                "hostName": "[parameters('customDomainName')]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Cdn/profiles/endpoints',parameters('cdnProfileName') , parameters('cdnEndPointName'))]"
-            ]
-        }
-    ],
-    "outputs": {
-        "endpointHostName": {
-            "type": "string",
-            "value": "[reference(parameters('cdnEndPointName')).hostname]"
-        }
+    "originHostName": {
+      "type": "string"
+    },
+    "optimizationType": {
+      "type": "string",
+      "defaultValue": "GeneralWebDelivery",
+      "allowedValues": [
+        "GeneralWebDelivery",
+        "GeneralMediaStreaming",
+        "VideoOnDemandMediaStreaming",
+        "LargeFileDownload",
+        "DynamicSiteAcceleration"
+      ]
+    },
+    "customDomainName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "isHttpAllowed": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "queryStringCachingBehavior": {
+      "type": "string",
+      "defaultValue": "IgnoreQueryString",
+      "allowedValues": [
+        "NotSet",
+        "IgnoreQueryString",
+        "UseQueryString",
+        "BypassCaching"
+      ]
+    },
+    "originPath": {
+      "type": "string",
+      "defaultValue": ""
     }
+  },
+  "variables": {
+    "fullEndpointName": "[concat(parameters('cdnProfileName'), '/', parameters('cdnEndpointName'))]",
+    "customDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
+    "originHostName": "[replace(replace(parameters('originHostName'),'https://',''),'/','')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('fullEndpointName')]",
+      "type": "Microsoft.Cdn/profiles/endpoints",
+      "apiVersion": "2017-10-12",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "originHostHeader": "[variables('originHostName')]",
+        "originPath": "[parameters('originPath')]",
+        "contentTypesToCompress": [
+          "text/plain",
+          "text/html",
+          "text/css",
+          "text/javascript",
+          "application/x-javascript",
+          "application/javascript",
+          "application/json",
+          "application/xml"
+        ],
+        "isCompressionEnabled": true,
+        "isHttpAllowed": "[parameters('isHttpAllowed')]",
+        "isHttpsAllowed": true,
+        "queryStringCachingBehavior": "[parameters('queryStringCachingBehavior')]",
+        "optimizationType": "[parameters('optimizationType')]",
+        "origins": [
+          {
+            "name": "[replace(parameters('originHostname'), '.', '-')]",
+            "properties": {
+              "hostName": "[variables('originHostName')]",
+              "httpPort": 80,
+              "httpsPort": 443
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-10-12",
+      "condition": "[variables('customDomainEnabled')]",
+      "type": "Microsoft.Cdn/profiles/endpoints/customDomains",
+      "name": "[concat(variables('fullEndpointName'), '/', if(variables('customDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+      "properties": {
+        "hostName": "[parameters('customDomainName')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Cdn/profiles/endpoints',parameters('cdnProfileName') , parameters('cdnEndPointName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "endpointHostName": {
+      "type": "string",
+      "value": "[reference(parameters('cdnEndPointName')).hostname]"
+    }
+  }
 }

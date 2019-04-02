@@ -28,7 +28,7 @@
       "minValue": 0,
       "maxValue": 20,
       "metadata": {
-       "description": "Upper limit for Auto Inflate scaling" 
+        "description": "Upper limit for Auto Inflate scaling"
       }
     }
   },
