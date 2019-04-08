@@ -29,6 +29,13 @@
       "metadata": {
         "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
       }
+    },
+    "ipSecurityRestrictions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
+      }
     }
   },
   "variables": {
@@ -48,7 +55,8 @@
         "siteConfig": {
           "alwaysOn": true,
           "appSettings": "[parameters('functionAppAppSettings')]",
-          "connectionStrings": "[parameters('functionAppConnectionStrings')]"
+          "connectionStrings": "[parameters('functionAppConnectionStrings')]",
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
         },
         "httpsOnly": true
       }
