@@ -34,7 +34,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
+        "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
       }
     }
   },
