@@ -29,6 +29,13 @@
       "metadata": {
         "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
       }
+    },
+    "ipSecurityRestrictions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
+      }
     }
   },
   "variables": {
@@ -48,7 +55,8 @@
         "siteConfig": {
           "alwaysOn": true,
           "appSettings": "[parameters('functionAppAppSettings')]",
-          "connectionStrings": "[parameters('functionAppConnectionStrings')]"
+          "connectionStrings": "[parameters('functionAppConnectionStrings')]",
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
         },
         "httpsOnly": true
       }
