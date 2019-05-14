@@ -1,0 +1,21 @@
+parameters:
+  databasePaths: []
+
+variables:
+  buildConfiguration: "release"
+  buildPlatform: "anycpu"
+
+pool:
+  demands:
+    - msbuild
+    - visualstudio
+
+steps:
+  - ${{ each  path in parameters.databasePaths }}
+  - task: VSBuild@1
+    displayName: "Build DACPAC"
+    inputs:
+      solution: ${{ path }}
+      platform: "$(buildPlatform)"
+      configuration: "$(buildConfiguration)"
+      msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)"'
