@@ -1,3 +1,6 @@
+parameters:
+  additionalBuildArguments: ""
+
 variables:
   buildConfiguration: "release"
 
@@ -13,7 +16,7 @@ steps:
     displayName: Build
     inputs:
       projects: "src/**/*.csproj"
-      arguments: "--configuration $(buildConfiguration) --no-restore"
+      arguments: "--configuration $(buildConfiguration) --no-restore ${{ parameters.additionalBuildArguments }}"
 
   - task: DotNetCoreCLI@2
     displayName: Test
