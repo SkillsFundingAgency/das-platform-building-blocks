@@ -1,9 +1,6 @@
 parameters:
   additionalBuildArguments: ""
 
-variables:
-  buildConfiguration: "release"
-
 steps:
   - task: DotNetCoreCLI@2
     displayName: Restore
@@ -16,11 +13,11 @@ steps:
     displayName: Build
     inputs:
       projects: "src/**/*.csproj"
-      arguments: "--configuration $(buildConfiguration) --no-restore ${{ parameters.additionalBuildArguments }}"
+      arguments: "--configuration release --no-restore ${{ parameters.additionalBuildArguments }}"
 
   - task: DotNetCoreCLI@2
     displayName: Test
     inputs:
       command: test
       projects: "**/*Tests.csproj"
-      arguments: "--configuration $(buildConfiguration) --no-build"
+      arguments: "--configuration release --no-build"
