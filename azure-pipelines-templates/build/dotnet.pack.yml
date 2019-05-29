@@ -6,7 +6,7 @@ steps:
     displayName: "dotnet pack"
     inputs:
       command: pack
-      packagesToPack: ${{ packagePaths }}
+      packagesToPack: ${{ parameters.packagePaths }}
       packDirectory: "$(build.artifactstagingdirectory)/publish"
       versioningScheme: byBuildNumber
       buildProperties: 'Version="$(Build.BuildNumber)"'

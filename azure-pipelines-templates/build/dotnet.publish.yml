@@ -16,5 +16,5 @@ steps:
     inputs:
       command: publish
       publishWebProjects: false
-      projects: ${{ projectPaths }}
+      projects: ${{ parameters.projectPaths }}
       arguments: "--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
