@@ -2,7 +2,7 @@ parameters:
   projectPaths: ""
 
 steps:
-  - ${{ if eq(parameters.projectPaths, '') }}
+- ${{ if eq(parameters.projectPaths, "") }}:
   - task: DotNetCoreCLI@2
     displayName: "Publish Web Project"
     inputs:
@@ -10,7 +10,7 @@ steps:
       publishWebProjects: true
       arguments: "--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
 
-  - ${{ if ne(parameters.projectPaths, '') }}
+- ${{ if ne(parameters.projectPaths, "" }}:
   - task: DotNetCoreCLI@2
     displayName: "Publish Web Projects"
     inputs:

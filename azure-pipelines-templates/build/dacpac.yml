@@ -11,7 +11,7 @@ pool:
     - visualstudio
 
 steps:
-  - ${{ each  path in parameters.databasePaths }}
+- ${{ each  path in parameters.databasePaths }}:
   - task: VSBuild@1
     displayName: "Build DACPAC: ${{ path }}"
     inputs:
