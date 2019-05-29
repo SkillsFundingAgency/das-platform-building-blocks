@@ -1,7 +1,5 @@
 parameters:
   databasePaths: []
-  buildConfiguration: "release"
-  buildPlatform: "anycpu"
 
 steps:
 - ${{ each  path in parameters.databasePaths }}:
@@ -9,6 +7,13 @@ steps:
     displayName: "Build DACPAC: ${{ path }}"
     inputs:
       solution: ${{ path }}
-      platform: ${{ parameters.buildPlatform }}
-      configuration: ${{ parameters.buildConfiguration }}
-      msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
+      platform: anycpu
+      configuration: release
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    contents: |
+     "**\*.dacpac"
+    targetFolder: '$(build.artifactstagingdirectory)/publish'
+    flattenFolders: true
