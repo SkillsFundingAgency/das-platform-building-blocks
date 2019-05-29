@@ -5,11 +5,6 @@ variables:
   buildConfiguration: "release"
   buildPlatform: "anycpu"
 
-pool:
-  demands:
-    - msbuild
-    - visualstudio
-
 steps:
 - ${{ each  path in parameters.databasePaths }}:
   - task: VSBuild@1
