@@ -1,7 +1,5 @@
 parameters:
   databasePaths: []
-
-variables:
   buildConfiguration: "release"
   buildPlatform: "anycpu"
 
@@ -11,6 +9,6 @@ steps:
     displayName: "Build DACPAC: ${{ path }}"
     inputs:
       solution: ${{ path }}
-      platform: "$(buildPlatform)"
-      configuration: "$(buildConfiguration)"
+      platform: ${{ parameters.buildPlatform }}
+      configuration: ${{ parameters.buildConfiguration }}
       msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
