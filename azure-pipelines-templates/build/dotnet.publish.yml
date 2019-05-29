@@ -8,7 +8,7 @@ steps:
     inputs:
       command: publish
       publishWebProjects: true
-      arguments: "--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
+      arguments: "--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
 
 - ${{ if ne(parameters.projectPaths, '') }}:
   - task: DotNetCoreCLI@2
@@ -17,4 +17,4 @@ steps:
       command: publish
       publishWebProjects: false
       projects: ${{ parameters.projectPaths }}
-      arguments: "--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
+      arguments: "--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
