@@ -41,11 +41,11 @@
   "outputs": {
     "PrimaryKey": {
       "type": "securestring",
-      "value": "listKeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')),'2018-03-01').primaryKey"
+      "value": "[listKeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')),'2018-03-01').primaryKey]"
     },
     "SecondaryKey": {
       "type": "securestring",
-      "value": "listKeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')),'2018-03-01').secondaryKey"
+      "value": "[listKeys(resourceId('Microsoft.Cache/Redis', parameters('redisCacheName')),'2018-03-01').secondaryKey]"
     },
     "ConnectionString": {
       "type": "securestring",
