@@ -101,7 +101,7 @@
       "name": "[parameters('appServiceName')]",
       "type": "Microsoft.Web/sites",
       "kind": "[parameters('appKind')]",
-      "apiVersion": "2016-08-01",
+      "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
@@ -120,7 +120,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "staging",
           "type": "slots",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
           "properties": {
             "clientAffinityEnabled": false,
@@ -139,7 +139,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "slotconfignames",
           "type": "config",
-          "apiVersion": "2016-08-01",
+          "apiVersion": "2018-11-01",
           "properties": {
             "appSettingNames": "[parameters('appServiceSlotSettingAppSettings')]",
             "connectionStringNames": "[parameters('appServiceSlotSettingConnectionStrings')]"
@@ -155,7 +155,7 @@
       "type": "Microsoft.Web/sites/hostnameBindings",
       "condition": "[variables('UseCustomHostname')]",
       "name": "[concat(parameters('appServiceName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
-      "apiVersion": "2016-08-01",
+      "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "sslState": "SniEnabled",
