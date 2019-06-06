@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "userAssignedIdentityName": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[parameters('userAssignedIdentityName')]",
+      "apiVersion": "2018-11-30",
+      "location": "[resourceGroup().location]"
+    }
+  ],
+  "outputs": {
+    "tenantId": {
+      "type": "string",
+      "value": "[reference(parameters('userAssignedIdentityName')).tenantId]"
+    },
+    "objectId": {
+      "type": "string",
+      "value": "[reference(parameters('userAssignedIdentityName')).principalId]"
+    },
+    "clientId": {
+      "type": "string",
+      "value": "[reference(parameters('userAssignedIdentityName')).tenantId]"
+    }
+  }
+}
