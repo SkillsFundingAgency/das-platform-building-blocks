@@ -173,13 +173,14 @@
       ]
     },
     {
-      "type": "Microsoft.Web/sites/virtualNetworkConnections",
+      "type": "Microsoft.Web/sites/config",
       "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
-      "name": "[concat(parameters('appServiceName'), '/vnetIntegration')]",
+      "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "vnetResourceId": "[parameters('subnetResourceId')]"
+        "subnetResourceId": "[parameters('subnetResourceId')]",
+        "swiftSupported": true
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
