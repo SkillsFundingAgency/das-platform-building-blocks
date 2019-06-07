@@ -55,18 +55,17 @@
     }
   },
   "variables": {
-    "copy": [
-      {
-        "name": "virtualNetworkRules",
-        "count": "[length(parameters('subnetResourceIdList'))]",
-        "input": {
-          "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
-        }
-      }
-    ],
     "networkAclObject": {
       "bypass": "Logging, Metrics",
-      "virtualNetworkRules": "[variables('virtualNetworkRules')]"
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[length(parameters('subnetResourceIdList'))]",
+          "input": {
+            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
+          }
+        }
+      ]
     }
   },
   "resources": [
