@@ -68,45 +68,44 @@
       "bypass": "Logging, Metrics",
       "virtualNetworkRules": "[variables('virtualNetworkRules')]"
     }
-  }
-},
-"resources": [
-  {
-    "apiVersion": "2018-02-01",
-    "name": "[parameters('storageAccountName')]",
-    "type": "Microsoft.Storage/storageAccounts",
-    "location": "[parameters('storageAccountLocation')]",
-    "sku": {
-      "name": "[parameters('accountType')]"
-    },
-    "kind": "[parameters('storageKind')]",
-    "tags": {},
-    "properties": {
-      "encryption": {
-        "services": {
-          "blob": {
-            "enabled": true
-          },
-          "file": {
-            "enabled": true
-          }
-        },
-        "keySource": "Microsoft.Storage"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[parameters('storageAccountLocation')]",
+      "sku": {
+        "name": "[parameters('accountType')]"
       },
-      "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
-      "supportsHttpsTrafficOnly": true,
-      "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAcls'), json('null'))]"
+      "kind": "[parameters('storageKind')]",
+      "tags": {},
+      "properties": {
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        },
+        "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
+        "supportsHttpsTrafficOnly": true,
+        "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "storageKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+    },
+    "storageConnectionString": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
     }
   }
-],
-"outputs": {
-  "storageKey": {
-    "type": "string",
-    "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-  },
-  "storageConnectionString": {
-    "type": "string",
-    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-  }
-}
 }
