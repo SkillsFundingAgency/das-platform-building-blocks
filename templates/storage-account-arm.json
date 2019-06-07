@@ -45,9 +45,31 @@
         "StorageV2",
         "BlobStorage"
       ]
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": "",
+      "metadata": {
+        "description": "A list of subnet resource ids."
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "copy": [
+      {
+        "name": "networkAcls",
+        "count": "[length(parameters('subnetResourceIdList'))]",
+        "input": {
+          "bypass": "Logging, Metrics",
+          "virtualNetworkRules": [
+            {
+              "id": "[parameters('subnetResourceIdList')[copyIndex('networkAcls')]]"
+            }
+          ]
+        }
+      }
+    ]
+  },
   "resources": [
     {
       "apiVersion": "2018-02-01",
@@ -72,7 +94,8 @@
           "keySource": "Microsoft.Storage"
         },
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
-        "supportsHttpsTrafficOnly": true
+        "supportsHttpsTrafficOnly": true,
+        "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAcls'), json('null'))]"
       }
     }
   ],
