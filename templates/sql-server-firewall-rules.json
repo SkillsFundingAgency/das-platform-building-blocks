@@ -10,7 +10,7 @@
     },
     "ipAddresses": {
       "type": "array",
-      "minLength": 1,
+      "defaultValue": "",
       "metadata": {
         "description": "Array of IP addresses to whitelist against a SQL server"
       }
@@ -20,12 +20,20 @@
       "metadata": {
         "description": "Name of the server to add firewall rules to"
       }
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": "",
+      "metadata": {
+        "description": "A list of subnet resource ids."
+      }
     }
   },
   "variables": {},
   "resources": [
     {
       "name": "[concat(parameters('serverName'), '/', parameters('firewallRuleNamePrefix'), parameters('ipAddresses')[copyIndex()])]",
+      "condition": "[greater(length(parameters('ipAddresses')), 0)]",
       "type": "Microsoft.Sql/servers/firewallRules",
       "apiVersion": "2015-05-01-preview",
       "properties": {
@@ -37,6 +45,19 @@
         "mode": "Parallel",
         "name": "firewallRuleCopy"
       }
+    },
+    {
+      "name": "[concat(parameters('serverName'), '/', last(split(parameters('subnetResourceIdList')[copyIndex()], '/')))]",
+      "condition": "[greater(length(parameters('subnetResourceIdList')), 0)]",
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "apiVersion": "2015-05-01-preview",
+      "properties": {
+        "virtualNetworkSubnetId": "[parameters('subnetResourceIdList')[copyIndex()]]"
+      },
+      "copy":{
+          "count": "[length(parameters('subnetResourceIdList'))]",
+          "name": "virtualNetworkRuleCopy"
+        }
     }
   ],
   "outputs": {}
