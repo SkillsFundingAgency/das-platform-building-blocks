@@ -26,7 +26,7 @@
       "type": "bool",
       "defaultValue": false
     },
-    "subnetResourceIdList":{
+    "subnetResourceIdList": {
       "type": "array",
       "defaultValue": []
     }
@@ -36,7 +36,7 @@
       "copy": [
         {
           "name": "virtualNetworkRules",
-          "count": "[length(parameters('subnetResourceIdList'))]",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0),length(parameters('subnetResourceIdList')), 1)]",
           "input": {
             "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
           }
@@ -57,7 +57,7 @@
         },
         "databaseAccountOfferType": "Standard",
         "isVirtualNetworkFilterEnabled": "[parameters('enableVirtualNetworkFilter')]",
-        "virtualNetworkRules":  "[if(and(greater(length(parameters('subnetResourceIdList')), 0), parameters('enableVirtualNetworkFilter')), variables('virtualNetworkRulesOject'), json('null'))]"
+        "virtualNetworkRules": "[if(and(greater(length(parameters('subnetResourceIdList')), 0), parameters('enableVirtualNetworkFilter')), variables('virtualNetworkRulesOject'), json('null'))]"
       }
     }
   ],
