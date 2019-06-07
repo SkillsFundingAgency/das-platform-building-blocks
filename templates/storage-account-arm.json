@@ -60,7 +60,7 @@
         "name": "virtualNetworkRules",
         "count": "[length(parameters('subnetResourceIdList'))]",
         "input": {
-          "id": "[parameters('subnetResourceIdList')[copyIndex('networkAcls')]]"
+          "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
         }
       }
     ],
