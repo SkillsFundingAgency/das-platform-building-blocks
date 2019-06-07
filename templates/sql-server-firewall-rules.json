@@ -11,7 +11,7 @@
     },
     "ipAddresses": {
       "type": "array",
-      "defaultValue": "",
+      "defaultValue": [],
       "metadata": {
         "description": "Array of IP addresses to whitelist against a SQL server"
       }
@@ -24,7 +24,7 @@
     },
     "subnetResourceIdList": {
       "type": "array",
-      "defaultValue": "",
+      "defaultValue": [],
       "metadata": {
         "description": "A list of subnet resource ids."
       }
