@@ -21,9 +21,29 @@
         "Strong",
         "ConsistentPrefix"
       ]
+    },
+    "enableVirtualNetworkFilter": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "subnetResourceIdList":{
+      "type": "array",
+      "defaultValue": []
     }
   },
-  "variables": {},
+  "variables": {
+    "virtualNetworkRulesOject": {
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[length(parameters('subnetResourceIdList'))]",
+          "input": {
+            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
+          }
+        }
+      ]
+    }
+  },
   "resources": [
     {
       "name": "[parameters('cosmosDbName')]",
@@ -35,7 +55,9 @@
         "consistencyPolicy": {
           "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
         },
-        "databaseAccountOfferType": "Standard"
+        "databaseAccountOfferType": "Standard",
+        "isVirtualNetworkFilterEnabled": "[parameters('enableVirtualNetworkFilter')]",
+        "virtualNetworkRules":  "[if(and(greater(length(parameters('subnetResourceIdList')), 0), parameters('enableVirtualNetworkFilter')), variables('virtualNetworkRulesOject'), json('null'))]"
       }
     }
   ],
