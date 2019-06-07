@@ -4,6 +4,7 @@
   "parameters": {
     "firewallRuleNamePrefix": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "The prefix for the firewall rule name, it will be appended by the IP address"
       }
