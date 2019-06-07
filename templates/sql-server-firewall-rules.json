@@ -33,7 +33,7 @@
   "variables": {},
   "resources": [
     {
-      "name": "[concat(parameters('serverName'), '/', parameters('firewallRuleNamePrefix'), parameters('ipAddresses')[copyIndex()])]",
+      "name": "[concat(parameters('serverName'), '/', if(greater(length(parameters('firewallRuleNamePrefix')), 0), parameters('ipAddresses')[copyIndex()], 'placeholder'))]",
       "condition": "[greater(length(parameters('ipAddresses')), 0)]",
       "type": "Microsoft.Sql/servers/firewallRules",
       "apiVersion": "2015-05-01-preview",
@@ -42,13 +42,13 @@
         "endIpAddress": "[parameters('ipAddresses')[copyIndex()]]"
       },
       "copy": {
-        "count": "[length(parameters('ipAddresses'))]",
+        "count": "[if(greater(length(parameters('ipAddresses')), 0), length(parameters('ipAddresses')), 1)]",
         "mode": "Parallel",
         "name": "firewallRuleCopy"
       }
     },
     {
-      "name": "[concat(parameters('serverName'), '/', last(split(parameters('subnetResourceIdList')[copyIndex()], '/')))]",
+      "name": "[concat(parameters('serverName'), '/', if(greater(length(parameters('subnetResourceIdList')), 0), last(split(parameters('subnetResourceIdList')[copyIndex()], '/')), 'placeholder'))]",
       "condition": "[greater(length(parameters('subnetResourceIdList')), 0)]",
       "type": "Microsoft.Sql/servers/virtualNetworkRules",
       "apiVersion": "2015-05-01-preview",
@@ -56,7 +56,8 @@
         "virtualNetworkSubnetId": "[parameters('subnetResourceIdList')[copyIndex()]]"
       },
       "copy":{
-          "count": "[length(parameters('subnetResourceIdList'))]",
+        "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "mode": "Parallel",
           "name": "virtualNetworkRuleCopy"
         }
     }
