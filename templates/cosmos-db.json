@@ -32,17 +32,17 @@
     }
   },
   "variables": {
-    "virtualNetworkRulesOject": {
-      "copy": [
-        {
-          "name": "virtualNetworkRules",
-          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0),length(parameters('subnetResourceIdList')), 1)]",
-          "input": {
-            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]"
-          }
+    "copy": [
+      {
+        "name": "virtualNetworkRulesCopy",
+        "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+        "input": {
+          "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRulesCopy')], json('null'))]"
         }
-      ]
-    }
+      }
+    ],
+    "virtualNetworkRulesEmpty": [],
+    "virtualNetworkRules": "[if(and(equals(length(variables('virtualNetworkRulesCopy')), 1), equals(variables('virtualNetworkRulesCopy')[0].Id, json('null'))), variables('virtualNetworkRulesEmpty'), variables('virtualNetworkRulesCopy'))]"
   },
   "resources": [
     {
@@ -56,8 +56,9 @@
           "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
         },
         "databaseAccountOfferType": "Standard",
-        "isVirtualNetworkFilterEnabled": "[parameters('enableVirtualNetworkFilter')]",
-        "virtualNetworkRules": "[if(and(greater(length(parameters('subnetResourceIdList')), 0), parameters('enableVirtualNetworkFilter')), variables('virtualNetworkRulesOject'), json('null'))]"
+        "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
+        "virtualNetworkRules": "[variables('virtualNetworkRules')]"
+
       }
     }
   ],
