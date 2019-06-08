@@ -59,10 +59,10 @@
       "bypass": "Logging, Metrics",
       "copy": [
         {
-          "name": "virtualNetworkRulesCopy",
+          "name": "virtualNetworkRules",
           "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
           "input": {
-            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRulesCopy')], json('null'))]",
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
             "action": "Allow"
           }
         }
