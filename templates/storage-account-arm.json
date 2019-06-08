@@ -48,7 +48,7 @@
     },
     "subnetResourceIdList": {
       "type": "array",
-      "defaultValue": "",
+      "defaultValue": [],
       "metadata": {
         "description": "A list of subnet resource ids."
       }
@@ -59,10 +59,10 @@
       "bypass": "Logging, Metrics",
       "copy": [
         {
-          "name": "virtualNetworkRules",
-          "count": "[length(parameters('subnetResourceIdList'))]",
+          "name": "virtualNetworkRulesCopy",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
           "input": {
-            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]",
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRulesCopy')], json('null'))]",
             "action": "Allow"
           }
         }
