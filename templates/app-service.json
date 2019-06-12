@@ -5,6 +5,10 @@
     "appServiceName": {
       "type": "string"
     },
+    "appServiceLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
     "appServicePlanName": {
       "type": "string"
     },
@@ -102,7 +106,7 @@
       "type": "Microsoft.Web/sites",
       "kind": "[parameters('appKind')]",
       "apiVersion": "2018-11-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('appServiceLocation')]",
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
@@ -121,7 +125,7 @@
           "name": "staging",
           "type": "slots",
           "apiVersion": "2018-11-01",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('appServiceLocation')]",
           "properties": {
             "clientAffinityEnabled": false,
             "siteConfig": {
@@ -156,7 +160,7 @@
       "condition": "[variables('UseCustomHostname')]",
       "name": "[concat(parameters('appServiceName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
       "apiVersion": "2018-11-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('appServiceLocation')]",
       "properties": {
         "sslState": "SniEnabled",
         "thumbprint": "[parameters('certificateThumbprint')]"
