@@ -63,7 +63,7 @@
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
 
-1. Set the top-level ```resourceEnvironmentName``` and ```serviceName``` parameters as follows, adding a metadata description property to all parameters:
+1. Set the top-level ```resourceEnvironmentName``` and ```serviceName``` parameters as follows, adding a metadata description property to all top-level parameters:
 
     ```json
     "parameters": {
