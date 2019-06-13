@@ -3,7 +3,7 @@
 ## Table of contents
 1. [Usage](#Usage)
 2. [Branching](#Branching)
-3. [Resource naming](#Resource-naming)
+3. [Resource naming and parameter metadata description properties](#Resource-naming-and-parameter-metadata-description-properties)
 4. [Property name formatting](#Property-name-formatting)
 
 ### Usage
@@ -59,19 +59,25 @@
 
 4. After the pull request is approved and the branch merged to master, delete the branch you made.
 
-## Resource naming
+## Resource naming and parameter metadata description properties
 
 Reduce the number of top-level parameters needed by setting the Azure resource names with variables:
 
-1. Set the top-level ```resourceEnvironmentName``` and ```serviceName``` parameters as follows:
+1. Set the top-level ```resourceEnvironmentName``` and ```serviceName``` parameters as follows, adding a metadata description property to all parameters:
 
     ```json
     "parameters": {
         "resourceEnvironmentName": {
-                "type": "string"
-            },
+            "type": "string",
+            "metadata": {
+                "description": "Short name of the environment. Used for the name of resources created"
+            }
+        },
         "serviceName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Short name of the service. Used for the name of resources created"
+            }
         },
             ...
     }
