@@ -70,13 +70,13 @@ Reduce the number of top-level parameters needed by setting the Azure resource n
         "resourceEnvironmentName": {
             "type": "string",
             "metadata": {
-                "description": "Short name of the environment. Used for the name of resources created"
+                "description": "Short name of the environment. Used for the name of resources created."
             }
         },
         "serviceName": {
             "type": "string",
             "metadata": {
-                "description": "Short name of the service. Used for the name of resources created"
+                "description": "Short name of the service. Used for the name of resources created."
             }
         },
             ...
