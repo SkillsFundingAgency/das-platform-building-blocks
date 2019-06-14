@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus Namespace that will be configured with the authorization rule."
+      }
+    },
+    "serviceBusAuthRuleName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the new Service Bus authorisation rule."
+      }
+    },
+    "serviceBusAuthRuleRights": {
+      "type": "array",
+      "defaultValue": ["Listen"],
+      "metadata": {
+        "description": "Array of the rights required, containing one or more of; Manage, Listen, Send."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusAuthRuleName'))]",
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "properties": {
+        "rights": "[parameters('serviceBusAuthRuleRights')]"
+      }
+    }
+  ],
+  "outputs": {
+    "ServiceBusConnectionString": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), parameters('serviceBusAuthRuleName')), '2017-04-01').primaryConnectionString]"
+    }
+  }
+}
