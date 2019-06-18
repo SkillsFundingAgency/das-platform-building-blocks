@@ -52,20 +52,23 @@
         "description": "Name of the SQL logs storage account for the environment"
       }
     },
-    "omsWorkspaceName": {
+    "logAnalyticsWorkspaceName": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "The name of the OMS workspace that will collect audit events"
       }
     },
-    "omsWorkspaceResourceGroupName": {
+    "logAnalyticsWorkspaceResourceGroupName": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "The name of the OMS workspace resource group that will collect audit events"
       }
     },
-    "omsWorkspaceSubscriptionId": {
+    "logAnalyticsWorkspaceSubscriptionId": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "The id of the OMS workspace subscription that will collect audit events"
       }
@@ -98,12 +101,13 @@
           ]
         },
         {
+          "condition": "[greater(length(parameters('logAnalyticsWorkspaceName')), 0)]",
           "type": "databases/providers/diagnosticSettings",
           "name": "[concat('master/microsoft.insights/',variables('diagnosticSettingName'))]",
           "apiVersion": "2017-05-01-preview",
           "properties": {
             "name": "[variables('diagnosticSettingName')]",
-            "workspaceId": "[resourceId(parameters('omsWorkspaceSubscriptionId'), parameters('omsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+            "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceSubscriptionId'), parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
             "logs": [
               {
                 "category": "SQLSecurityAuditEvents",

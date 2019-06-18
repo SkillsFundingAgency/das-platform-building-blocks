@@ -21,9 +21,29 @@
         "Strong",
         "ConsistentPrefix"
       ]
+    },
+    "enableVirtualNetworkFilter": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": []
     }
   },
-  "variables": {},
+  "variables": {
+    "copy": [
+      {
+        "name": "virtualNetworkRulesCopy",
+        "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+        "input": {
+          "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRulesCopy')], json('null'))]"
+        }
+      }
+    ],
+    "virtualNetworkRulesEmpty": [],
+    "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRulesCopy'), variables('virtualNetworkRulesEmpty'))]"
+  },
   "resources": [
     {
       "name": "[parameters('cosmosDbName')]",
@@ -35,7 +55,9 @@
         "consistencyPolicy": {
           "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
         },
-        "databaseAccountOfferType": "Standard"
+        "databaseAccountOfferType": "Standard",
+        "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
+        "virtualNetworkRules": "[variables('virtualNetworkRules')]"
       }
     }
   ],

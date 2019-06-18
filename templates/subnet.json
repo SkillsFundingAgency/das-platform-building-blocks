@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the virtual network to create the subnet in."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the subnet."
+      }
+    },
+    "subnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "The address prefix of the subnet."
+      }
+    },
+    "serviceEndpointList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of service endpoints."
+      }
+    },
+    "delegations": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "An array of delegations. Object referance can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#Delegation"
+      }
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "serviceEndPoints",
+        "count": "[if(greater(length(parameters('serviceEndpointList')), 0), length(parameters('serviceEndpointList')), 1)]",
+        "input": {
+          "service": "[if(greater(length(parameters('serviceEndpointList')), 0), parameters('serviceEndpointList')[copyIndex('serviceEndPoints')], json('null'))]"
+        }
+      }
+    ],
+    "serviceEndPointsEmpty": []
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2018-11-01",
+      "properties": {
+        "addressPrefix": "[parameters('subnetAddressPrefix')]",
+        "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
+        "delegations": "[parameters('delegations')]"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

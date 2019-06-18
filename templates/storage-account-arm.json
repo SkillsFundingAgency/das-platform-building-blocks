@@ -45,12 +45,34 @@
         "StorageV2",
         "BlobStorage"
       ]
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet resource ids."
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "networkAclObject": {
+      "bypass": "Logging, Metrics",
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "input": {
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ],
+      "defaultAction": "Deny"
+    }
+  },
   "resources": [
     {
-      "apiVersion": "2018-02-01",
+      "apiVersion": "2019-04-01",
       "name": "[parameters('storageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[parameters('storageAccountLocation')]",
@@ -72,7 +94,8 @@
           "keySource": "Microsoft.Storage"
         },
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
-        "supportsHttpsTrafficOnly": true
+        "supportsHttpsTrafficOnly": true,
+        "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
       }
     }
   ],
