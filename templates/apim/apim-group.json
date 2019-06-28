@@ -23,7 +23,7 @@
         {
             "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('groupResourceName'))]",
             "type": "Microsoft.ApiManagement/service/groups",
-            "apiVersion": "2018-01-01",
+            "apiVersion": "2019-01-01",
             "properties": {
                 "displayName": "[parameters('groupDisplayName')]",
                 "description": "[parameters('groupDescription')]",

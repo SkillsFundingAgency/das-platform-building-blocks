@@ -20,7 +20,7 @@
         {
             "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('namedValueName'))]",
             "type": "Microsoft.ApiManagement/service/properties",
-            "apiVersion": "2018-01-01",
+            "apiVersion": "2019-01-01",
             "properties": {
                 "displayName": "[parameters('namedValueName')]",
                 "secret": "[parameters('namedValueIsSecret')]",

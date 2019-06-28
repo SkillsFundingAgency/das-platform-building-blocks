@@ -30,7 +30,7 @@
         {
             "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('apiResourceName'))]",
             "type": "Microsoft.ApiManagement/service/apis",
-            "apiVersion": "2018-01-01",
+            "apiVersion": "2019-01-01",
             "properties": {
                 "description": "[parameters('apiDescription')]",
                 "displayName": "[parameters('apiDisplayName')]",
@@ -45,7 +45,7 @@
         {
             "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'), '/', parameters('apiResourceName'))]",
             "type": "Microsoft.ApiManagement/service/products/apis",
-            "apiVersion": "2018-01-01",
+            "apiVersion": "2019-01-01",
             "dependsOn": [
                 "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiResourceName'))]"
             ]

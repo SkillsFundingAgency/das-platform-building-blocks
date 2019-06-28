@@ -24,7 +24,7 @@
         {
             "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('loggerName'))]",
             "type": "Microsoft.ApiManagement/service/loggers",
-            "apiVersion": "2018-01-01",
+            "apiVersion": "2019-01-01",
             "properties": {
                 "loggerType": "[parameters('loggerType')]",
                 "description": "[parameters('loggerName')]",
