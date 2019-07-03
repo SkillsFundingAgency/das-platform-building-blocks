@@ -103,7 +103,7 @@
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
-      },
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
@@ -111,11 +111,11 @@
       "apiVersion": "2018-07-01",
       "name": "[parameters('containerArray')[copyIndex()].name]",
       "properties": {
-        "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]",
+        "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]"
       },
       "copy": {
           "name": "containercopy",
-          "count": "[length(parameters('containerArray'))]",
+          "count": "[length(parameters('containerArray'))]"
       },
       "dependsOn": [
           "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
