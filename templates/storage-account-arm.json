@@ -104,21 +104,23 @@
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
       },
-      "resources": [
-        {
-          "name": "[parameters('containerArray')[copyIndex()].name]",
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2018-07-01",
-            "properties": {
-              "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]"
-            }
-        }
-      ],
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "condition": "[greater(length(parameters('containerArray')), 0)]",
+      "apiVersion": "2018-07-01",
+      "name": "[parameters('containerArray')[copyIndex()].name]",
+      "properties": {
+        "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]",
+      },
       "copy": {
-        "name": "containercop",
-        "count": "[length(parameters('containerArray'))]",
-      }
-    }
+          "name": "containercopy",
+          "count": "[length(parameters('containerArray'))]",
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+  }
   ],
   "outputs": {
     "storageKey": {
