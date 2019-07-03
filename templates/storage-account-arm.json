@@ -106,34 +106,21 @@
       },
       "resources": [
         {
-          "condition":  "[greater(length(parameters('containerArray')), 0)]",
-          "type": "Microsoft.Resources/deployments",
-          "apiVersion": "2019-04-01",
-          "name": "[concat('storage-container', copyIndex())]",
-          "copy": {
-            "name": "containercopy",
-            "count": "[length(parameters('containerArray'))]",
-            "mode": "Serial"
-          },
-          "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[concat(variables('deploymentUrlBase'), 'storage-container.json')]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "containerName": {
-                  "value":  "[parameters('containerArray')[copyIndex()].name]"
-                },
-                "publicAccess": {
-                  "value":  "[parameters('containerArray')[copyIndex()].publicAccess]"
-                }
+          "name": "[parameters('containerArray')[copyIndex()].name]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2018-07-01",
+            "properties": {
+              "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]"
             }
-          }
         }
       ]
     }
   ],
+  "copy": {
+    "name": "containercopy",
+    "count": "[length(parameters('containerArray'))]",
+    "mode": "Serial"
+  },
   "outputs": {
     "storageKey": {
       "type": "string",

@@ -1,0 +1,42 @@
+
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "resourceEnvironmentName": {
+          "type": "string"
+      },
+      "serviceName": {
+          "type": "string"
+      }
+  },
+  "variables": {
+      "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/mjw/blobAutoCreation/templates/",
+      "storageAccountName": "[toLower(concat('das', parameters('resourceEnvironmentName'), parameters('serviceName'), 'str'))]"
+  },
+  "resources": [
+      {
+          "apiVersion": "2017-05-10",
+          "name": "storage-account",
+          "type": "Microsoft.Resources/deployments",
+          "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                  "uri": "[concat(variables('deploymentUrlBase'), 'storage-account-arm.json')]",
+                  "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                  "storageAccountName": {
+                      "value": "[variables('storageAccountName')]"
+                  }
+              }
+          }
+      }
+  ],
+  "outputs": {
+      "StorageConnectionString": {
+          "type": "string",
+          "value": "[reference('storage-account').outputs.storageConnectionString.value]"
+      }
+  }
+}
