@@ -6,10 +6,22 @@
       "value": "test"
     },
     "serviceName": {
-      "value": "dr"
+      "value": "dr2"
     },
     "containerArray" : {
       "value": [
+        {
+        "name" : "container2",
+        "publicAccess" : "none"
+        },
+        {
+          "name" : "container3",
+          "publicAccess" : "none"
+        },
+        {
+          "name" : "container4",
+          "publicAccess" : "none"
+        }
       ]
     }
   }
