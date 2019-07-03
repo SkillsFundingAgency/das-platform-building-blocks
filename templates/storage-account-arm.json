@@ -113,14 +113,13 @@
               "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]"
             }
         }
-      ]
+      ],
+      "copy": {
+        "name": "containercop",
+        "count": "[length(parameters('containerArray'))]",
+      }
     }
   ],
-  "copy": {
-    "name": "containercopy",
-    "count": "[length(parameters('containerArray'))]",
-    "mode": "Serial"
-  },
   "outputs": {
     "storageKey": {
       "type": "string",
