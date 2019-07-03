@@ -16,7 +16,7 @@
     },
     "publicAccess": {
       "type": "string",
-      "defaultValue": "none",
+      "defaultValue": "None",
       "allowedValues": [
         "Container",
         "Blob",
