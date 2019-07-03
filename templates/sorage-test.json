@@ -43,7 +43,7 @@
         "properties": {
             "mode": "Incremental",
             "templateLink": {
-                "uri": "[concat(variables('deploymentUrlBase'), 'storage-container-arm.json')]",
+                "uri": "[concat(variables('deploymentUrlBase'), 'storage-container.json')]",
                 "contentVersion": "1.0.0.0"
             },
             "parameters": {
