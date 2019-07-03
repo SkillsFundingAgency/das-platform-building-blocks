@@ -8,6 +8,9 @@
       },
       "serviceName": {
           "type": "string"
+      },
+      "containerArray": {
+        "type": "array"
       }
   },
   "variables": {
@@ -28,6 +31,9 @@
               "parameters": {
                   "storageAccountName": {
                       "value": "[variables('storageAccountName')]"
+                  },
+                  "containerArray": {
+                    "value": "[parameters('containerArray')]"
                   }
               }
           }

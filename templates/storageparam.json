@@ -7,6 +7,15 @@
     },
     "serviceName": {
       "value": "dr"
+    },
+    "containerArray" : {
+      "value": [
+        {
+          "name" : "container1",
+          "publicaccess": "none"
+        }
+      ]
+
     }
   }
 }
