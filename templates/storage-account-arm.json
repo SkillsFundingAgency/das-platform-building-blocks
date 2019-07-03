@@ -52,13 +52,6 @@
       "metadata": {
         "description": "A list of subnet resource ids."
       }
-    },
-    "containerArray": {
-      "type": "array",
-      "defaultValue": [],
-      "metadata": {
-        "description" : "A list of container names and if they are publicly accessible"
-      }
     }
   },
   "variables": {
@@ -104,23 +97,7 @@
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
       }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "condition": "[greater(length(parameters('containerArray')), 0)]",
-      "apiVersion": "2018-07-01",
-      "name": "[concat(parameters('storageAccountName'), '/default/', parameters('containerArray')[copyIndex()].name)]",
-      "properties": {
-        "publicAccess": "[parameters('containerArray')[copyIndex()].publicaccess]"
-      },
-      "copy": {
-          "name": "containercopy",
-          "count": "[length(parameters('containerArray'))]"
-      },
-      "dependsOn": [
-          "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
-      ]
-  }
+    }
   ],
   "outputs": {
     "storageKey": {
