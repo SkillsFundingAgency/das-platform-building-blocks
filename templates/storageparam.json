@@ -13,14 +13,6 @@
         {
         "name" : "container2",
         "publicAccess" : "none"
-        },
-        {
-          "name" : "container3",
-          "publicAccess" : "none"
-        },
-        {
-          "name" : "container4",
-          "publicAccess" : "none"
         }
       ]
     }
