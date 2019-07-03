@@ -5,7 +5,7 @@
     "storageAccountName": {
       "type" : "string",
       "metadata": {
-        "description": "Name of the container"
+        "description": "Name of the storage account the container belongs to"
       }
     },
     "containerName": {
@@ -16,8 +16,14 @@
     },
     "publicAccess": {
       "type": "string",
+      "defaultValue": "none",
+      "allowedValues": [
+        "Container",
+        "Blob",
+        "None"
+      ],
       "metadata": {
-        "description": "If the Container is publicly accessible"
+        "description": "Level of publicly accesability of the created container"
       }
     }
   },
