@@ -1,0 +1,10 @@
+"resources": [
+  {
+    "name": "[parameters('containerArray')[copyIndex()].name]",
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2018-07-01",
+      "properties": {
+        "publicAccess": "[parameters('containerArray')[copyIndex()].name]"
+      }
+  }
+]

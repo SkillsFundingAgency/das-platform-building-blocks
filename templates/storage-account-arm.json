@@ -114,17 +114,22 @@
             "name": "containercopy",
             "count": "[length(parameters('containerArray'))]",
             "mode": "Serial"
-        },
-        "resources": [
-          {
-            "name": "[parameters('containerArray')[copyIndex()].name]",
-              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-              "apiVersion": "2018-07-01",
-              "properties": {
-                "publicAccess": "[parameters('containerArray')[copyIndex()].name]"
-              }
+          },
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[concat(variables('deploymentUrlBase'), 'storage-container.json')]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "containerName": {
+                  "value":  "[parameters('containerArray')[copyIndex()].name]"
+                },
+                "publicAccess": {
+                  "value":  "[parameters('containerArray')[copyIndex()].publicAccess]"
+                }
+            }
           }
-        ]
         }
       ]
     }
