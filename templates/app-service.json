@@ -110,6 +110,9 @@
       "kind": "[parameters('appKind')]",
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
@@ -129,6 +132,9 @@
           "type": "slots",
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
+          "identity": {
+            "type": "SystemAssigned"
+          },
           "properties": {
             "clientAffinityEnabled": false,
             "siteConfig": {
