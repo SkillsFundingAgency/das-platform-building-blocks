@@ -130,6 +130,7 @@
           "apiVersion": "2018-11-01",
           "location": "[resourceGroup().location]",
           "properties": {
+            "serverFarmId": "[variables('appServicePlanId')]",
             "clientAffinityEnabled": false,
             "siteConfig": {
               "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings'), parameters('appServiceAppSettings'))]",
