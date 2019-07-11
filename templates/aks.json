@@ -85,7 +85,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2019-02-01",
+      "apiVersion": "2019-06-01",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
@@ -94,7 +94,7 @@
         "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
           {
-            "name": "default-agentpool",
+            "name": "defaultagentpool",
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
             "count": "[parameters('clusterNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
