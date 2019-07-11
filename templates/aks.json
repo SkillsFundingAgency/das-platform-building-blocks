@@ -94,7 +94,7 @@
         "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
           {
-            "name": "agentpool",
+            "name": "default-agentpool",
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
             "count": "[parameters('clusterNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
