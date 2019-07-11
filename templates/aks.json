@@ -78,10 +78,24 @@
     "dockerBridgeCidr": {
       "type": "string",
       "defaultValue": "172.17.0.1/16"
+    },
+    "logAnalyticsResourceGroupName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The name of the resource group for log analytics"
+      }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the log analytics workspace that will be used for monitoring"
+      }
     }
   },
   "variables": {
-    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]"
+    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
+    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
     {
@@ -92,6 +106,14 @@
       "properties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
+        "addonProfiles": {
+          "omsagent": {
+            "enabled": true,
+            "config": {
+              "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsId')]"
+            }
+          }
+        },
         "agentPoolProfiles": [
           {
             "name": "agentpool",
