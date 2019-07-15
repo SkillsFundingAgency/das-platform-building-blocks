@@ -84,7 +84,7 @@
         "storageProfile": "ManagedDisks",
         "type": "VirtualMachineScaleSets",
         "vnetSubnetID": "[variables('vnetSubnetId')]",
-        "orchestratorVersion": "[parameters('kubernetesVersion')]",
+        "orchestratorVersion": "[parameters('kubernetesVersion')]"
       }
     }
   ]
