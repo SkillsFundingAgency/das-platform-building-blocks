@@ -34,6 +34,50 @@
       "type": "string",
       "defaultValue": "172.17.0.1/16"
     },
+    "osDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+      },
+      "minValue": 0,
+      "maxValue": 1023
+    },
+    "clusterNodeCount": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "The number of nodes for the cluster."
+      },
+      "minValue": 1,
+      "maxValue": 50
+    },
+    "agentVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_D2_v2",
+      "metadata": {
+        "description": "The size of the Virtual Machine."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet name that will contain the aks CLUSTER"
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of an existing VNET that will contain this AKS deployment."
+      }
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Name of the existing VNET resource group"
+      }
+    },
     "logAnalyticsResourceGroupName": {
       "type": "string",
       "defaultValue": "[resourceGroup().name]",
@@ -49,6 +93,7 @@
     }
   },
   "variables": {
+    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
@@ -60,7 +105,18 @@
       "properties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
-        "agentPoolProfiles":[],
+        "agentPoolProfiles": [
+          {
+            "name": "agentpool",
+            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+            "count": "[parameters('clusterNodeCount')]",
+            "vmSize": "[parameters('agentVMSize')]",
+            "osType": "Linux",
+            "vnetSubnetID": "[variables('vnetSubnetID')]",
+            "type": "VirtualMachineScaleSets",
+            "storageProfile": "ManagedDisks"
+          }
+        ],
         "addonProfiles": {
           "omsagent": {
             "enabled": true,
@@ -69,6 +125,7 @@
             }
           }
         },
+        "enableRBAC": true,
         "servicePrincipalProfile": {
           "clientId": "[parameters('servicePrincipalClientId')]",
           "secret": "[parameters('servicePrincipalSecret')]"
