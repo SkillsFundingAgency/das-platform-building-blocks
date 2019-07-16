@@ -27,8 +27,19 @@
         "",
         "Basic",
         "Standard",
-        "Premium"
+        "Premium",
+        "GeneralPurpose",
+        "BusinessCritical",
+        "Hyperscale"
       ]
+    },
+    "serverlessMinCapacity": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "serverlessAutoPauseDelay": {
+      "type": "string",
+      "defaultValue": "-1"
     },
     "dataMaskingExemptPrincipals": {
       "type": "string",
@@ -82,7 +93,9 @@
           "tier": "[parameters('databaseTier')]"
         },
         "properties": {
-          "maxSizeBytes": "[parameters('databaseSizeBytes')]"
+          "maxSizeBytes": "[parameters('databaseSizeBytes')]",
+          "minCapacity": "[parameters('serverlessMinCapacity')]",
+          "autoPauseDelay": "[parameters('serverlessAutoPauseDelay')]"
         }
       },
       "elasticPool": {
