@@ -34,6 +34,13 @@
       "type": "string",
       "defaultValue": "172.17.0.1/16"
     },
+    "agentPoolName": {
+      "type": "string",
+      "defaultValue": "agentpool",
+      "metadata": {
+        "description": "The name of the default agent pool"
+      }
+    },
     "osDiskSizeGB": {
       "type": "int",
       "defaultValue": 0,
@@ -107,7 +114,7 @@
         "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
           {
-            "name": "agentpool",
+            "name": "[parameters('agentPoolName')]",
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
             "count": "[parameters('agentNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
