@@ -43,7 +43,7 @@
       "minValue": 0,
       "maxValue": 1023
     },
-    "clusterNodeCount": {
+    "agentNodeCount": {
       "type": "int",
       "defaultValue": 3,
       "metadata": {
@@ -54,9 +54,9 @@
     },
     "agentVMSize": {
       "type": "string",
-      "defaultValue": "Standard_D2_v2",
+      "defaultValue": "Standard_D2_v3",
       "metadata": {
-        "description": "The size of the Virtual Machine."
+        "description": "The sku of the machines that will be used for the default agentpool."
       }
     },
     "subnetName": {
@@ -109,7 +109,7 @@
           {
             "name": "agentpool",
             "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
-            "count": "[parameters('clusterNodeCount')]",
+            "count": "[parameters('agentNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
             "osType": "Linux",
             "vnetSubnetID": "[variables('vnetSubnetID')]",
