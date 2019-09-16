@@ -100,6 +100,12 @@
       "metadata": {
         "description": "The name of the log analytics workspace that will be used for monitoring"
       }
+    },
+    "nodeResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the resource group used for nodes"
+      }
     }
   },
   "variables": {
@@ -134,7 +140,7 @@
             }
           }
         },
-        "nodeResourceGroup": "[resourceGroup().name]",
+        "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
         "enableRBAC": true,
         "servicePrincipalProfile": {
           "clientId": "[parameters('servicePrincipalClientId')]",
