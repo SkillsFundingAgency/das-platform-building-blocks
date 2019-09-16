@@ -20,6 +20,18 @@
     "servicePrincipalSecret": {
       "type": "securestring"
     },
+    "rbacClientAppId": {
+      "type": "string"
+    },
+    "rbacServerAppId": {
+      "type": "string"
+    },
+    "rbacServerAppSecret": {
+      "type": "securestring"
+    },
+    "rbacTenantId": {
+      "type": "string"
+    },
     "serviceCidr": {
       "type": "string"
     },
@@ -41,15 +53,6 @@
         "description": "The name of the default agent pool"
       }
     },
-    "osDiskSizeGB": {
-      "type": "int",
-      "defaultValue": 0,
-      "metadata": {
-        "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
-      },
-      "minValue": 0,
-      "maxValue": 1023
-    },
     "agentNodeCount": {
       "type": "int",
       "defaultValue": 3,
@@ -61,7 +64,7 @@
     },
     "agentVMSize": {
       "type": "string",
-      "defaultValue": "Standard_D2_v3",
+      "defaultValue": "Standard_DS2_v2",
       "metadata": {
         "description": "The sku of the machines that will be used for the default agentpool."
       }
@@ -115,7 +118,6 @@
         "agentPoolProfiles": [
           {
             "name": "[parameters('agentPoolName')]",
-            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
             "count": "[parameters('agentNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
             "osType": "Linux",
@@ -132,10 +134,17 @@
             }
           }
         },
+        "nodeResourceGroup": "[resourceGroup().name]",
         "enableRBAC": true,
         "servicePrincipalProfile": {
           "clientId": "[parameters('servicePrincipalClientId')]",
           "secret": "[parameters('servicePrincipalSecret')]"
+        },
+        "aadProfile": {
+          "clientAppID": "[parameters('rbacClientAppId')]",
+          "serverAppID": "[parameters('rbacServerAppId')]",
+          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
+          "tenantID": "[parameters('rbacTenantId')]"
         },
         "networkProfile": {
           "networkPlugin": "kubenet",
