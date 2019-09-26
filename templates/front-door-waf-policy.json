@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "policyName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Web Application Firewall Policy"
+      }
+    },
+    "enabledState": {
+      "type": "string",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "defaultValue": "Enabled",
+      "metadata": {
+        "description": "Describes if the policy is in enabled or disabled state. Defaults to Enabled if not specified. - Disabled or Enabled"
+      }
+    },
+    "mode": {
+      "type": "string",
+      "allowedValues": [
+        "Prevention",
+        "Detection"
+      ],
+      "defaultValue": "Prevention",
+      "metadata": {
+        "description": "Describes if it is in detection mode or prevention mode at policy level. - Prevention or Detection"
+      }
+    },
+    "ruleSetVersion": {
+      "type": "string",
+      "defaultValue": "1.0",
+      "metadata": {
+        "description": "Defines the version of the rule set to use"
+      }
+    },
+    "ruleGroupOverrides": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Defines the rule group overrides to apply to the rule set. Pass an array of ManagedRuleGroupOverride objects (https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2019-03-01/frontdoorwebapplicationfirewallpolicies#managedrulegroupoverride-object)."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2019-03-01",
+      "type": "Microsoft.Network/FrontDoorWebApplicationFirewallPolicies",
+      "name": "[parameters('policyName')]",
+      "location": "global",
+      "properties": {
+        "policySettings": {
+          "enabledState": "[parameters('enabledState')]",
+          "mode": "[parameters('mode')]"
+        },
+        "managedRules": {
+          "managedRuleSets": [
+            {
+              "ruleSetType": "DefaultRuleSet",
+              "ruleSetVersion": "[parameters('ruleSetVersion')]",
+              "ruleGroupOverrides": "[parameters('ruleGroupOverrides')]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
