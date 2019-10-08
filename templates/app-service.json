@@ -101,14 +101,15 @@
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
-    "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]"
+    "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
+    "appServiceApiVersion": "2018-11-01"
   },
   "resources": [
     {
       "name": "[parameters('appServiceName')]",
       "type": "Microsoft.Web/sites",
       "kind": "[parameters('appKind')]",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "[variables('appServiceApiVersion')]",
       "location": "[resourceGroup().location]",
       "identity": {
         "type": "SystemAssigned"
@@ -162,8 +163,7 @@
             "[parameters('appServiceName')]"
           ]
         }
-      ],
-      "dependsOn": []
+      ]
     },
     {
       "type": "Microsoft.Web/sites/hostnameBindings",
@@ -198,6 +198,10 @@
     "possibleOutboundIpAddresses": {
       "type": "array",
       "value": "[split(reference(parameters('appServiceName')).possibleOutboundIpAddresses, ',')]"
+    },
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(parameters('appServiceName'), variables('appServiceApiVersion'), 'Full').identity.principalId]"
     }
   }
 }
