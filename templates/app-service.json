@@ -144,7 +144,8 @@
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings'), parameters('appServiceConnectionStrings'))]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
-            }
+            },
+            "httpsOnly": true
           },
           "dependsOn": [
             "[parameters('appServiceName')]"
