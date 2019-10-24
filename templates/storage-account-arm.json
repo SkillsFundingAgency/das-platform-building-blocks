@@ -52,6 +52,42 @@
       "metadata": {
         "description": "A list of subnet resource ids."
       }
+    },
+    "enableCors": {
+      "type": "string",
+      "defaultValue": "False",
+      "allowedValues": [
+        "False",
+        "True"
+      ]
+    },
+    "allowedHeaders": {
+      "type": "array",
+      "defaultValue": [
+        "*"
+      ]
+    },
+    "allowedOrigins": {
+      "type": "array",
+      "defaultValue": [
+        "*"
+      ]
+    },
+    "maxAgeInSeconds": {
+      "type": "string",
+      "defaultValue": "3600"
+    },
+    "allowedMethods": {
+      "type": "array",
+        "defaultValue": [
+        "GET"
+      ]
+    },
+    "exposedHeaders": {
+      "type": "array",
+      "defaultValue": [
+        "*"
+      ]
     }
   },
   "variables": {
@@ -96,7 +132,32 @@
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('networkAclObject'), json('null'))]"
-      }
+      },
+      "resources": [
+          {
+            "name": "default",
+            "type": "blobServices",
+            "condition": "[equals(parameters('enableCors'), 'True')]",
+            "apiVersion": "2018-11-01",
+            "dependsOn": [
+              "[parameters('storageAccountName')]"
+            ],
+            "properties": {
+              "cors": {
+                "corsRules": [
+                  {
+                    "allowedOrigins": "[parameters('allowedOrigins')]",
+                    "allowedMethods": "[parameters('allowedMethods')]",
+                    "maxAgeInSeconds": "[parameters('maxAgeInSeconds')]",
+                    "exposedHeaders": "[parameters('exposedHeaders')]",
+                    "allowedHeaders": "[parameters('allowedHeaders')]"
+                  }
+                ]
+              }
+            },
+            "resources": []
+          }
+        ]
     }
   ],
   "outputs": {
