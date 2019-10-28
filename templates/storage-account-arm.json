@@ -171,7 +171,7 @@
     },
     "storagePrimaryEndpointsBlob": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob]"
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), '2019-04-01').primaryEndpoints.blob]"
     }
   }
 }
