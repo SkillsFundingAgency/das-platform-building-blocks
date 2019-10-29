@@ -13,7 +13,7 @@
     },
     "pathArray":{
       "type": "array",
-      "defaultValue": {}
+      "defaultValue": []
     }
   },
   "variables": {},
