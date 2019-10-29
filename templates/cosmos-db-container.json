@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "cosmosDatabase": {
+      "type": "string"
+    },
+    "cosmosDbAccountName": {
+      "type": "string"
+    },
+    "containerName": {
+      "type": "string"
+    },
+    "pathArray":{
+      "type": "array",
+      "defaultValue": {}
+    }
+  },
+  "variables": {},
+  "resources": [
+            {
+            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+            "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+            "apiVersion": "2016-03-31",
+            "properties":
+            {
+                "resource":{
+                    "id":  "[parameters('containerName')]",
+                    "indexingPolicy": {
+                        "condition": "[greater(length(parameters('pathArray')),0)]",
+                        "indexingMode": "consistent",
+                        "includedPaths": "[parameters('pathArray')]"
+                    }
+                }
+            }
+        }
+  ],
+  "outputs": {}
+}
