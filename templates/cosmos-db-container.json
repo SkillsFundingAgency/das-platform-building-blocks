@@ -23,44 +23,60 @@
     "cosmosDBType": {
       "type": "string",
       "allowedValues": [
-        "Sql",
-        "Mongo"
+        "GlobalDocumentDB",
+        "MongoDB"
       ]
     }
   },
   "variables": {
-  },
-  "resources": [
-    {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
-      "condition": "[equals(parameters('cosmosDBType'), 'Sql')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
-      "properties": {
+    "createIndexPaths": "[greater(length(parameters('pathArray')),0)]",
+    "GlobalDocumentDBContainerParameters": {
+      "WithIndex": {
         "resource": {
           "id": "[parameters('containerName')]",
           "indexingPolicy": {
-            "condition": "[greater(length(parameters('pathArray')),0)]",
             "indexingMode": "consistent",
             "includedPaths": "[parameters('pathArray')]"
           }
         }
+      },
+      "NoIndex": {
+        "resource": {
+          "id": "[parameters('containerName')]"
+        }
       }
     },
-    {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/collections",
-      "condition": "[equals(parameters('cosmosDBType'), 'Mongo')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
-      "properties": {
+    "createPartitionKey": "[greater(length(parameters('partitionKey')),1)]",
+    "MongoContainerParameters": {
+      "WithPartitionKey": {
         "resource": {
           "id": "[parameters('containerName')]",
           "shardKey": {
-            "condition": "[greater(length(parameters('partitionKey')),1)]",
             "[parameters('partitionKey')]": "Hash"
           }
         }
+      },
+      "WithoutPartitionKey": {
+        "resource": {
+          "id": "[parameters('containerName')]"
+        }
       }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+      "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2016-03-31",
+      "properties": "[if(variables('createIndexPaths'), variables('MongoContainerParameters').WithPartitionKey, variables('MongoContainerParameters').WithoutPartitionKey)]"
+    },
+    {
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/collections",
+      "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2016-03-31",
+            "properties": "[if(variables('createPartitionKey'), variables('GlobalDocumentDBContainerParameters').WithIndex, variables('GlobalDocumentDBContainerParameters').NoIndex)]"
     }
   ],
   "outputs": {

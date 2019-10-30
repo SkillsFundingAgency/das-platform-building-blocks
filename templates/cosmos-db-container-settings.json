@@ -19,8 +19,8 @@
     "cosmosDBType": {
       "type": "string",
       "allowedValues": [
-        "Sql",
-        "Mongo"
+        "GlobalDocumentDB",
+        "MongoDB"
       ]
     }
   },
@@ -29,7 +29,7 @@
   "resources": [
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
-      "condition": "[equals(parameters('cosmosDBType'), 'Sql')]",
+      "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
       "apiVersion": "2016-03-31",
       "properties": {
@@ -40,7 +40,7 @@
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/collections/settings",
-      "condition": "[equals(parameters('cosmosDBType'), 'Mongo')]",
+      "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
       "apiVersion": "2016-03-31",
       "properties": {
