@@ -14,6 +14,10 @@
     "pathArray":{
       "type": "array",
       "defaultValue": []
+    },
+    "partitionKey": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {},
@@ -30,6 +34,12 @@
                         "condition": "[greater(length(parameters('pathArray')),0)]",
                         "indexingMode": "consistent",
                         "includedPaths": "[parameters('pathArray')]"
+                    },
+                    "partitionKey": {
+                         "condition": "[greater(length(parameters('partitionKey')),0)]",
+                        "paths": [
+                        "[concat('/', parameters('partitionKey'))]"
+                        ]
                     }
                 }
             }
