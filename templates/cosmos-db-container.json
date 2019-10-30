@@ -46,7 +46,7 @@
         }
       }
     },
-    "createPartitionKey": "[greater(length(parameters('partitionKey')),1)]",
+    "createPartitionKey": "[greater(length(parameters('partitionKey')),0)]",
     "MongoContainerParameters": {
       "WithPartitionKey": {
         "resource": {
@@ -76,7 +76,7 @@
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2016-03-31",
-            "properties": "[if(variables('createPartitionKey'), variables('GlobalDocumentDBContainerParameters').WithIndex, variables('GlobalDocumentDBContainerParameters').NoIndex)]"
+      "properties": "[if(variables('createPartitionKey'), variables('GlobalDocumentDBContainerParameters').WithIndex, variables('GlobalDocumentDBContainerParameters').NoIndex)]"
     }
   ],
   "outputs": {
