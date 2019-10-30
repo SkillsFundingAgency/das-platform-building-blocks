@@ -7,20 +7,41 @@
     },
     "cosmosDbAccountName": {
       "type": "string"
+    },
+    "cosmosDBType": {
+      "type": "string",
+      "allowedValues": [
+        "Sql",
+        "Mongo"
+      ]
     }
   },
-  "variables": {},
+  "variables": {
+  },
   "resources": [
- {
-            "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
-            "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('CosmosDatabase'))]",
-            "apiVersion": "2016-03-31",
-            "properties":{
-                "resource":{
-                    "id": "[parameters('CosmosDatabase')]"
-                }
-            }
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "condition": "[equals(parameters('cosmosDBType'), 'Sql')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('CosmosDatabase'))]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "id": "[parameters('CosmosDatabase')]"
         }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "condition": "[equals(parameters('cosmosDBType'), 'Mongo')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('CosmosDatabase'))]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "id": "[parameters('CosmosDatabase')]"
+        }
+      }
+    }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }

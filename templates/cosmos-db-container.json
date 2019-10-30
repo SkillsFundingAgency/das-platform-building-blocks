@@ -11,39 +11,58 @@
     "containerName": {
       "type": "string"
     },
-    "pathArray":{
+    "pathArray": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+      ]
     },
     "partitionKey": {
       "type": "string",
       "defaultValue": ""
+    },
+    "cosmosDBType": {
+      "type": "string",
+      "allowedValues": [
+        "Sql",
+        "Mongo"
+      ]
     }
   },
-  "variables": {},
+  "variables": {
+  },
   "resources": [
-            {
-            "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
-            "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-            "apiVersion": "2016-03-31",
-            "properties":
-            {
-                "resource":{
-                    "id":  "[parameters('containerName')]",
-                    "indexingPolicy": {
-                        "condition": "[greater(length(parameters('pathArray')),0)]",
-                        "indexingMode": "consistent",
-                        "includedPaths": "[parameters('pathArray')]"
-                    },
-                    "partitionKey": {
-                        "condition": "[greater(length(parameters('partitionKey')),1)]",
-                        "paths": [
-                        "[parameters('partitionKey')]"
-                        ]
-                    }
-                }
-            }
+    {
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+      "condition": "[equals(parameters('cosmosDBType'), 'Sql')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "id": "[parameters('containerName')]",
+          "indexingPolicy": {
+            "condition": "[greater(length(parameters('pathArray')),0)]",
+            "indexingMode": "consistent",
+            "includedPaths": "[parameters('pathArray')]"
+          }
         }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/collections",
+      "condition": "[equals(parameters('cosmosDBType'), 'Mongo')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "id": "[parameters('containerName')]",
+          "shardKey": {
+            "condition": "[greater(length(parameters('partitionKey')),0)]",
+            "[parameters('partitionKey')]": "Hash"
+          }
+        }
+      }
+    }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }
