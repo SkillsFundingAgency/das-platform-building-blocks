@@ -36,7 +36,7 @@
                         "includedPaths": "[parameters('pathArray')]"
                     },
                     "partitionKey": {
-                         "condition": "[greater(length(parameters('partitionKey')),0)]",
+                        "condition": "[greater(length(parameters('partitionKey')),1)]",
                         "paths": [
                         "[parameters('partitionKey')]"
                         ]
