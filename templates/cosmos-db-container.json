@@ -56,7 +56,7 @@
         "resource": {
           "id": "[parameters('containerName')]",
           "shardKey": {
-            "condition": "[greater(length(parameters('partitionKey')),0)]",
+            "condition": "[greater(length(parameters('partitionKey')),1)]",
             "[parameters('partitionKey')]": "Hash"
           }
         }
