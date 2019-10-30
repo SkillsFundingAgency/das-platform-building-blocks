@@ -38,7 +38,7 @@
                     "partitionKey": {
                          "condition": "[greater(length(parameters('partitionKey')),0)]",
                         "paths": [
-                        "[concat('/', parameters('partitionKey'))]"
+                        "[parameters('partitionKey')]"
                         ]
                     }
                 }
