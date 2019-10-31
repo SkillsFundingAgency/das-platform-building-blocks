@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "principalId": {
+      "type": "string"
+    },
+    "assignmentType": {
+      "type": "string",
+      "allowedValues": [
+        "ServiceBusOwner"
+      ]
+    },
+    "resourceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "ServiceBusOwner": {
+      "roleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '090c5cfd-751d-490a-894a-3ce6f1109419')]",
+      "provider": "Microsoft.ServiceBus/namespaces"
+    }
+  },
+  "resources": [
+    {
+      "type": "[concat(variables(parameters('assignmentType')).provider,  '/providers/roleAssignments')]",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
+      "properties": {
+        "roleDefinitionId": "[variables(parameters('assignmentType')).roleId]",
+        "principalId": "[parameters('principalId')]"
+      }
+    }
+  ]
+}
