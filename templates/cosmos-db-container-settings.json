@@ -1,0 +1,50 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "cosmosDbAccountName": {
+      "type": "string"
+    },
+    "cosmosDatabase": {
+      "type": "string"
+    },
+    "containerName": {
+      "type": "string"
+    },
+    "throughput": {
+      "type": "int",
+      "minValue": 400,
+      "maxValue": 1000000
+    },
+    "cosmosDBType": {
+      "type": "string",
+      "allowedValues": [
+        "GlobalDocumentDB",
+        "MongoDB"
+      ]
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
+      "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "throughput": "[parameters('throughput')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/collections/settings",
+      "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "throughput": "[parameters('throughput')]"
+        }
+      }
+    }
+  ]
+}
