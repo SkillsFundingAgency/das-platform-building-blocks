@@ -24,20 +24,21 @@
       ]
     }
   },
-  "variables":{
-    "dbTypeName":{
-      "globalDocumentDbType": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
-      "mongoDbType": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]"
-    },
-    "settingsType": {
-      "sqlType": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
-      "mongoType": "Microsoft.DocumentDB/databaseAccounts/apis/databases/collections/settings"
-    }
-  },
   "resources": [
     {
-      "type":"[if(equals(parameters('cosmosDBType'), 'GlobalDocumentDB'), variables('settingsType').sqlType, variables('settingsType').mongoType)]",
-      "name": "[if(equals(parameters('cosmosDBType'), 'GlobalDocumentDB'), variables('dbTypeName').globalDocumentDbType, variables('dbTypeName').mongoDbType)]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
+      "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
+      "apiVersion": "2016-03-31",
+      "properties": {
+        "resource": {
+          "throughput": "[parameters('throughput')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/collections/settings",
+      "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
       "apiVersion": "2016-03-31",
       "properties": {
         "resource": {
