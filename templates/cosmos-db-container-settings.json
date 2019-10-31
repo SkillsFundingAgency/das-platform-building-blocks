@@ -32,13 +32,14 @@
       "mongoDbType": {
         "value":"[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]"
       }
-    }
+    },
+    "dbTypeParam": "[if(equals(parameters('cosmosDBType'), 'GlobalDocumentDB'), variables('dbTypeName').globalDocumentDbType, variables('dbTypeName').mongoDbType )]",
   },
   "resources": [
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "name": "[if(equals(parameters('cosmosDBType'), 'GlobalDocumentDB'), variables('dbTypeName').globalDocumentDbType, variables('dbTypeName').mongoDbType )]",
+      "name": "[variables('dbTypeParam')]",
       "apiVersion": "2016-03-31",
       "properties": {
         "resource": {
