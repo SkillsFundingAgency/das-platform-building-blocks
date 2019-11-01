@@ -27,6 +27,7 @@
   "resources": [
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
       "apiVersion": "2016-03-31",
       "properties": {
