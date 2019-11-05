@@ -41,6 +41,17 @@
         "PremiumV2"
       ],
       "defaultValue": "Standard"
+    },
+    "appServicePlanOS": {
+      "type": "string",
+      "allowedValues": [
+        "Windows",
+        "Linux"
+      ],
+      "defaultValue": "Windows",
+      "metadata": {
+        "description": "Windows or Linux"
+      }
     }
   },
   "variables": {
@@ -79,6 +90,7 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2016-09-01",
       "name": "[parameters('appServicePlanName')]",
+      "kind": "[parameters('appServicePlanOS')]",
       "location": "[parameters('aspLocation')]",
       "properties": "[if(variables('DeployToASE'), variables('ASPResourceProperties').WithASE, variables('ASPResourceProperties').WithoutASE)]",
       "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]"
