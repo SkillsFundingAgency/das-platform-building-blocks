@@ -96,6 +96,10 @@
       "metadata": {
         "description": "Resource ID of the subnet used for vNet integration"
       }
+    },
+    "dockerImageName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -103,7 +107,8 @@
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
-    "appServiceApiVersion": "2018-11-01"
+    "appServiceApiVersion": "2018-11-01",
+    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerImageName'))]"
   },
   "resources": [
     {
@@ -123,7 +128,8 @@
           "appSettings": "[parameters('appServiceAppSettings')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings')]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+          "linuxFxVersion": "[if(equals(parameters('appKind'), 'app,linux,container'), variables('linuxFxVersion'), '')]"
         },
         "httpsOnly": true
       },
