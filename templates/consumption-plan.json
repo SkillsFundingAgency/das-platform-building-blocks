@@ -18,6 +18,9 @@
     "sku": {
       "name": "Y1",
       "tier": "Dynamic"
+    },
+    "properties": {
+      "name": "[parameters('consumptionPlanName')]"
     }
   },
   "resources": [
@@ -26,7 +29,8 @@
       "apiVersion": "2016-09-01",
       "name": "[parameters('consumptionPlanName')]",
       "location": "[parameters('consumptionPlanLocation')]",
-      "sku": "[variables('sku')]"
+      "sku": "[variables('sku')]",
+      "properties": "[variables('properties')]"
     }
   ],
   "outputs": {
