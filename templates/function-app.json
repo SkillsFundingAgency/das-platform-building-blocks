@@ -53,7 +53,7 @@
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
         "siteConfig": {
-          "alwaysOn": "[if(equals(reference(resourceId('Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').computeMode,'Dynamic'), 'false', 'true')]",
+          "alwaysOn": "[if(equals(reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').computeMode,'Dynamic'), 'false', 'true')]",
           "appSettings": "[parameters('functionAppAppSettings')]",
           "connectionStrings": "[parameters('functionAppConnectionStrings')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
