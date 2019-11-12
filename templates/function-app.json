@@ -40,7 +40,8 @@
   },
   "variables": {
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
-    "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+    "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+    "functionAppApiVersion": "2019-08-01"
   },
   "resources": [
     {
@@ -49,6 +50,9 @@
       "kind": "functionapp",
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
@@ -76,5 +80,10 @@
       ]
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(parameters('functionAppName'), variables('functionAppApiVersion'), 'Full').identity.principalId]"
+    }
+  }
 }
