@@ -8,7 +8,8 @@
     "assignmentType": {
       "type": "string",
       "allowedValues": [
-        "ServiceBusOwner"
+        "ServiceBusOwner",
+        "ServiceBusReceiver"
       ]
     },
     "resourceName": {
@@ -16,11 +17,12 @@
     }
   },
   "variables": {
-    "ServiceBusOwner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '090c5cfd-751d-490a-894a-3ce6f1109419')]"
+    "ServiceBusOwner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '090c5cfd-751d-490a-894a-3ce6f1109419')]",
+    "ServiceBusReceiver": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0')]"
   },
   "resources": [
     {
-      "condition": "[equals(parameters('assignmentType'), 'ServiceBusOwner')]",
+      "condition": "[startsWith(parameters('assignmentType'), 'ServiceBus')]",
       "type": "Microsoft.ServiceBus/namespaces/providers/roleAssignments",
       "apiVersion": "2018-09-01-preview",
       "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
