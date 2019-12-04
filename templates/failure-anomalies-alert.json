@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the application insights instance"
+      }
+    },
+    "appInsightsResourceGroup": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The resource group that contains the application insights instance"
+      }
+
+    },
+    "actionGroupResourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource id of the action group to associate with this alert"
+      }
+    },
+    "severity": {
+      "type": "string",
+      "defaultValue": "Sev2",
+      "metadata": {
+        "description": "The severity of the alert"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "microsoft.alertsmanagement/smartdetectoralertrules",
+      "apiVersion": "2019-03-01",
+      "name": "[concat('Failure Anomalies - ', parameters('appInsightsName'))]",
+      "location": "global",
+      "properties": {
+        "description": "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+        "state": "Enabled",
+        "severity": "[parameters('severity')]",
+        "frequency": "PT1M",
+        "detector": {
+          "id": "FailureAnomaliesDetector"
+        },
+        "scope": [
+          "[resourceId(parameters('appInsightsResourceGroup'), 'Microsoft.Insights/components', parameters('appInsightsName'))]"
+        ],
+        "actionGroups": {
+          "groupIds": [
+            "[parameters('actionGroupResourceId')]"
+          ]
+        }
+      }
+    }
+  ]
+}
