@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "appServiceName": {
@@ -13,11 +13,13 @@
     },
     "appServiceAppSettings": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+      ]
     },
     "appServiceConnectionStrings": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+      ]
     },
     "appServiceVirtualApplications": {
       "type": "array",
@@ -47,35 +49,40 @@
     },
     "ipSecurityRestrictions": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
       }
     },
     "appServiceSlotAppSettings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
     "appServiceSlotSettingAppSettings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "List of app settings to set as slot specific: [\"EnvironmentName\", \"ReadOnly\"]"
       }
     },
     "appServiceSlotConnectionStrings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
       }
@@ -95,6 +102,10 @@
       "metadata": {
         "description": "Resource ID of the subnet used for vNet integration"
       }
+    },
+    "healthCheckPath": {
+      "type": "string",
+      "defaultValue": null
     }
   },
   "variables": {
@@ -102,7 +113,7 @@
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
-    "appServiceApiVersion": "2018-11-01"
+    "appServiceApiVersion": "2019-08-01"
   },
   "resources": [
     {
@@ -122,7 +133,8 @@
           "appSettings": "[parameters('appServiceAppSettings')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings')]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+          "healthCheckPath": "[parameters('healthCheckPath')]"
         },
         "httpsOnly": true
       },
@@ -131,7 +143,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "staging",
           "type": "slots",
-          "apiVersion": "2018-11-01",
+          "apiVersion": "[variables('appServiceApiVersion')]",
           "location": "[resourceGroup().location]",
           "identity": {
             "type": "SystemAssigned"
@@ -143,7 +155,8 @@
               "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings'), parameters('appServiceAppSettings'))]",
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings'), parameters('appServiceConnectionStrings'))]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-              "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+              "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+              "healthCheckPath": "[parameters('healthCheckPath')]"
             },
             "httpsOnly": true
           },
@@ -155,7 +168,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "slotconfignames",
           "type": "config",
-          "apiVersion": "2018-11-01",
+          "apiVersion": "[variables('appServiceApiVersion')]",
           "properties": {
             "appSettingNames": "[parameters('appServiceSlotSettingAppSettings')]",
             "connectionStringNames": "[parameters('appServiceSlotSettingConnectionStrings')]"
@@ -170,7 +183,7 @@
       "type": "Microsoft.Web/sites/hostnameBindings",
       "condition": "[variables('UseCustomHostname')]",
       "name": "[concat(parameters('appServiceName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "[variables('appServiceApiVersion')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "sslState": "SniEnabled",
@@ -184,7 +197,7 @@
       "type": "Microsoft.Web/sites/config",
       "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
       "name": "[concat(parameters('appServiceName'), '/virtualNetwork')]",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "[variables('appServiceApiVersion')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "subnetResourceId": "[parameters('subnetResourceId')]",
