@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterName": {
@@ -106,6 +106,13 @@
       "metadata": {
         "description": "The name of the resource group used for nodes"
       }
+    },
+    "windowsProfile": {
+      "type": "secureObject",
+      "defaultValue": null,
+      "metadata": {
+        "description": "adminUsername and adminPassword for Windows nodes"
+      }
     }
   },
   "variables": {
@@ -114,7 +121,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2019-06-01",
+      "apiVersion": "2019-08-01",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
@@ -158,9 +165,11 @@
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
-        }
+        },
+        "windowsProfile": "[parameters('windowsProfile')]"
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+  }
 }
