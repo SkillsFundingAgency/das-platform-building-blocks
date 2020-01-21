@@ -1,0 +1,14 @@
+steps:
+  - task: dependency-check.dependencycheck.dependency-check-build-task.dependency-check-build-task@5
+    displayName: "OWASP Dependency Check"
+    inputs:
+      projectName: "OWASP Dependency Check"
+      scanPath: .
+      format: CSV
+
+  - powershell: |
+      $Uri = 'https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-automation/master/Code-Analysis-Scripts/Import-OwaspDependencyCheckResults.ps1'
+      $File = Invoke-RestMethod -Method Get -Uri $Uri
+      New-Item -Path .\Import-OwaspDependencyCheckResults.ps1 -Value $File
+      . .\Import-OwaspDependencyCheckResults.ps1 -CustomerId $(ProdLogAnalyticsWorkspaceId) -SharedKey $(ProdLogAnalyticsWorkspaceKey)
+    displayName: "Import OWASP Dependency Check Results to Log Analytics"
