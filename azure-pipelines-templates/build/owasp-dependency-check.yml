@@ -6,9 +6,18 @@ steps:
       scanPath: .
       format: CSV
 
-  - powershell: |
-      $Uri = 'https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-automation/master/Code-Analysis-Scripts/Import-OwaspDependencyCheckResults.ps1'
-      $File = Invoke-RestMethod -Method Get -Uri $Uri
-      New-Item -Path .\Import-OwaspDependencyCheckResults.ps1 -Value $File
-      . .\Import-OwaspDependencyCheckResults.ps1 -CustomerId $(ProdLogAnalyticsWorkspaceId) -SharedKey $(ProdLogAnalyticsWorkspaceKey)
-    displayName: "Import OWASP Dependency Check Results to Log Analytics"
+  - task: DownloadGitHubRelease@0
+    displayName: 'Download GitHub Release'
+    inputs:
+      connection: 'GitHub (SFA)'
+      userRepository: 'SkillsFundingAgency/das-platform-automation'
+      defaultVersionType: specificVersion
+      version: TBC
+
+  - task: PowerShell@2
+    displayName: 'PowerShell Script'
+    inputs:
+      targetType: filePath
+      filePath: '$(System.ArtifactsDirectory)/Import-OwaspDependencyCheckResults.ps1'
+      arguments: '-CustomerId $(ProdLogAnalyticsWorkspaceId) -SharedKey $(ProdLogAnalyticsWorkspaceKey)'
+      displayName: "Import OWASP Dependency Check Results to Log Analytics"
