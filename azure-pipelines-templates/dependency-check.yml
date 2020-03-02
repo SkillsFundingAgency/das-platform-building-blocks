@@ -1,5 +1,5 @@
 steps:
-- task: esfadevops.dependency-check.custom-dependency-check.dependencycheck@0
+- task: esfadevops.DependencyCheck.custom-dependency-check.DependencyCheck@0
   displayName: 'Dependency Check'
   inputs:
     workspaceId: '$(LogAnalyticsWorkspaceId)'
