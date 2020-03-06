@@ -98,7 +98,10 @@
         "publisherEmail": "[parameters('publisherEmail')]",
         "publisherName": "[parameters('publisherName')]",
         "virtualNetworkConfiguration": "[if(variables('deployToNetwork'), variables('vnetConfiguration'), json('null'))]",
-        "virtualNetworkType": "[parameters('virtualNetworkType')]"
+        "virtualNetworkType": "[parameters('virtualNetworkType')]",
+        "identity": {
+          "type": "SystemAssigned"
+        }
       }
     }
   ]
