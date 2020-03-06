@@ -61,6 +61,10 @@
       "type": "string",
       "defaultValue": ""
     },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "portalkeyVaultCertificateName": {
       "type": "string",
       "defaultValue": ""
@@ -71,6 +75,7 @@
     }
   },
   "variables": {
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
@@ -102,6 +107,37 @@
       },
       "identity": {
         "type": "SystemAssigned"
+      }
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[concat(parameters('apiManagementServiceName'),'-keyvault-accesspolicy')]",
+      "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'keyvault-accesspolicies.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "keyVaultName": {
+            "value": "[parameters('keyvaultName')]"
+          },
+          "accessPolicies": {
+            "value": [
+              {
+                "objectId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')), '2019-01-01', 'Full').identity.principalId]",
+                "tenantId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')), '2019-01-01', 'Full').identity.tenantId]",
+                "permissions": {
+                  "secrets": [
+                    "Get"
+                  ]
+                }
+              }
+            ]
+          }
+        }
       }
     }
   ]
