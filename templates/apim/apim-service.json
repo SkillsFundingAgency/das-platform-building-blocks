@@ -56,6 +56,18 @@
     "subnetResourceId": {
       "type": "string",
       "defaultValue": ""
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "portalkeyVaultCertificateName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "portalHostname": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -75,6 +87,14 @@
         "capacity": "[parameters('skuCount')]"
       },
       "properties": {
+        "hostnameConfigurations": [
+          {
+            "type": "DeveloperPortal",
+            "hostName": "[parameters('portalHostname')]",
+            "keyVaultId": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').certificateUriWithVersion]",
+            "negotiateClientCertificate": false
+          }
+        ],
         "publisherEmail": "[parameters('publisherEmail')]",
         "publisherName": "[parameters('publisherName')]",
         "virtualNetworkConfiguration": "[if(variables('deployToNetwork'), variables('vnetConfiguration'), json('null'))]",
