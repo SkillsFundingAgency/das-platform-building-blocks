@@ -79,7 +79,9 @@
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
-    }
+    },
+    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]",
+    "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/"
   },
   "resources": [
     {
@@ -92,14 +94,6 @@
         "capacity": "[parameters('skuCount')]"
       },
       "properties": {
-        "hostnameConfigurations": [
-          {
-            "type": "DeveloperPortal",
-            "hostName": "[parameters('portalHostname')]",
-            "keyVaultId": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]",
-            "negotiateClientCertificate": false
-          }
-        ],
         "publisherEmail": "[parameters('publisherEmail')]",
         "publisherName": "[parameters('publisherName')]",
         "virtualNetworkConfiguration": "[if(variables('deployToNetwork'), variables('vnetConfiguration'), json('null'))]",
@@ -127,8 +121,8 @@
           "accessPolicies": {
             "value": [
               {
-                "objectId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')), '2019-01-01', 'Full').identity.principalId]",
-                "tenantId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')), '2019-01-01', 'Full').identity.tenantId]",
+                "tenantId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').tenantId]",
+                "objectId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').principalId]",
                 "permissions": {
                   "secrets": [
                     "Get"
@@ -138,7 +132,45 @@
             ]
           }
         }
-      }
+      },
+      "dependsOn": [
+        "[parameters('apiManagementServiceName')]"
+      ]
+    },
+    {
+      "apiVersion": "2017-05-10",
+      "name": "[concat(parameters('apiManagementServiceName'),'-with-hostname-configurations')]",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('apimDeploymentUrlBase'),'apim-service-with-hostnames.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "publisherEmail": {
+            "value": "[parameters('publisherEmail')]"
+          },
+          "publisherName": {
+            "value": "[parameters('publisherName')]"
+          },
+          "sku": {
+            "value": "[parameters('sku')]"
+          },
+          "skuCount": {
+            "value": "[parameters('skuCount')]"
+          },
+          "portalHostname": {
+            "value": "[parameters('portalHostname')]"
+          },
+          "keyVaultSecretsIdToCertificate": {
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[concat(parameters('apiManagementServiceName'),'-keyvault-accesspolicy')]"
+      ]
     }
   ]
 }
