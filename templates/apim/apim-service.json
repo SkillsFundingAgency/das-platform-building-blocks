@@ -148,6 +148,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "apiManagementServiceName": {
+            "value": "[parameters('apiManagementServiceName')]"
+          },
           "publisherEmail": {
             "value": "[parameters('publisherEmail')]"
           },
