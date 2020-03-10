@@ -19,8 +19,6 @@
       "name": "[concat(parameters('apiManagementServiceName'), '/', 'Microsoft.Insights/service')]",
       "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
-      "dependsOn": [
-      ],
       "properties": {
         "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
         "logs": [
@@ -35,7 +33,7 @@
         ],
         "metrics": [
           {
-            "category": "GatewayRequests",
+            "category": "Gateway Requests",
             "enabled": true,
             "retentionPolicy": {
               "enabled": true,
@@ -51,7 +49,7 @@
             }
           },
           {
-            "category": "EventHubEvents",
+            "category": "EventHub Events",
             "enabled": true,
             "retentionPolicy": {
               "enabled": true,
