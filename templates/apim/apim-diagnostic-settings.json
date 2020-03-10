@@ -1,0 +1,68 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiManagementServiceName": {
+      "type": "string"
+    },
+    "omsWorkspaceName": {
+      "type": "string"
+    },
+    "logRetentionDays": {
+      "type": "int",
+      "defaultValue": 30
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('apiManagementServiceName'), '/', 'Microsoft.Insights/service')]",
+      "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.ApiManagement/service/', parameters('apiManagementServiceName'))]",
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+      ],
+      "properties": {
+        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+        "logs": [
+          {
+            "category": "GatewayLogs",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
+          }
+        ],
+        "metrics": [
+          {
+            "category": "GatewayRequests",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
+          },
+          {
+            "category": "Capacity",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
+          },
+          {
+            "category": "EventHubEvents",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}
