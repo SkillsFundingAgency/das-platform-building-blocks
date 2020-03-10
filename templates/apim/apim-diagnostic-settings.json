@@ -20,8 +20,6 @@
       "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.ApiManagement/service/', parameters('apiManagementServiceName'))]",
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
       ],
       "properties": {
         "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
