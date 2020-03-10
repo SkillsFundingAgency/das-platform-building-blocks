@@ -5,6 +5,9 @@
     "apiManagementServiceName": {
       "type": "string"
     },
+    "omsWorkspaceResourceGroup": {
+      "type": "string"
+    },
     "omsWorkspaceName": {
       "type": "string"
     },
@@ -20,7 +23,7 @@
       "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "properties": {
-        "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+        "workspaceId": "[resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
         "logs": [
           {
             "category": "GatewayLogs",
