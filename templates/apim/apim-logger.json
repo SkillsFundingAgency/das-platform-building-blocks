@@ -17,6 +17,9 @@
     },
     "loggerCredentials": {
       "type": "object"
+    },
+    "loggerResourceId": {
+      "type": "string"
     }
   },
   "variables": {},
@@ -28,7 +31,8 @@
       "properties": {
         "loggerType": "[parameters('loggerType')]",
         "description": "[parameters('loggerName')]",
-        "credentials": "[parameters('loggerCredentials')]"
+        "credentials": "[parameters('loggerCredentials')]",
+        "resourceId": "[parameters('loggerResourceId')]"
       }
     }
   ],
