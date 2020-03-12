@@ -5,6 +5,16 @@
     "apiManagementServiceName": {
       "type": "string"
     },
+    "resourceEnvironmentName": {
+      "type": "string"
+    },
+    "resourceGroupLocation": {
+      "type": "string",
+      "defaultValue": "WestEurope"
+    },
+    "serviceName": {
+      "type": "string"
+    },
     "publisherEmail": {
       "type": "string",
       "minLength": 1,
@@ -76,6 +86,8 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "resourceGroupName": "[concat(variables('resourceNamePrefix'),'-rg')]",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
@@ -87,6 +99,7 @@
     {
       "apiVersion": "2019-01-01",
       "name": "[parameters('apiManagementServiceName')]",
+      "condition": "[not(equals(resourceGroup().tags.BasicApimDeploymentCompleted, 'true'))]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -102,6 +115,20 @@
       "identity": {
         "type": "SystemAssigned"
       }
+    },
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2019-09-01",
+      "name": "[variables('resourceGroupName')]",
+      "location": "[parameters('resourceGroupLocation')]",
+      "tags": {
+        "BasicApimDeploymentCompleted": "true"
+      },
+      "properties": {
+      },
+      "dependsOn" : [
+        "[parameters('apiManagementServiceName')]"
+      ]
     },
     {
       "apiVersion": "2017-05-10",
