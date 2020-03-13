@@ -99,7 +99,7 @@
     {
       "apiVersion": "2019-01-01",
       "name": "[parameters('apiManagementServiceName')]",
-      "condition": "[not(equals(resourceGroup().tags.BasicApimDeploymentCompleted, 'true'))]",
+      "condition": "[not(equals(reference(variables('apimServiceIdentityResourceId'),'2015-08-31-PREVIEW').principalId, json('null')))]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -115,20 +115,6 @@
       "identity": {
         "type": "SystemAssigned"
       }
-    },
-    {
-      "type": "Microsoft.Resources/resourceGroups",
-      "apiVersion": "2019-09-01",
-      "name": "[variables('resourceGroupName')]",
-      "location": "[parameters('resourceGroupLocation')]",
-      "tags": {
-        "BasicApimDeploymentCompleted": "true"
-      },
-      "properties": {
-      },
-      "dependsOn" : [
-        "[parameters('apiManagementServiceName')]"
-      ]
     },
     {
       "apiVersion": "2017-05-10",
