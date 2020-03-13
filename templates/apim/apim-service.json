@@ -8,9 +8,6 @@
     "serviceName": {
       "type": "string"
     },
-    "deployBasicApim": {
-      "type": "bool"
-    },
     "publisherEmail": {
       "type": "string",
       "minLength": 1,
@@ -82,34 +79,30 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "apiManagementServiceName": "[concat(variables('resourceNamePrefix'), '-apim')]",
+    "userAssignedIdentityName": "[concat(variables('resourceNamePrefix'), '-umi')]",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
-    },
-    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    }
   },
   "resources": [
     {
-      "apiVersion": "2019-01-01",
-      "name": "[variables('apiManagementServiceName')]",
-      "condition": "[parameters('deployBasicApim')]",
-      "type": "Microsoft.ApiManagement/service",
-      "location": "[resourceGroup().location]",
-      "sku": {
-        "name": "[parameters('sku')]",
-        "capacity": "[parameters('skuCount')]"
-      },
+      "apiVersion": "2017-05-10",
+      "name": "[concat(variables('apiManagementServiceName'),'-user-assigned-identity')]",
+      "type": "Microsoft.Resources/deployments",
       "properties": {
-        "publisherEmail": "[parameters('publisherEmail')]",
-        "publisherName": "[parameters('publisherName')]",
-        "virtualNetworkConfiguration": "[if(variables('deployToNetwork'), variables('vnetConfiguration'), json('null'))]",
-        "virtualNetworkType": "[parameters('virtualNetworkType')]"
-      },
-      "identity": {
-        "type": "SystemAssigned"
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('deploymentUrlBase'),'user-assigned-identity.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "userAssignedIdentityName": {
+            "value": "[variables('userAssignedIdentityName')]"
+          }
+        }
       }
     },
     {
@@ -130,8 +123,8 @@
           "accessPolicies": {
             "value": [
               {
-                "tenantId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').tenantId]",
-                "objectId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').principalId]",
+                "tenantId": "[reference(concat(variables('apiManagementServiceName'),'-user-assigned-identity')).outputs.tenantId.value]",
+                "objectId": "[reference(concat(variables('apiManagementServiceName'),'-user-assigned-identity')).outputs.objectId.value]",
                 "permissions": {
                   "secrets": [
                     "Get"
@@ -143,45 +136,41 @@
         }
       },
       "dependsOn": [
-        "[variables('apiManagementServiceName')]"
+        "[concat(variables('apiManagementServiceName'),'-user-assigned-identity')]"
       ]
     },
     {
-      "apiVersion": "2017-05-10",
-      "name": "[concat(variables('apiManagementServiceName'),'-with-hostname-configurations')]",
-      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-12-01-preview",
+      "name": "[variables('apiManagementServiceName')]",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "capacity": "[parameters('skuCount')]"
+      },
       "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('apimDeploymentUrlBase'),'apim-service-with-hostnames.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "apiManagementServiceName": {
-            "value": "[variables('apiManagementServiceName')]"
-          },
-          "publisherEmail": {
-            "value": "[parameters('publisherEmail')]"
-          },
-          "publisherName": {
-            "value": "[parameters('publisherName')]"
-          },
-          "sku": {
-            "value": "[parameters('sku')]"
-          },
-          "skuCount": {
-            "value": "[parameters('skuCount')]"
-          },
-          "portalHostname": {
-            "value": "[parameters('portalHostname')]"
-          },
-          "keyVaultSecretsIdToCertificate": {
-            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+        "hostnameConfigurations": [
+          {
+            "type": "DeveloperPortal",
+            "hostName": "[parameters('portalHostname')]",
+            "keyVaultId": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]",
+            "negotiateClientCertificate": false
+          }
+        ],
+        "publisherEmail": "[parameters('publisherEmail')]",
+        "publisherName": "[parameters('publisherName')]",
+        "virtualNetworkConfiguration": "[if(variables('deployToNetwork'), variables('vnetConfiguration'), json('null'))]",
+        "virtualNetworkType": "[parameters('virtualNetworkType')]"
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('userAssignedIdentityName'))]": {
           }
         }
       },
       "dependsOn": [
-        "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]"
+        "[concat(variables('apiManagementServiceName'),'-user-assigned-identity')]"
       ]
     }
   ]
