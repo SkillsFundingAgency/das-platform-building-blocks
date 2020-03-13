@@ -163,7 +163,7 @@
         "virtualNetworkType": "[parameters('virtualNetworkType')]"
       },
       "identity": {
-        "type": "SystemAssigned,UserAssigned",
+        "type": "UserAssigned",
         "userAssignedIdentities": {
           "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', variables('userAssignedIdentityName'))]": {
           }
