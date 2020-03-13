@@ -99,7 +99,7 @@
     {
       "apiVersion": "2019-01-01",
       "name": "[parameters('apiManagementServiceName')]",
-      "condition": "[not(equals(reference(variables('apimServiceIdentityResourceId'),'2015-08-31-PREVIEW').principalId, json('null')))]",
+      "condition": "[equals(reference(variables('apimServiceIdentityResourceId'),'2015-08-31-PREVIEW').principalId, json('null'))]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
