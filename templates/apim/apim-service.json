@@ -170,7 +170,8 @@
         }
       },
       "dependsOn": [
-        "[concat(variables('apiManagementServiceName'),'-user-assigned-identity')]"
+        "[concat(variables('apiManagementServiceName'),'-user-assigned-identity')]",
+        "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]"
       ]
     }
   ]
