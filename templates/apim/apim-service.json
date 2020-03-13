@@ -89,7 +89,7 @@
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
     },
-    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
   "resources": [
     {
