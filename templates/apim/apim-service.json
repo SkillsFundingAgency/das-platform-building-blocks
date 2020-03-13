@@ -8,10 +8,6 @@
     "resourceEnvironmentName": {
       "type": "string"
     },
-    "resourceGroupLocation": {
-      "type": "string",
-      "defaultValue": "WestEurope"
-    },
     "serviceName": {
       "type": "string"
     },
@@ -86,20 +82,19 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "resourceGroupName": "[concat(variables('resourceNamePrefix'),'-rg')]",
+    "apiManagementServiceName": "[concat(variables('resourceNamePrefix'), '-apim')]",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
     },
-    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]",
-    "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/"
+    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
   "resources": [
     {
       "apiVersion": "2019-01-01",
-      "name": "[parameters('apiManagementServiceName')]",
-      "condition": "[equals(reference(variables('apimServiceIdentityResourceId'),'2015-08-31-PREVIEW').principalId, json('null'))]",
+      "name": "[variables('apiManagementServiceName')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -118,7 +113,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(parameters('apiManagementServiceName'),'-keyvault-accesspolicy')]",
+      "name": "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]",
       "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -147,12 +142,12 @@
         }
       },
       "dependsOn": [
-        "[parameters('apiManagementServiceName')]"
+        "[variables('apiManagementServiceName')]"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(parameters('apiManagementServiceName'),'-with-hostname-configurations')]",
+      "name": "[concat(variables('apiManagementServiceName'),'-with-hostname-configurations')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -162,7 +157,7 @@
         },
         "parameters": {
           "apiManagementServiceName": {
-            "value": "[parameters('apiManagementServiceName')]"
+            "value": "[variables('apiManagementServiceName')]"
           },
           "publisherEmail": {
             "value": "[parameters('publisherEmail')]"
@@ -185,7 +180,7 @@
         }
       },
       "dependsOn": [
-        "[concat(parameters('apiManagementServiceName'),'-keyvault-accesspolicy')]"
+        "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]"
       ]
     }
   ]
