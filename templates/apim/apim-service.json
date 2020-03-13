@@ -81,7 +81,7 @@
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "apiManagementServiceName": "[concat(variables('resourceNamePrefix'), '-apim')]",
-    "userAssignedIdentityName": "[concat(variables('resourceNamePrefix'), '-umi')]",
+    "userAssignedIdentityName": "[concat(variables('apiManagementServiceName'), '-umi')]",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
