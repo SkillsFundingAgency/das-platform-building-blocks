@@ -153,7 +153,7 @@
           {
             "type": "DeveloperPortal",
             "hostName": "[parameters('portalHostname')]",
-            "keyVaultId": "[reference(resourceId('Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]",
+            "keyVaultId": "[reference(resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]",
             "negotiateClientCertificate": false
           }
         ],
