@@ -1,0 +1,23 @@
+parameters:
+  additionalBuildArguments: ""
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: "src/**/*.csproj"
+      noCache: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: "src/**/*.csproj"
+      arguments: "--configuration release --no-restore ${{ parameters.additionalBuildArguments }}"
+
+  - task: DotNetCoreCLI@2
+    displayName: Test
+    inputs:
+      command: test
+      projects: "**/*Tests.csproj"
+      arguments: "--configuration release --no-build"

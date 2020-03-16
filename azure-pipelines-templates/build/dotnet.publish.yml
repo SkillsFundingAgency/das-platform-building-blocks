@@ -1,0 +1,20 @@
+parameters:
+  projectPaths: ""
+
+steps:
+- ${{ if eq(parameters.projectPaths, '') }}:
+  - task: DotNetCoreCLI@2
+    displayName: "Publish Web Project"
+    inputs:
+      command: publish
+      publishWebProjects: true
+      arguments: "--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"
+
+- ${{ if ne(parameters.projectPaths, '') }}:
+  - task: DotNetCoreCLI@2
+    displayName: "Publish Web Projects"
+    inputs:
+      command: publish
+      publishWebProjects: false
+      projects: ${{ parameters.projectPaths }}
+      arguments: "--configuration release --output $(build.artifactstagingdirectory)/publish --no-restore --no-build"

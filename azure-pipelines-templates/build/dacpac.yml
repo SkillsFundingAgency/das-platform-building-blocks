@@ -1,0 +1,18 @@
+parameters:
+  databasePaths: []
+
+steps:
+  - ${{ each  path in parameters.databasePaths }}:
+      - task: VSBuild@1
+        displayName: "Build DACPAC: ${{ path }}"
+        inputs:
+          solution: ${{ path }}
+          platform: anycpu
+          configuration: release
+
+  - task: CopyFiles@2
+    displayName: "Copy Files to: $(build.artifactstagingdirectory)"
+    inputs:
+      contents: "**/bin/**/*.dacpac"
+      targetFolder: "$(build.artifactstagingdirectory)/publish"
+      flattenFolders: true

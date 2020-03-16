@@ -1,0 +1,12 @@
+parameters:
+  packagePaths: ""
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: "dotnet pack"
+    inputs:
+      command: pack
+      packagesToPack: ${{ parameters.packagePaths }}
+      packDirectory: "$(build.artifactstagingdirectory)/publish"
+      versioningScheme: byBuildNumber
+      buildProperties: 'Version="$(Build.BuildNumber)"'
