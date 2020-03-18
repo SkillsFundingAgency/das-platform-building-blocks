@@ -41,7 +41,7 @@
       "properties": {
         "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
         "protocol": "http",
-        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
+        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('functionAppResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
         "credentials": {
           "header": {
             "x-functions-key": [
@@ -56,7 +56,6 @@
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/get-httptrigger')]",
       "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementInstanceName'), parameters('functionAppName'))]"
       ],
       "properties": {
         "displayName": "HttpTrigger",
