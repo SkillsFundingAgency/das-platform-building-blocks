@@ -10,18 +10,6 @@
     },
     "functionAppName": {
       "type": "string"
-    },
-    "operationName": {
-      "type": "string"
-    },
-    "operationMethod": {
-      "type": "string"
-    },
-    "operationUrlTemplate": {
-      "type": "string"
-    },
-    "operationTemplateParameters": {
-      "type": "array"
     }
   },
   "variables": {
@@ -61,35 +49,6 @@
             ]
           }
         }
-      }
-    },
-    {
-      "type": "Microsoft.ApiManagement/service/apis/operations",
-      "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/', parameters('operationName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementInstanceName'), parameters('functionAppName'))]"
-      ],
-      "properties": {
-        "displayName": "[parameters('operationName')]",
-        "method": "[parameters('operationMethod')]",
-        "urlTemplate": "[parameters('operationUrlTemplate')]",
-        "templateParameters": "[parameters('operationTemplateParameters')]",
-        "responses": [
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
-      "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/', parameters('operationName'),'/policy')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apiManagementInstanceName'), parameters('functionAppName'), parameters('operationName'))]",
-        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementInstanceName'), parameters('functionAppName'))]"
-      ],
-      "properties": {
-        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('functionAppName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
-        "format": "xml"
       }
     }
   ],
