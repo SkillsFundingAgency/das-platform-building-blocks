@@ -10,14 +10,16 @@
       "defaultValue": "[utcNow()]"
     }
   },
-  "variables": {},
+  "variables": {
+    "functionAppKeyName": "[concat('apimanagement-', parameters('utcValue'))]"
+  },
   "resources": [
     {
       "type": "Microsoft.Web/sites/host/functionKeys",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('functionAppName'), '/default/apimanagement')]",
+      "name": "[concat(parameters('functionAppName'), '/default/', variables('functionAppKeyName'))]",
       "properties": {
-        "name": "[concat('api-management', parameters('utcValue'))]"
+        "name": "[variables('functionAppKeyName')]"
       },
       "dependsOn": [
       ]
@@ -26,7 +28,7 @@
   "outputs": {
     "ApimFunctionAppKeyName": {
       "type": "string",
-      "value": "[concat('api-management', parameters('utcValue'))]"
+      "value": "[variables('functionAppKeyName')]"
     }
   }
 }
