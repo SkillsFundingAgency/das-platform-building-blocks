@@ -1,0 +1,93 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiManagementInstanceName": {
+      "type": "string"
+    },
+    "functionAppResourceGroup": {
+      "type": "string"
+    },
+    "functionAppName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "functionAppId": "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "displayName": "[parameters('functionAppName')]",
+        "apiRevision": "1",
+        "path": "[parameters('functionAppName')]",
+        "protocols": [
+          "https"
+        ],
+        "isCurrent": true
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
+        "credentials": {
+          "header": {
+            "x-functions-key": [
+              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys.apimanagement]"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/get-httptrigger')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementInstanceName'), parameters('functionAppName'))]"
+      ],
+      "properties": {
+        "displayName": "HttpTrigger",
+        "method": "GET",
+        "urlTemplate": "/{cityName}",
+        "templateParameters": [
+          {
+            "name": "cityName",
+            "required": true,
+            "values": [
+            ],
+            "type": "string"
+          }
+        ],
+        "responses": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/get-httptrigger/policy')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apiManagementInstanceName'), parameters('functionAppName'), 'get-httptrigger')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementInstanceName'), parameters('functionAppName'))]"
+      ],
+      "properties": {
+        "value": "<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"das-poc-api-fa\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>",
+        "format": "xml"
+      }
+    }
+  ],
+  "outputs": {}
+}
