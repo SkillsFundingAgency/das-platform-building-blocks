@@ -10,6 +10,9 @@
     },
     "functionAppName": {
       "type": "string"
+    },
+    "functionAppKeyName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -45,7 +48,7 @@
         "credentials": {
           "header": {
             "x-functions-key": [
-              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys.apimanagement]"
+              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
             ]
           }
         }

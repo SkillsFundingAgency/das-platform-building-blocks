@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string"
+    },
+    "utcValue": {
+      "type": "string",
+      "defaultValue": "[utcNow()]"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites/host/functionKeys",
+      "apiVersion": "2018-11-01",
+      "name": "[concat(parameters('functionAppName'), '/default/apimanagement')]",
+      "properties": {
+        "name": "[concat('api-management', parameters('utcValue'))]"
+      },
+      "dependsOn": [
+        "function-app"
+      ]
+    }
+  ],
+  "outputs": {
+    "ApimFunctionAppKeyName": {
+      "type": "string",
+      "value": "[concat('api-management', parameters('utcValue'))]"
+    }
+  }
+}
