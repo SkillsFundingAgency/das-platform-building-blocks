@@ -20,7 +20,6 @@
         "name": "[concat('api-management', parameters('utcValue'))]"
       },
       "dependsOn": [
-        "function-app"
       ]
     }
   ],
