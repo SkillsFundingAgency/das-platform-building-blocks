@@ -67,7 +67,7 @@
       "type": "string",
       "defaultValue": ""
     },
-    "keyVaultResourceGroupName": {
+    "keyVaultResourceGroup": {
       "type": "string",
       "defaultValue": ""
     },
@@ -115,7 +115,7 @@
     {
       "apiVersion": "2017-05-10",
       "name": "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]",
-      "resourceGroup": "[parameters('keyVaultResourceGroupName')]",
+      "resourceGroup": "[parameters('keyVaultResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -176,7 +176,7 @@
             "value": "[parameters('portalHostname')]"
           },
           "keyVaultSecretsIdToCertificate": {
-            "value": "[reference(resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
           }
         }
       },

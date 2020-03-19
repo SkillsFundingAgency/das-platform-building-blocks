@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiManagementInstanceName": {
+    "apimName": {
       "type": "string"
     },
     "functionAppName": {
@@ -27,7 +27,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/', parameters('operationName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'), '/', parameters('operationName'))]",
       "dependsOn": [
       ],
       "properties": {
@@ -41,9 +41,9 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apiManagementInstanceName'), '/', parameters('functionAppName'), '/', parameters('operationName'),'/policy')]",
+      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'), '/', parameters('operationName'),'/policy')]",
       "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apiManagementInstanceName'), parameters('functionAppName'), parameters('operationName'))]"
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('functionAppName'), parameters('operationName'))]"
       ],
       "properties": {
         "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('functionAppName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
