@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "appServiceResourceGroup": {
+      "type": "string"
+    },
+    "appServiceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
+      "dependsOn": [],
+      "properties": {
+        "displayName": "[parameters('appServiceName')]",
+        "apiRevision": "1",
+        "path": "[parameters('appServiceName')]",
+        "protocols": [
+          "https"
+        ],
+        "isCurrent": true
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
+      "dependsOn": [],
+      "properties": {
+        "url": "[concat('https://', parameters('appServiceName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('appServiceResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('appServiceName'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}
