@@ -35,7 +35,7 @@
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/applicationinsights')]",
       "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), '/', parameters('appServiceName'))]"
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), parameters('appServiceName'))]"
       ],
       "properties": {
         "alwaysLog": "allErrors",
