@@ -31,6 +31,23 @@
       }
     },
     {
+      "type": "Microsoft.ApiManagement/service/apis/diagnostics",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), 'applicationinsights')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apimName'), '/', parameters('appServiceName'))]"
+      ],
+      "properties": {
+        "alwaysLog": "allErrors",
+        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), 'appInsightsLogger')]",
+        "sampling": {
+          "samplingType": "fixed",
+          "percentage": 100
+        },
+        "enableHttpCorrelationHeaders": true
+      }
+    },
+    {
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
