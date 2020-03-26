@@ -13,11 +13,13 @@
     },
     "appServiceAppSettings": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+      ]
     },
     "appServiceConnectionStrings": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+      ]
     },
     "appServiceVirtualApplications": {
       "type": "array",
@@ -47,35 +49,39 @@
     },
     "ipSecurityRestrictions": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
       }
     },
     "appServiceSlotAppSettings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
     "appServiceSlotSettingAppSettings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "List of app settings to set as slot specific: [\"EnvironmentName\", \"ReadOnly\"]"
       }
     },
     "appServiceSlotConnectionStrings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": [
+      ],
       "metadata": {
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": ["WEBSITE_LOCAL_CACHE_OPTION", "WEBSITE_LOCAL_CACHE_SIZEINMB"],
       "metadata": {
         "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
       }
@@ -98,11 +104,22 @@
     }
   },
   "variables": {
+    "appServiceSlotAppSettings": [
+      {
+        "name": "WEBSITE_LOCAL_CACHE_OPTION",
+        "value": "Always"
+      },
+      {
+        "name": "WEBSITE_LOCAL_CACHE_SIZEINMB",
+        "value": "300"
+      }
+    ],
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
-    "appServiceApiVersion": "2018-11-01"
+    "appServiceApiVersion": "2018-11-01",
+    "appServiceSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings'), variables('appServiceSlotAppSettings'))]"
   },
   "resources": [
     {
@@ -140,7 +157,7 @@
             "serverFarmId": "[variables('appServicePlanId')]",
             "clientAffinityEnabled": false,
             "siteConfig": {
-              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings'), parameters('appServiceAppSettings'))]",
+              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), variables('appServiceSlotAppSettingsCombined'), parameters('appServiceAppSettings'))]",
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings'), parameters('appServiceConnectionStrings'))]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
