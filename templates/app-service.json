@@ -119,7 +119,7 @@
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
     "appServiceApiVersion": "2018-11-01",
-    "appServiceSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings'), variables('appServiceSlotAppSettings'))]"
+    "appServiceAppSettingsCombined": "[union(parameters('appServiceAppSettings'), variables('appServiceSlotAppSettings'))]"
   },
   "resources": [
     {
@@ -136,7 +136,7 @@
         "clientAffinityEnabled": false,
         "siteConfig": {
           "alwaysOn": true,
-          "appSettings": "[parameters('appServiceAppSettings')]",
+          "appSettings": "[variables('appServiceAppSettingsCombined')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings')]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
@@ -157,7 +157,7 @@
             "serverFarmId": "[variables('appServicePlanId')]",
             "clientAffinityEnabled": false,
             "siteConfig": {
-              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), variables('appServiceSlotAppSettingsCombined'), parameters('appServiceAppSettings'))]",
+              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings'), parameters('appServiceAppSettings'))]",
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings'), parameters('appServiceConnectionStrings'))]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
