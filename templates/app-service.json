@@ -75,10 +75,7 @@
     },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
-      "defaultValue": [
-        "WEBSITE_LOCAL_CACHE_OPTION",
-        "WEBSITE_LOCAL_CACHE_SIZEINMB"
-      ],
+      "defaultValue": [],
       "metadata": {
         "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
       }
@@ -101,7 +98,7 @@
     }
   },
   "variables": {
-    "appServiceSlotAppSettings": [
+    "appServiceProductionSlotAppSettings": [
       {
         "name": "WEBSITE_LOCAL_CACHE_OPTION",
         "value": "Always"
@@ -116,7 +113,7 @@
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings')), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings')), 0)]",
     "appServiceApiVersion": "2018-11-01",
-    "appServiceAppSettingsCombined": "[union(parameters('appServiceAppSettings'), variables('appServiceSlotAppSettings'))]"
+    "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings'), variables('appServiceProductionSlotAppSettings'))]"
   },
   "resources": [
     {
@@ -133,7 +130,7 @@
         "clientAffinityEnabled": false,
         "siteConfig": {
           "alwaysOn": true,
-          "appSettings": "[variables('appServiceAppSettingsCombined')]",
+          "appSettings": "[variables('appServiceProductionSlotAppSettingsCombined')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings')]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
