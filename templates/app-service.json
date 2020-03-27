@@ -75,7 +75,7 @@
     },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
-      "defaultValue": [],
+      "defaultValue": ["WEBSITE_LOCAL_CACHE_OPTION","WEBSITE_LOCAL_CACHE_SIZEINMB"],
       "metadata": {
         "description": "List of connection strings to set as slot specific: [\"Sql\", \"CosmosDb\", \"Redis\"]"
       }
