@@ -85,7 +85,7 @@
                 "type": "VirtualMachineScaleSets",
                 "vnetSubnetID": "[variables('vnetSubnetId')]",
                 "orchestratorVersion": "[parameters('kubernetesVersion')]",
-                "nodeTaints": "[parameters('kubernetesVersion')]"
+                "nodeTaints": "[parameters('nodeTaints')]"
             }
         }
     ]
