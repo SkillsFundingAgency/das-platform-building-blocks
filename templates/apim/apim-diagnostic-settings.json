@@ -58,6 +58,14 @@
               "enabled": true,
               "days": "[parameters('logRetentionDays')]"
             }
+          },
+          {
+            "category": "Network Status",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
           }
         ]
       }
