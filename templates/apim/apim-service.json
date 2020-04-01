@@ -84,17 +84,17 @@
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "apiManagementServiceName": "[concat(variables('resourceNamePrefix'), '-apim')]",
+    "apimName": "[concat(variables('resourceNamePrefix'), '-apim')]",
     "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "vnetConfiguration": {
       "subnetResourceId": "[parameters('subnetResourceId')]"
     },
-    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apiManagementServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
   "resources": [
     {
       "apiVersion": "2019-01-01",
-      "name": "[variables('apiManagementServiceName')]",
+      "name": "[variables('apimName')]",
       "condition": "[parameters('deployBasicApim')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
@@ -114,7 +114,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]",
+      "name": "[concat(variables('apimName'),'-keyvault-accesspolicy')]",
       "resourceGroup": "[parameters('keyVaultResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
@@ -143,12 +143,12 @@
         }
       },
       "dependsOn": [
-        "[variables('apiManagementServiceName')]"
+        "[variables('apimName')]"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(variables('apiManagementServiceName'),'-with-hostname-configurations')]",
+      "name": "[concat(variables('apimName'),'-with-hostname-configurations')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -157,8 +157,8 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "apiManagementServiceName": {
-            "value": "[variables('apiManagementServiceName')]"
+          "apimName": {
+            "value": "[variables('apimName')]"
           },
           "publisherEmail": {
             "value": "[parameters('publisherEmail')]"
@@ -181,7 +181,7 @@
         }
       },
       "dependsOn": [
-        "[concat(variables('apiManagementServiceName'),'-keyvault-accesspolicy')]"
+        "[concat(variables('apimName'),'-keyvault-accesspolicy')]"
       ]
     }
   ]

@@ -2,7 +2,7 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiManagementServiceName": {
+    "apimName": {
       "type": "string"
     },
     "publisherEmail": {
@@ -75,7 +75,7 @@
   "resources": [
     {
       "apiVersion": "2019-01-01",
-      "name": "[parameters('apiManagementServiceName')]",
+      "name": "[parameters('apimName')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -99,6 +99,23 @@
       "identity": {
         "type": "SystemAssigned"
       }
+    },
+    {
+      "name": "[concat(parameters('apimName'),'-api-diagnostics')]",
+      "type": "Microsoft.ApiManagement/service/diagnostics",
+      "apiVersion": "2019-01-01",
+      "properties": {
+        "alwaysLog": "allErrors",
+        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), 'appInsightsLogger')]",
+        "sampling": {
+          "samplingType": "fixed",
+          "percentage": 100
+        },
+        "enableHttpCorrelationHeaders": true
+      },
+      "dependsOn": [
+        "[parameters('apimName')]"
+      ]
     }
   ]
 }
