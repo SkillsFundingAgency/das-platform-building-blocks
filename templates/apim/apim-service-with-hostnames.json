@@ -101,7 +101,7 @@
       }
     },
     {
-      "name": "[concat(parameters('apimName'), '/applicationinsights')]",
+      "name": "[concat(parameters('apimName'), '/diagnostics')]",
       "type": "Microsoft.ApiManagement/service/diagnostics",
       "apiVersion": "2019-01-01",
       "properties": {
@@ -109,7 +109,7 @@
         "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), 'appInsightsLogger')]",
         "sampling": {
           "samplingType": "fixed",
-          "percentage": 100
+          "percentage": 50
         },
         "enableHttpCorrelationHeaders": true
       },
