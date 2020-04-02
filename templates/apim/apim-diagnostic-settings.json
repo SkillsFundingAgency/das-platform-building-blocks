@@ -33,40 +33,6 @@
               "days": "[parameters('logRetentionDays')]"
             }
           }
-        ],
-        "metrics": [
-          {
-            "category": "Gateway Requests",
-            "enabled": true,
-            "retentionPolicy": {
-              "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
-            }
-          },
-          {
-            "category": "Capacity",
-            "enabled": true,
-            "retentionPolicy": {
-              "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
-            }
-          },
-          {
-            "category": "EventHub Events",
-            "enabled": true,
-            "retentionPolicy": {
-              "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
-            }
-          },
-          {
-            "category": "Network Status",
-            "enabled": true,
-            "retentionPolicy": {
-              "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
-            }
-          }
         ]
       }
     }
