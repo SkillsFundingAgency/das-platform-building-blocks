@@ -8,6 +8,9 @@
     "appServiceName": {
       "type": "string"
     },
+    "applicationIdUri": {
+      "type": "string"
+    },
     "operationName": {
       "type": "string"
     },
@@ -24,28 +27,28 @@
   "variables": {},
   "resources": [
     {
+      "type": "Microsoft.ApiManagement/service/apis/policies",
+      "apiVersion": "2019-12-01-preview",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/policy')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "value": "[concat('<policies>\r\n  <inbound>\r\n    <authentication-managed-identity resource=\"', parameters('applicationIdUri'),'\" />\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('appServiceName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n<base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+        "format": "xml"
+      }
+    },
+    {
       "type": "Microsoft.ApiManagement/service/apis/operations",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'))]",
-      "dependsOn": [],
+      "dependsOn": [
+      ],
       "properties": {
         "displayName": "[parameters('operationName')]",
         "method": "[parameters('operationMethod')]",
         "urlTemplate": "[parameters('operationUrlTemplate')]",
         "templateParameters": "[parameters('operationTemplateParameters')]",
         "responses": []
-      }
-    },
-    {
-      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
-      "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
-      ],
-      "properties": {
-        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('appServiceName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
-        "format": "xml"
       }
     }
   ],
