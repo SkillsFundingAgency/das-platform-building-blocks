@@ -22,6 +22,22 @@
     },
     "operationTemplateParameters": {
       "type": "array"
+    },
+    "operationPolicyRewriteUri": {
+      "type": "string",
+      "defaultValue": "/graph"
+    },
+    "operationPolicyQueryParameterName": {
+      "type": "string",
+      "defaultValue": "queryValues"
+    },
+    "operationPolicyQueryParameterAction": {
+      "type": "string",
+      "defaultValue": "append"
+    },
+    "operationPolicyQueryParameterValue": {
+      "type": "string",
+      "defaultValue": "courses{id}"
     }
   },
   "variables": {},
@@ -49,6 +65,18 @@
         "urlTemplate": "[parameters('operationUrlTemplate')]",
         "templateParameters": "[parameters('operationTemplateParameters')]",
         "responses": []
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
+      ],
+      "properties": {
+        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+        "format": "xml"
       }
     }
   ],
