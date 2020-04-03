@@ -24,20 +24,16 @@
       "type": "array"
     },
     "operationPolicyRewriteUri": {
-      "type": "string",
-      "defaultValue": "/graph"
+      "type": "string"
     },
     "operationPolicyQueryParameterName": {
-      "type": "string",
-      "defaultValue": "queryValues"
+      "type": "string"
     },
     "operationPolicyQueryParameterAction": {
-      "type": "string",
-      "defaultValue": "append"
+      "type": "string"
     },
     "operationPolicyQueryParameterValue": {
-      "type": "string",
-      "defaultValue": "courses{id}"
+      "type": "string"
     }
   },
   "variables": {},
