@@ -36,7 +36,10 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "operationPolicyWithoutQueryParameter": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+    "operationPolicyWithQueryParameter": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
+  },
   "resources": [
     {
       "type": "Microsoft.ApiManagement/service/apis/policies",
@@ -66,26 +69,12 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy-without-query-parameter')]",
-      "condition": "[empty(parameters('operationPolicyQueryParameterName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
-      ],
-      "properties": {
-        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
-        "format": "xml"
-      }
-    },
-    {
-      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
-      "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy-with-query-parameter')]",
-      "condition": "[not(empty(parameters('operationPolicyQueryParameterName')))]",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
       ],
       "properties": {
-        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+        "value": "[if(empty(parameters('operationPolicyQueryParameterName')), variables('operationPolicyWithoutQueryParameter'), variables('operationPolicyWithQueryParameter'))]",
         "format": "xml"
       }
     }
