@@ -14,9 +14,6 @@
     "operationName": {
       "type": "string"
     },
-    "operationDisplayName": {
-      "type": "string"
-    },
     "operationMethod": {
       "type": "string"
     },
@@ -62,7 +59,7 @@
       "dependsOn": [
       ],
       "properties": {
-        "displayName": "[parameters('operationDisplayName')]",
+        "displayName": "[parameters('operationName')]",
         "method": "[parameters('operationMethod')]",
         "urlTemplate": "[parameters('operationUrlTemplate')]",
         "templateParameters": "[parameters('operationTemplateParameters')]",
