@@ -66,7 +66,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy')]",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy-without-query-parameter')]",
       "condition": "[empty(parameters('operationPolicyQueryParameterName'))]",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
@@ -79,7 +79,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy')]",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy-with-query-parameter')]",
       "condition": "[not(empty(parameters('operationPolicyQueryParameterName')))]",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
