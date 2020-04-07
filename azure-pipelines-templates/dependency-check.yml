@@ -6,3 +6,4 @@ steps:
     sharedKey: '$(LogAnalyticsWorkspaceKey)'
     enableSelfHostedDatabase: true
     databaseEndpoint: '$(DependencyCheckDatabaseEndpoint)'
+    excludedScanPathPatterns: '$(DependencyCheckExcludedScanPathPatterns)'
