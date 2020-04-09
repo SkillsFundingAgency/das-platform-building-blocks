@@ -71,11 +71,19 @@
       "type": "string",
       "defaultValue": ""
     },
-    "portalkeyVaultCertificateName": {
+    "portalHostname": {
       "type": "string",
       "defaultValue": ""
     },
-    "portalHostname": {
+    "portalKeyVaultCertificateName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "gatewayHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "gatewayKeyVaultCertificateName": {
       "type": "string",
       "defaultValue": ""
     }
@@ -175,8 +183,14 @@
           "portalHostname": {
             "value": "[parameters('portalHostname')]"
           },
-          "keyVaultSecretsIdToCertificate": {
-            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+          "portalKeyVaultSecretId": {
+            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+          },
+          "gatewayHostname": {
+            "value": "[parameters('gatewayHostname')]"
+          },
+          "gatewayKeyVaultSecretId": {
+            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
           },
           "virtualNetworkType": {
             "value": "[parameters('virtualNetworkType')]"

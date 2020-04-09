@@ -57,11 +57,19 @@
       "type": "string",
       "defaultValue": ""
     },
-    "keyVaultSecretsIdToCertificate": {
+    "portalHostname": {
       "type": "string",
       "defaultValue": ""
     },
-    "portalHostname": {
+    "portalKeyVaultSecretId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "gatewayHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "gatewayKeyVaultSecretId": {
       "type": "string",
       "defaultValue": ""
     }
@@ -87,7 +95,13 @@
           {
             "type": "DeveloperPortal",
             "hostName": "[parameters('portalHostname')]",
-            "keyVaultId": "[parameters('keyVaultSecretsIdToCertificate')]",
+            "keyVaultId": "[parameters('portalKeyVaultSecretId')]",
+            "negotiateClientCertificate": false
+          },
+          {
+            "type": "Proxy",
+            "hostName": "[parameters('gatewayHostname')]",
+            "keyVaultId": "[parameters('gatewayKeyVaultSecretId')]",
             "negotiateClientCertificate": false
           }
         ],
