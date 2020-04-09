@@ -59,7 +59,15 @@
       ],
       "defaultValue": "None"
     },
-    "subnetResourceId": {
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "subnetName": {
       "type": "string",
       "defaultValue": ""
     },
@@ -93,9 +101,10 @@
     "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "apimName": "[concat(variables('resourceNamePrefix'), '-apim')]",
-    "deployToNetwork": "[and(greater(length(parameters('subnetResourceId')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
+    "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
+    "subnetResourceId": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'), parameters('subnetName'))]",
     "vnetConfiguration": {
-      "subnetResourceId": "[parameters('subnetResourceId')]"
+      "subnetResourceId": "[variables('subnetResourceId')]"
     },
     "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
