@@ -38,7 +38,7 @@
     {
       "name": "[concat(parameters('apimName'), '/applicationinsights')]",
       "type": "Microsoft.ApiManagement/service/diagnostics",
-      "apiVersion": "2019-12-01",
+      "apiVersion": "2019-01-01",
       "properties": {
         "alwaysLog": "allErrors",
         "loggerId": "[concat('/loggers/', parameters('loggerName'))]",
