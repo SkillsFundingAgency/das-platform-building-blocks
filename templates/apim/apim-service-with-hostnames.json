@@ -113,23 +113,6 @@
       "identity": {
         "type": "SystemAssigned"
       }
-    },
-    {
-      "name": "[concat(parameters('apimName'), '/applicationinsights')]",
-      "type": "Microsoft.ApiManagement/service/diagnostics",
-      "apiVersion": "2019-01-01",
-      "properties": {
-        "alwaysLog": "allErrors",
-        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), 'appInsightsLogger')]",
-        "sampling": {
-          "samplingType": "fixed",
-          "percentage": 50
-        },
-        "enableHttpCorrelationHeaders": true
-      },
-      "dependsOn": [
-        "[parameters('apimName')]"
-      ]
     }
   ]
 }

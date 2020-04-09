@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiManagementServiceName": {
+    "apimName": {
       "type": "string"
     },
     "loggerName": {
@@ -25,7 +25,7 @@
   "variables": {},
   "resources": [
     {
-      "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('loggerName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('loggerName'))]",
       "type": "Microsoft.ApiManagement/service/loggers",
       "apiVersion": "2019-01-01",
       "properties": {
@@ -34,6 +34,23 @@
         "credentials": "[parameters('loggerCredentials')]",
         "resourceId": "[parameters('loggerResourceId')]"
       }
+    },
+    {
+      "name": "[concat(parameters('apimName'), '/applicationinsights')]",
+      "type": "Microsoft.ApiManagement/service/diagnostics",
+      "apiVersion": "2019-01-01",
+      "properties": {
+        "alwaysLog": "allErrors",
+        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), 'appInsightsLogger')]",
+        "sampling": {
+          "samplingType": "fixed",
+          "percentage": 50
+        },
+        "enableHttpCorrelationHeaders": true
+      },
+      "dependsOn": [
+        "[parameters('apimName')]"
+      ]
     }
   ],
   "outputs": {}
