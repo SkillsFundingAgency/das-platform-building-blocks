@@ -49,7 +49,7 @@
         "enableHttpCorrelationHeaders": true
       },
       "dependsOn": [
-        "[concat(parameters('apimName'), '/', parameters('loggerName'))]"
+        "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '/loggers/', parameters('loggerName'))]"
       ]
     }
   ],
