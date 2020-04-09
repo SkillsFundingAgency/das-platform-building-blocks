@@ -177,6 +177,12 @@
           },
           "keyVaultSecretsIdToCertificate": {
             "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalkeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+          },
+          "virtualNetworkType": {
+            "value": "[parameters('virtualNetworkType')]"
+          },
+          "subnetResourceId": {
+            "value": "[parameters('subnetResourceId')]"
           }
         }
       },
