@@ -41,7 +41,7 @@
       "apiVersion": "2019-12-01",
       "properties": {
         "alwaysLog": "allErrors",
-        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), parameters('loggerName'))]",
+        "loggerId": "[concat('/loggers/', parameters('loggerName'))]",
         "sampling": {
           "samplingType": "fixed",
           "percentage": 50
