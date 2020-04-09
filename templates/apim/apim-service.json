@@ -205,7 +205,7 @@
             "value": "[parameters('virtualNetworkType')]"
           },
           "subnetResourceId": {
-            "value": "[parameters('subnetResourceId')]"
+            "value": "[variables('subnetResourceId')]"
           }
         }
       },
