@@ -49,7 +49,7 @@
         "enableHttpCorrelationHeaders": true
       },
       "dependsOn": [
-        "[parameters('apimName')]"
+        "[concat(parameters('apimName'), '/', parameters('loggerName'))]"
       ]
     }
   ],
