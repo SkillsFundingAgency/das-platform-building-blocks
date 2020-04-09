@@ -102,7 +102,7 @@
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "apimName": "[concat(variables('resourceNamePrefix'), '-apim')]",
     "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
-    "subnetResourceId": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'), 'subnets', parameters('subnetName'))]",
+    "subnetResourceId": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
     "vnetConfiguration": {
       "subnetResourceId": "[variables('subnetResourceId')]"
     },
