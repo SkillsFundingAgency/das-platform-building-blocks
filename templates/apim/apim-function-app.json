@@ -5,6 +5,13 @@
     "apimName": {
       "type": "string"
     },
+    "apiType": {
+      "type": "string",
+      "allowedValues": [
+        "external",
+        "internal"
+      ]
+    },
     "functionAppResourceGroup": {
       "type": "string"
     },
@@ -28,7 +35,7 @@
       "properties": {
         "displayName": "[parameters('functionAppName')]",
         "apiRevision": "1",
-        "path": "[parameters('functionAppName')]",
+        "path": "[concat(parameters('apiType'),'/',parameters('functionAppName'))]",
         "protocols": [
           "https"
         ],
