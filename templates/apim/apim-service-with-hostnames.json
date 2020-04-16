@@ -82,7 +82,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[parameters('apimName')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
