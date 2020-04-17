@@ -43,7 +43,7 @@
   "resources": [
     {
       "type": "Microsoft.ApiManagement/service/apis/policies",
-      "apiVersion": "2019-12-01-preview",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/policy')]",
       "dependsOn": [
       ],
