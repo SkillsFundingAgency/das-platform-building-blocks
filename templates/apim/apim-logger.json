@@ -45,8 +45,7 @@
         "sampling": {
           "samplingType": "fixed",
           "percentage": 50
-        },
-        "enableHttpCorrelationHeaders": true
+        }
       },
       "dependsOn": [
         "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '/loggers/', parameters('loggerName'))]"
