@@ -5,7 +5,10 @@
     "apimName": {
       "type": "string"
     },
-    "apiName": {
+    "apiDisplayName": {
+      "type": "string"
+    },
+    "apiUrlSuffix": {
       "type": "string"
     },
     "appServiceResourceGroup": {
@@ -21,12 +24,12 @@
     {
       "type": "Microsoft.ApiManagement/service/apis",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('apiName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'))]",
       "dependsOn": [],
       "properties": {
-        "displayName": "[parameters('apiName')]",
+        "displayName": "[parameters('apiDisplayName')]",
         "apiRevision": "1",
-        "path": "[concat(parameters('apiName'))]",
+        "path": "[concat(parameters('apiUrlSuffix'))]",
         "protocols": [
           "https"
         ],
