@@ -5,12 +5,8 @@
     "apimName": {
       "type": "string"
     },
-    "apiType": {
-      "type": "string",
-      "allowedValues": [
-        "external",
-        "internal"
-      ]
+    "apiName": {
+      "type": "string"
     },
     "appServiceResourceGroup": {
       "type": "string"
@@ -25,12 +21,12 @@
     {
       "type": "Microsoft.ApiManagement/service/apis",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiName'))]",
       "dependsOn": [],
       "properties": {
-        "displayName": "[parameters('appServiceName')]",
+        "displayName": "[parameters('apiName')]",
         "apiRevision": "1",
-        "path": "[concat(parameters('apiType'),'/',parameters('appServiceName'))]",
+        "path": "[concat(parameters('apiName'))]",
         "protocols": [
           "https"
         ],
