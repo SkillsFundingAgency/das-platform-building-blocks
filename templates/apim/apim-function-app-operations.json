@@ -17,6 +17,9 @@
     "operationMethod": {
       "type": "string"
     },
+    "operationUrlTemplate": {
+      "type": "string"
+    },
     "operationTemplateParameters": {
       "type": "array"
     }
@@ -33,7 +36,7 @@
       "properties": {
         "displayName": "[parameters('operationName')]",
         "method": "[parameters('operationMethod')]",
-        "urlTemplate": "[concat('/',parameters('operationName'))]",
+        "urlTemplate": "[parameters('operationUrlTemplate')]",
         "templateParameters": "[parameters('operationTemplateParameters')]",
         "responses": []
       }
