@@ -74,7 +74,7 @@
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'),'/policy')]",
       "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('appServiceName'), parameters('operationName'))]"
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
       ],
       "properties": {
         "value": "[if(empty(parameters('operationPolicyQueryParameterName')), variables('operationPolicyWithoutQueryParameter'), variables('operationPolicyWithQueryParameter'))]",
