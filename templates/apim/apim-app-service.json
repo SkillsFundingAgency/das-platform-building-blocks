@@ -29,7 +29,7 @@
       "properties": {
         "displayName": "[parameters('apiDisplayName')]",
         "apiRevision": "1",
-        "path": "[concat(parameters('apiUrlSuffix'))]",
+        "path": "[parameters('apiUrlSuffix')]",
         "protocols": [
           "https"
         ],
