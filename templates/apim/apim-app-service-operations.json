@@ -5,6 +5,9 @@
     "apimName": {
       "type": "string"
     },
+    "apiUrlSuffix": {
+      "type": "string"
+    },
     "appServiceName": {
       "type": "string"
     },
@@ -44,7 +47,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/policies",
       "apiVersion": "2019-12-01-preview",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/policy')]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/policy')]",
       "dependsOn": [
       ],
       "properties": {
@@ -55,7 +58,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'), '/', parameters('operationName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]",
       "dependsOn": [
       ],
       "properties": {
