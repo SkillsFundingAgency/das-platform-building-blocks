@@ -5,6 +5,9 @@
     "apimName": {
       "type": "string"
     },
+    "apiUrlSuffix": {
+      "type": "string"
+    },
     "functionAppName": {
       "type": "string"
     },
@@ -24,7 +27,7 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'), '/', parameters('operationName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]",
       "dependsOn": [
       ],
       "properties": {
@@ -38,9 +41,9 @@
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
       "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'), '/', parameters('operationName'),'/policy')]",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'),'/policy')]",
       "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('functionAppName'), parameters('operationName'))]"
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
       ],
       "properties": {
         "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('functionAppName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
