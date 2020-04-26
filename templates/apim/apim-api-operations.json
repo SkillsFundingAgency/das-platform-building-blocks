@@ -5,22 +5,16 @@
     "apimName": {
       "type": "string"
     },
-    "apiBackendType": {
+    "apiUrlSuffix": {
+      "type": "string"
+    },
+    "apimBackendType": {
       "type": "string",
       "allowedValues": [
         "functionApp"
       ]
     },
-    "apiUrlSuffix": {
-      "type": "string"
-    },
-    "functionAppResourceGroup": {
-      "type": "string"
-    },
     "functionAppName": {
-      "type": "string"
-    },
-    "functionAppKeyName": {
       "type": "string"
     },
     "operationName": {
@@ -37,28 +31,8 @@
     }
   },
   "variables": {
-    "functionAppId": "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
   },
   "resources": [
-    {
-      "condition": "[equals(parameters('apiBackendType'), 'functionApp')]",
-      "type": "Microsoft.ApiManagement/service/backends",
-      "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
-      "dependsOn": [],
-      "properties": {
-        "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
-        "protocol": "http",
-        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('functionAppResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
-        "credentials": {
-          "header": {
-            "x-functions-key": [
-              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
-            ]
-          }
-        }
-      }
-    },
     {
       "type": "Microsoft.ApiManagement/service/apis/operations",
       "apiVersion": "2019-01-01",
