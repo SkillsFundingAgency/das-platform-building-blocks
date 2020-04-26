@@ -14,7 +14,7 @@
         "functionApp"
       ]
     },
-    "functionAppName": {
+    "backendResourceName": {
       "type": "string"
     },
     "operationName": {
@@ -31,7 +31,9 @@
     }
   },
   "variables": {
-    "functionAppOperationPolicy": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('functionAppName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
+    "baseOperationPolicy": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('backendResourceName'),'\" />')]",
+    "finalOperationPolicy": "[concat(variables('baseOperationPolicy'), '\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
+
   },
   "resources": [
     {
@@ -57,7 +59,7 @@
         "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
       ],
       "properties": {
-        "value": "[if(equals(parameters('apimBackendType'), 'functionApp'), variables('functionAppOperationPolicy'), variables('functionAppOperationPolicy'))]",
+        "value": "[variables('finalOperationPolicy')]",
         "format": "xml"
       }
     }
