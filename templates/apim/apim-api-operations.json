@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "apiBackendType": {
+      "type": "string",
+      "allowedValues": [
+        "functionApp"
+      ]
+    },
+    "apiUrlSuffix": {
+      "type": "string"
+    },
+    "functionAppResourceGroup": {
+      "type": "string"
+    },
+    "functionAppName": {
+      "type": "string"
+    },
+    "functionAppKeyName": {
+      "type": "string"
+    },
+    "operationName": {
+      "type": "string"
+    },
+    "operationMethod": {
+      "type": "string"
+    },
+    "operationUrlTemplate": {
+      "type": "string"
+    },
+    "operationTemplateParameters": {
+      "type": "array"
+    }
+  },
+  "variables": {
+    "functionAppId": "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
+  },
+  "resources": [
+    {
+      "condition": "[equals(parameters('apiBackendType'), 'functionApp')]",
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
+      "dependsOn": [],
+      "properties": {
+        "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('functionAppResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
+        "credentials": {
+          "header": {
+            "x-functions-key": [
+              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "displayName": "[parameters('operationName')]",
+        "method": "[parameters('operationMethod')]",
+        "urlTemplate": "[parameters('operationUrlTemplate')]",
+        "templateParameters": "[parameters('operationTemplateParameters')]",
+        "responses": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'),'/policy')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
+      ],
+      "properties": {
+        "value": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('functionAppName'),'\" />\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]",
+        "format": "xml"
+      }
+    }
+  ],
+  "outputs": {}
+}
