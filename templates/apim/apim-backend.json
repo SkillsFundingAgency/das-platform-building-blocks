@@ -11,7 +11,7 @@
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('functionApp', uniqueString(resourceGroup().id))]"
     },
     "functionAppKeyName": {
       "type": "string",
@@ -23,12 +23,12 @@
     },
     "appServiceName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('appService', uniqueString(resourceGroup().id))]"
     }
   },
   "variables": {
-    "deployFunctionApp": "[greater(length(parameters('functionAppName')), 0)]",
-    "deployAppService": "[greater(length(parameters('appServiceName')), 0)]"
+    "deployFunctionApp": "[greater(length(parameters('functionAppResourceGroup')), 0)]",
+    "deployAppService": "[greater(length(parameters('appServiceResourceGroup')), 0)]"
 
   },
   "resources": [
