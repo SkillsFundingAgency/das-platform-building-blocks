@@ -11,7 +11,7 @@
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('functionApp', uniqueString(resourceGroup().id))]"
     },
     "functionAppKeyName": {
       "type": "string",
@@ -23,14 +23,14 @@
     },
     "appServiceName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('appService', uniqueString(resourceGroup().id))]",
     }
   },
   "variables": {
   },
   "resources": [
     {
-      "condition": "[greater(length(parameters('functionAppName')), 0)]",
+      "condition": "[greater(length(parameters('functionAppResourceGroup')), 0)]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
@@ -50,7 +50,7 @@
       }
     },
     {
-      "condition": "[greater(length(parameters('appServiceName')), 0)]",
+      "condition": "[greater(length(parameters('appServiceResourceGroup')), 0)]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
