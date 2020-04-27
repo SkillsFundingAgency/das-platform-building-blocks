@@ -34,7 +34,7 @@
     }
   },
   "variables": {
-    "functionAppId": "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
+    "functionAppId": "[if(equals(parameters('apimBackendType'), 'functionApp'), resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName')), '')]"
   },
   "resources": [
     {
