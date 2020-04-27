@@ -5,6 +5,10 @@
     "apimName": {
       "type": "string"
     },
+    "deployFunctionApp": {
+      "type": "bool",
+      "defaultValue": false
+    },
     "functionAppResourceGroup": {
       "type": "string",
       "defaultValue": ""
@@ -17,6 +21,10 @@
       "type": "string",
       "defaultValue": ""
     },
+    "deployAppService": {
+      "type": "bool",
+      "defaultValue": false
+    },
     "appServiceResourceGroup": {
       "type": "string",
       "defaultValue": ""
@@ -27,13 +35,10 @@
     }
   },
   "variables": {
-    "deployFunctionApp": "[greater(length(parameters('functionAppResourceGroup')), 0)]",
-    "deployAppService": "[greater(length(parameters('appServiceResourceGroup')), 0)]"
-
   },
   "resources": [
     {
-      "condition": "[variables('deployFunctionApp')]",
+      "condition": "[parameters('deployFunctionApp')]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
@@ -53,7 +58,7 @@
       }
     },
     {
-      "condition": "[variables('deployAppService')]",
+      "condition": "[parameters('deployAppService')]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
