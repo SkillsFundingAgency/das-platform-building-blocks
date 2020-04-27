@@ -52,7 +52,7 @@
         "credentials": {
           "header": {
             "x-functions-key": [
-              "[listkeys(concat(variables('functionAppResourceId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
+              ""
             ]
           }
         }
