@@ -33,7 +33,7 @@
   },
   "resources": [
     {
-      "condition": "[empty(parameters('functionAppName'))]",
+      "condition": "[not(empty(parameters('functionAppName')))]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
