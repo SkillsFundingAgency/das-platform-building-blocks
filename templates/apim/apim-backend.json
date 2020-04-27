@@ -10,31 +10,30 @@
     },
     "functionAppResourceGroup": {
       "type": "string",
-      "defaultValue": "[concat('functionAppResourceGroup', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": "[concat('functionAppResourceName', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "functionAppKeyName": {
       "type": "string",
-      "defaultValue": "[concat('functionAppKeyName', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "appServiceResourceGroup": {
       "type": "string",
-      "defaultValue": "[concat('appServiceResourceGroup', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "appServiceName": {
       "type": "string",
-      "defaultValue": "[concat('appServiceResourceName', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     }
   },
   "variables": {
-    "functionAppId": "[if(equals(parameters('apimBackendType'), 'functionApp'), resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName')), '')]"
   },
   "resources": [
     {
-      "condition": "[equals(parameters('apimBackendType'), 'functionApp')]",
+      "condition": "[empty(parameters('appServiceName'))]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
@@ -46,14 +45,14 @@
         "credentials": {
           "header": {
             "x-functions-key": [
-              "[listkeys(concat(variables('functionAppId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
+              "[listkeys(concat(resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName')), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
             ]
           }
         }
       }
     },
     {
-      "condition": "[equals(parameters('apimBackendType'), 'appService')]",
+      "condition": "[empty(parameters('functionAppName'))]",
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
