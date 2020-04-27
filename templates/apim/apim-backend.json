@@ -52,7 +52,7 @@
         "credentials": {
           "header": {
             "x-functions-key": [
-              ""
+              "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
             ]
           }
         }
