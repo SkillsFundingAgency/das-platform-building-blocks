@@ -8,17 +8,29 @@
     "apimBackendType": {
       "type": "string",
       "allowedValues": [
-        "functionApp"
+        "functionApp",
+        "appService"
       ]
     },
     "functionAppResourceGroup": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "[concat('functionAppResourceGroup', uniqueString(resourceGroup().id))]"
     },
     "functionAppName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "[concat('functionAppResourceName', uniqueString(resourceGroup().id))]"
     },
     "functionAppKeyName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "[concat('functionAppKeyName', uniqueString(resourceGroup().id))]"
+    },
+    "appServiceResourceGroup": {
+      "type": "string",
+      "defaultValue": "[concat('appServiceResourceGroup', uniqueString(resourceGroup().id))]"
+    },
+    "appServiceName": {
+      "type": "string",
+      "defaultValue": "[concat('appServiceResourceName', uniqueString(resourceGroup().id))]"
     }
   },
   "variables": {
@@ -42,6 +54,19 @@
             ]
           }
         }
+      }
+    },
+    {
+      "condition": "[equals(parameters('apimBackendType'), 'appService')]",
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "url": "[concat('https://', parameters('appServiceName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('appServiceResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('appServiceName'))]"
       }
     }
   ],
