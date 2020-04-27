@@ -35,6 +35,7 @@
     }
   },
   "variables": {
+    "functionAppResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('functionAppResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]"
   },
   "resources": [
     {
@@ -47,11 +48,11 @@
       "properties": {
         "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
         "protocol": "http",
-        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('functionAppResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('functionAppName'))]",
+        "resourceId": "[concat('https://management.azure.com', variables('functionAppResourceId'))]",
         "credentials": {
           "header": {
             "x-functions-key": [
-              "[listkeys(concat(resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName')), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
+              "[listkeys(concat(variables('functionAppResourceId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')]]"
             ]
           }
         }
