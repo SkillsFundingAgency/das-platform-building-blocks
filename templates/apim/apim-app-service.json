@@ -5,12 +5,6 @@
     "apimName": {
       "type": "string"
     },
-    "apiDisplayName": {
-      "type": "string"
-    },
-    "apiUrlSuffix": {
-      "type": "string"
-    },
     "appServiceResourceGroup": {
       "type": "string"
     },
@@ -19,32 +13,19 @@
     }
   },
   "variables": {
+    "appServiceResourceId": "[resourceId(parameters('appServiceResourceGroup'), 'Microsoft.Web/sites', parameters('appServiceName'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.ApiManagement/service/apis",
-      "apiVersion": "2019-01-01",
-      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'))]",
-      "dependsOn": [],
-      "properties": {
-        "displayName": "[parameters('apiDisplayName')]",
-        "apiRevision": "1",
-        "path": "[parameters('apiUrlSuffix')]",
-        "protocols": [
-          "https"
-        ],
-        "isCurrent": true
-      }
-    },
     {
       "type": "Microsoft.ApiManagement/service/backends",
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
-      "dependsOn": [],
+      "dependsOn": [
+      ],
       "properties": {
         "url": "[concat('https://', parameters('appServiceName'), '.azurewebsites.net/api')]",
         "protocol": "http",
-        "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('appServiceResourceGroup'), '/providers/Microsoft.Web/sites/', parameters('appServiceName'))]"
+        "resourceId": "[concat('https://management.azure.com', variables('appServiceResourceId'))]"
       }
     }
   ],
