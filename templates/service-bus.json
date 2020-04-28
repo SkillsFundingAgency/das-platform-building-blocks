@@ -120,7 +120,7 @@
     {
       "apiVersion": "2017-04-01",
       "condition": "[variables('deploySubscriptions')]",
-      "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deploySubscriptions'), concat(parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription), 'placeholder'))]",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deploySubscriptions'), concat(parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription), 'placeholder/placeholder'))]",
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "copy": {
         "name": "sbSubscriptionCopy",
