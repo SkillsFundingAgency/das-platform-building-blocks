@@ -117,6 +117,21 @@
         "name": "sbTopicCopy",
         "count": "[if(variables('deployTopics'), length(parameters('serviceBusTopics')), 1)]"
       }
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "condition": "[variables('deploySubscriptions')]",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription)]",
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "copy": {
+        "name": "sbSubscriptionCopy",
+        "count": "[length(parameters('serviceBusSubscriptions'))]"
+      },
+      "properties": {
+      },
+      "dependsOn": [
+        "sbTopicCopy"
+      ]
     }
   ],
   "outputs": {
