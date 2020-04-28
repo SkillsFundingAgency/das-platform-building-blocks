@@ -11,13 +11,13 @@
     "apimBackendType": {
       "type": "string",
       "allowedValues": [
-        "functionApp",
-        "appService"
+        "AppService",
+        "FunctionApp"
       ]
     },
-    "applicationIdUri": {
+    "appServiceApplicationIdUri": {
       "type": "string",
-      "defaultValue": "[concat('applicationIdUri', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "backendResourceName": {
       "type": "string"
@@ -32,24 +32,29 @@
       "type": "string"
     },
     "operationTemplateParameters": {
-      "type": "array"
+      "type": "array",
+      "defaultValue": []
     },
     "operationPolicyRewriteUri": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "operationPolicyQueryParameterName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "operationPolicyQueryParameterAction": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "operationPolicyQueryParameterValue": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
     "basePolicy": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('backendResourceName'),'\" />')]",
-    "managedIdentityPolicy": "[if(equals(parameters('apimBackendType'), 'appService'), concat(variables('basePolicy'), '\r\n    <authentication-managed-identity resource=\"', parameters('applicationIdUri'),'\" />'), variables('basePolicy'))]",
+    "managedIdentityPolicy": "[if(equals(parameters('apimBackendType'), 'AppService'), concat(variables('basePolicy'), '\r\n    <authentication-managed-identity resource=\"', parameters('appServiceApplicationIdUri'),'\" />'), variables('basePolicy'))]",
     "rewriteUriPolicy": "[if(not(empty(parameters('operationPolicyRewriteUri'))), concat(variables('managedIdentityPolicy'), '\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />'), variables('managedIdentityPolicy'))]",
     "queryParameterPolicy": "[if(not(empty(parameters('operationPolicyQueryParameterName'))),concat(variables('rewriteUriPolicy'), '\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>'), variables('rewriteUriPolicy'))]",
     "finalPolicy": "[concat(variables('queryParameterPolicy'), '\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
