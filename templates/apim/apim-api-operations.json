@@ -58,7 +58,6 @@
     "rewriteUriPolicy": "[if(not(empty(parameters('operationPolicyRewriteUri'))), concat(variables('managedIdentityPolicy'), '\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />'), variables('managedIdentityPolicy'))]",
     "queryParameterPolicy": "[if(not(empty(parameters('operationPolicyQueryParameterName'))),concat(variables('rewriteUriPolicy'), '\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>'), variables('rewriteUriPolicy'))]",
     "finalPolicy": "[concat(variables('queryParameterPolicy'), '\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
-
   },
   "resources": [
     {
