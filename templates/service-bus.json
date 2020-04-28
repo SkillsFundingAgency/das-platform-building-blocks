@@ -26,16 +26,34 @@
       "metadata": {
         "description": "Names of service bus queues to create within the namespace"
       }
+    },
+    "serviceBusTopics": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Names of service bus topics to create within the namespace"
+      }
+    },
+    "serviceBusSubscriptions": {
+      "type": "array",
+      "defaultValue": [
+      ],
+      "metadata": {
+        "description": "Names of service bus topics to create within the namespace"
+      }
     }
   },
   "variables": {
-    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]"
+    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]",
+    "deployTopics": "[greater(length(parameters('serviceBusTopics')), 0)]",
+    "deploySubscriptions": "[greater(length(parameters('serviceBusSubscriptions')), 0)]"
   },
   "resources": [
     {
       "apiVersion": "2017-04-01",
       "name": "[parameters('serviceBusNamespaceName')]",
       "type": "Microsoft.ServiceBus/namespaces",
+      "properties": {},
       "location": "[resourceGroup().location]",
       "sku": {
         "name": "[parameters('serviceBusSku')]"
@@ -83,6 +101,34 @@
       "copy": {
         "name": "sbQueueCopy",
         "count": "[if(variables('deployQueues'), length(parameters('serviceBusQueues')), 1)]"
+      }
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "condition": "[variables('deployTopics')]",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusTopics')[copyIndex()])]",
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "properties": {
+      },
+      "dependsOn": [
+        "[parameters('serviceBusNamespaceName')]"
+      ],
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "condition": "[variables('deploySubscriptions')]",
+          "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusSubscriptions')[copyIndex()])]",
+          "type": "Subscriptions",
+          "dependsOn": [
+            "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusTopics')[copyIndex()])]"
+          ],
+          "properties": {
+          }
+        }
+      ],
+      "copy": {
+        "name": "sbTopicCopy",
+        "count": "[if(variables('deployTopics'), length(parameters('serviceBusTopics')), 1)]"
       }
     }
   ],
