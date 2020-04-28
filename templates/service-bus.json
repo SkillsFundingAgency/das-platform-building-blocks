@@ -124,7 +124,7 @@
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "copy": {
         "name": "sbSubscriptionCopy",
-        "count": "[length(parameters('serviceBusSubscriptions'))]"
+        "count": "[if(variables('deploySubscriptions'), length(parameters('serviceBusSubscriptions')), 1)]"
       },
       "properties": {},
       "dependsOn": [
