@@ -80,7 +80,7 @@
       "apiVersion": "2019-01-01",
       "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'),'/policy')]",
       "dependsOn": [
-        "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]"
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
       ],
       "properties": {
         "value": "[variables('finalPolicy')]",
