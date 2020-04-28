@@ -2,53 +2,32 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiManagementServiceName": {
-      "type": "string"
-    },
-    "productName": {
-      "type": "string"
-    },
-    "apiResourceName": {
+    "apimName": {
       "type": "string"
     },
     "apiDisplayName": {
       "type": "string"
     },
-    "apiDescription": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "apiPath": {
-      "type": "string"
-    },
-    "apiSwaggerUrl": {
+    "apiUrlSuffix": {
       "type": "string"
     }
   },
   "variables": {},
   "resources": [
     {
-      "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('apiResourceName'))]",
       "type": "Microsoft.ApiManagement/service/apis",
       "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'))]",
+      "dependsOn": [],
       "properties": {
-        "description": "[parameters('apiDescription')]",
         "displayName": "[parameters('apiDisplayName')]",
-        "path": "[parameters('apiPath')]",
-        "contentFormat": "swagger-link-json",
-        "contentValue": "[parameters('apiSwaggerUrl')]",
+        "apiRevision": "1",
+        "path": "[parameters('apiUrlSuffix')]",
         "protocols": [
           "https"
-        ]
+        ],
+        "isCurrent": true
       }
-    },
-    {
-      "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productName'), '/', parameters('apiResourceName'))]",
-      "type": "Microsoft.ApiManagement/service/products/apis",
-      "apiVersion": "2019-01-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiResourceName'))]"
-      ]
     }
   ],
   "outputs": {}

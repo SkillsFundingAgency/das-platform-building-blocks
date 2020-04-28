@@ -1,0 +1,92 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "apiUrlSuffix": {
+      "type": "string"
+    },
+    "apimBackendType": {
+      "type": "string",
+      "allowedValues": [
+        "AppService",
+        "FunctionApp"
+      ]
+    },
+    "appServiceApplicationIdUri": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "backendResourceName": {
+      "type": "string"
+    },
+    "operationName": {
+      "type": "string"
+    },
+    "operationMethod": {
+      "type": "string"
+    },
+    "operationUrlTemplate": {
+      "type": "string"
+    },
+    "operationTemplateParameters": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "operationPolicyRewriteUri": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "operationPolicyQueryParameterName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "operationPolicyQueryParameterAction": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "operationPolicyQueryParameterValue": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "basePolicy": "[concat('<policies>\r\n  <inbound>\r\n    <base />\r\n    <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('backendResourceName'),'\" />')]",
+    "managedIdentityPolicy": "[if(equals(parameters('apimBackendType'), 'AppService'), concat(variables('basePolicy'), '\r\n    <authentication-managed-identity resource=\"', parameters('appServiceApplicationIdUri'),'\" />'), variables('basePolicy'))]",
+    "rewriteUriPolicy": "[if(not(empty(parameters('operationPolicyRewriteUri'))), concat(variables('managedIdentityPolicy'), '\r\n    <rewrite-uri template=\"', parameters('operationPolicyRewriteUri'),'\" />'), variables('managedIdentityPolicy'))]",
+    "queryParameterPolicy": "[if(not(empty(parameters('operationPolicyQueryParameterName'))),concat(variables('rewriteUriPolicy'), '\r\n    <set-query-parameter name=\"', parameters('operationPolicyQueryParameterName'), '\" exists-action=\"', parameters('operationPolicyQueryParameterAction'),'\">\r\n      <value>', parameters('operationPolicyQueryParameterValue'), '</value>\r\n    </set-query-parameter>'), variables('rewriteUriPolicy'))]",
+    "finalPolicy": "[concat(variables('queryParameterPolicy'), '\r\n  </inbound>\r\n  <backend>\r\n    <base />\r\n  </backend>\r\n  <outbound>\r\n    <base />\r\n  </outbound>\r\n  <on-error>\r\n    <base />\r\n  </on-error>\r\n</policies>')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "displayName": "[parameters('operationName')]",
+        "method": "[parameters('operationMethod')]",
+        "urlTemplate": "[parameters('operationUrlTemplate')]",
+        "templateParameters": "[parameters('operationTemplateParameters')]",
+        "responses": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'),'/policy')]",
+      "dependsOn": [
+        "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]"
+      ],
+      "properties": {
+        "value": "[variables('finalPolicy')]",
+        "format": "xml"
+      }
+    }
+  ],
+  "outputs": {}
+}
