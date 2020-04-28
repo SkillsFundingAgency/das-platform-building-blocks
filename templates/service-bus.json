@@ -108,8 +108,7 @@
       "condition": "[variables('deployTopics')]",
       "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deployTopics'), parameters('serviceBusTopics')[copyIndex()], 'placeholder'))]",
       "type": "Microsoft.ServiceBus/namespaces/topics",
-      "properties": {
-      },
+      "properties": {},
       "dependsOn": [
         "[parameters('serviceBusNamespaceName')]"
       ],
@@ -121,14 +120,13 @@
     {
       "apiVersion": "2017-04-01",
       "condition": "[variables('deploySubscriptions')]",
-      "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription)]",
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deploySubscriptions'), concat(parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription), 'placeholder'))]",
       "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
       "copy": {
         "name": "sbSubscriptionCopy",
         "count": "[length(parameters('serviceBusSubscriptions'))]"
       },
-      "properties": {
-      },
+      "properties": {},
       "dependsOn": [
         "sbTopicCopy"
       ]
