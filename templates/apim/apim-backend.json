@@ -18,7 +18,10 @@
     },
     "appServiceName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('appService', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Name of App Service with a defaultValue as needed for deployment name"
+      }
     },
     "functionAppResourceGroup": {
       "type": "string",
@@ -26,7 +29,10 @@
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "[concat('functionApp', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Name of Function App with a defaultValue as needed for deployment name"
+      }
     },
     "functionAppKeyName": {
       "type": "string",
