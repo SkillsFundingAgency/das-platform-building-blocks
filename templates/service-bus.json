@@ -113,19 +113,6 @@
       "dependsOn": [
         "[parameters('serviceBusNamespaceName')]"
       ],
-      "resources": [
-        {
-          "apiVersion": "2017-04-01",
-          "condition": "[variables('deploySubscriptions')]",
-          "name": "[concat(parameters('serviceBusNamespaceName'), '/topics/',  if(variables('deploySubscriptions'), parameters('serviceBusSubscriptions')[copyIndex()], 'placeholder'))]",
-          "type": "Subscriptions",
-          "dependsOn": [
-            "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusTopics')[copyIndex()])]"
-          ],
-          "properties": {
-          }
-        }
-      ],
       "copy": {
         "name": "sbTopicCopy",
         "count": "[if(variables('deployTopics'), length(parameters('serviceBusTopics')), 1)]"
