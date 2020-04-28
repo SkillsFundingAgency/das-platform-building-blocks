@@ -36,10 +36,9 @@
     },
     "serviceBusSubscriptions": {
       "type": "array",
-      "defaultValue": [
-      ],
+      "defaultValue": [],
       "metadata": {
-        "description": "Names of service bus topics to create within the namespace"
+        "description": "Names of service bus subscriptions to create within the topic"
       }
     }
   },
