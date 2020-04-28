@@ -18,7 +18,7 @@
     },
     "appServiceName": {
       "type": "string",
-      "defaultValue": "[concat('appService', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "functionAppResourceGroup": {
       "type": "string",
@@ -26,7 +26,7 @@
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": "[concat('functionApp', uniqueString(resourceGroup().id))]"
+      "defaultValue": ""
     },
     "functionAppKeyName": {
       "type": "string",
