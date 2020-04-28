@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "apimBackendType": {
+      "type": "string",
+      "allowedValues": [
+        "AppService",
+        "FunctionApp"
+      ]
+    },
+    "appServiceResourceGroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "appServiceName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "functionAppResourceGroup": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "functionAppName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "functionAppKeyName": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "appServiceResourceId": "[resourceId(parameters('appServiceResourceGroup'), 'Microsoft.Web/sites', parameters('appServiceName'))]",
+    "functionAppResourceId": "[resourceId(parameters('functionAppResourceGroup'),'Microsoft.Web/sites', parameters('functionAppName'))]"
+  },
+  "resources": [
+    {
+      "condition": "[equals(parameters('apimBackendType'), 'AppService')]",
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
+      "dependsOn": [],
+      "properties": {
+        "url": "[concat('https://', parameters('appServiceName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com', variables('appServiceResourceId'))]"
+      }
+    },
+    {
+      "condition": "[equals(parameters('apimBackendType'), 'FunctionApp')]",
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01",
+      "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "url": "[concat('https://', parameters('functionAppName'), '.azurewebsites.net/api')]",
+        "protocol": "http",
+        "resourceId": "[concat('https://management.azure.com', variables('functionAppResourceId'))]",
+        "credentials": {
+          "header": {
+            "x-functions-key": [
+              "[if(equals(parameters('apimBackendType'), 'FunctionApp'), listkeys(concat(variables('functionAppResourceId'), '/host/default/'),'2016-08-01').functionKeys[parameters('functionAppKeyName')], json('null'))]"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
