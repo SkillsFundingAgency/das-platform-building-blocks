@@ -26,26 +26,10 @@
       "metadata": {
         "description": "Names of service bus queues to create within the namespace"
       }
-    },
-    "serviceBusTopics": {
-      "type": "array",
-      "defaultValue": [],
-      "metadata": {
-        "description": "Names of service bus topics to create within the namespace"
-      }
-    },
-    "serviceBusSubscriptions": {
-      "type": "array",
-      "defaultValue": [],
-      "metadata": {
-        "description": "Names of service bus subscriptions to create within the topic"
-      }
     }
   },
   "variables": {
-    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]",
-    "deployTopics": "[greater(length(parameters('serviceBusTopics')), 0)]",
-    "deploySubscriptions": "[greater(length(parameters('serviceBusSubscriptions')), 0)]"
+    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]"
   },
   "resources": [
     {
@@ -101,34 +85,6 @@
         "name": "sbQueueCopy",
         "count": "[if(variables('deployQueues'), length(parameters('serviceBusQueues')), 1)]"
       }
-    },
-    {
-      "apiVersion": "2017-04-01",
-      "condition": "[variables('deployTopics')]",
-      "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deployTopics'), parameters('serviceBusTopics')[copyIndex()], 'placeholder'))]",
-      "type": "Microsoft.ServiceBus/namespaces/topics",
-      "properties": {},
-      "dependsOn": [
-        "[parameters('serviceBusNamespaceName')]"
-      ],
-      "copy": {
-        "name": "sbTopicCopy",
-        "count": "[if(variables('deployTopics'), length(parameters('serviceBusTopics')), 1)]"
-      }
-    },
-    {
-      "apiVersion": "2017-04-01",
-      "condition": "[variables('deploySubscriptions')]",
-      "name": "[concat(parameters('serviceBusNamespaceName'), '/', if(variables('deploySubscriptions'), concat(parameters('serviceBusSubscriptions')[copyIndex()].topicname, '/', parameters('serviceBusSubscriptions')[copyIndex()].subscription), 'placeholder/placeholder'))]",
-      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
-      "copy": {
-        "name": "sbSubscriptionCopy",
-        "count": "[if(variables('deploySubscriptions'), length(parameters('serviceBusSubscriptions')), 1)]"
-      },
-      "properties": {},
-      "dependsOn": [
-        "sbTopicCopy"
-      ]
     }
   ],
   "outputs": {
