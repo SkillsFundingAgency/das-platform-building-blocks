@@ -9,9 +9,9 @@
       }
     },
     "serviceBusTopicName": {
-      "type": "array",
+      "type": "string",
       "metadata": {
-        "description": "Names of service bus topics to create within the namespace"
+        "description": "Name of service bus topic to create within the namespace"
       }
     },
     "serviceBusSubscriptions": {
