@@ -16,7 +16,7 @@
   "resources": [
     {
       "type": "Microsoft.ApiManagement/service/apis",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'))]",
       "dependsOn": [],
       "properties": {
