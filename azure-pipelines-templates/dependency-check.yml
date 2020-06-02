@@ -1,0 +1,9 @@
+steps:
+- task: esfadevops.DependencyCheck.custom-dependency-check.DependencyCheck@0
+  displayName: 'Dependency Check'
+  inputs:
+    workspaceId: '$(LogAnalyticsWorkspaceId)'
+    sharedKey: '$(LogAnalyticsWorkspaceKey)'
+    enableSelfHostedDatabase: true
+    databaseEndpoint: '$(DependencyCheckDatabaseEndpoint)'
+    excludedScanPathPatterns: '$(DependencyCheckExcludedScanPathPatterns)'
