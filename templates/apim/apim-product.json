@@ -29,7 +29,7 @@
     {
       "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('productResourceName'))]",
       "type": "Microsoft.ApiManagement/service/products",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "properties": {
         "displayName": "[parameters('productDisplayName')]",
         "description": "[parameters('productDescription')]",

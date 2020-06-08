@@ -47,7 +47,7 @@
     {
       "condition": "[equals(parameters('apimBackendType'), 'AppService')]",
       "type": "Microsoft.ApiManagement/service/backends",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('appServiceName'))]",
       "dependsOn": [],
       "properties": {
@@ -59,7 +59,7 @@
     {
       "condition": "[equals(parameters('apimBackendType'), 'FunctionApp')]",
       "type": "Microsoft.ApiManagement/service/backends",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('functionAppName'))]",
       "dependsOn": [
       ],

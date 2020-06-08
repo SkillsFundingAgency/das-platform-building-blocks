@@ -62,7 +62,7 @@
   "resources": [
     {
       "type": "Microsoft.ApiManagement/service/apis/operations",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'))]",
       "dependsOn": [
       ],
@@ -77,7 +77,7 @@
     },
     {
       "type": "Microsoft.ApiManagement/service/apis/operations/policies",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2019-12-01",
       "name": "[concat(parameters('apimName'), '/', parameters('apiUrlSuffix'), '/', parameters('operationName'),'/policy')]",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('apimName'), parameters('apiUrlSuffix'), parameters('operationName'))]"
