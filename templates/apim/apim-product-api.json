@@ -17,7 +17,7 @@
   "resources": [
     {
       "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'), '/', parameters('apiUrlSuffix'))]",
-      "type": "Microsoft.ApiManagement/service/products",
+      "type": "Microsoft.ApiManagement/service/products/apis",
       "apiVersion": "2019-12-01"
     }
   ],
