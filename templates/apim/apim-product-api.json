@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "productResourceName": {
+      "type": "string"
+    },
+    "apiUrlSuffix": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'), '/', parameters('apiUrlSuffix'))]",
+      "type": "Microsoft.ApiManagement/service/products",
+      "apiVersion": "2019-12-01"
+    }
+  ],
+  "outputs": {
+  }
+}
