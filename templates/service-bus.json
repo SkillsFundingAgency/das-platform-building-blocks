@@ -36,6 +36,7 @@
       "apiVersion": "2017-04-01",
       "name": "[parameters('serviceBusNamespaceName')]",
       "type": "Microsoft.ServiceBus/namespaces",
+      "properties": {},
       "location": "[resourceGroup().location]",
       "sku": {
         "name": "[parameters('serviceBusSku')]"
