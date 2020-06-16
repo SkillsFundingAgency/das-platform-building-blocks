@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "apiManagementServiceName": {
+    "apimName": {
       "type": "string"
     },
     "groupResourceName": {
@@ -21,7 +21,7 @@
   "variables": {},
   "resources": [
     {
-      "name": "[concat(parameters('apiManagementServiceName'), '/', parameters('groupResourceName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('groupResourceName'))]",
       "type": "Microsoft.ApiManagement/service/groups",
       "apiVersion": "2019-12-01",
       "properties": {
