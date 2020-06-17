@@ -11,7 +11,7 @@
     "logAnalyticsWorkspaceName": {
       "type": "string"
     },
-    "logRetentionDays": {
+    "logsRetentionDays": {
       "type": "int",
       "defaultValue": 30
     }
@@ -30,7 +30,7 @@
             "enabled": true,
             "retentionPolicy": {
               "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
+              "days": "[parameters('logsRetentionDays')]"
             }
           }
         ]
