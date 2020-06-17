@@ -106,7 +106,7 @@
     "vnetConfiguration": {
       "subnetResourceId": "[variables('subnetResourceId')]"
     },
-    "apimServiceIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    "apimManagedIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
   "resources": [
     {
@@ -147,8 +147,8 @@
           "accessPolicies": {
             "value": [
               {
-                "tenantId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').tenantId]",
-                "objectId": "[reference(variables('apimServiceIdentityResourceId'), '2015-08-31-PREVIEW').principalId]",
+                "tenantId": "[reference(variables('apimManagedIdentityResourceId'), '2015-08-31-PREVIEW').tenantId]",
+                "objectId": "[reference(variables('apimManagedIdentityResourceId'), '2015-08-31-PREVIEW').principalId]",
                 "permissions": {
                   "secrets": [
                     "Get"
