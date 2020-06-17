@@ -50,7 +50,7 @@
       "type": "Microsoft.ApiManagement/service/products/groups",
       "apiVersion": "2019-12-01",
       "copy": {
-        "name": "productGroupCopy",
+        "name": "product-group-copy",
         "count": "[if(variables('deployProductGroups'), length(parameters('productGroups')), 1)]"
       },
       "properties": {
