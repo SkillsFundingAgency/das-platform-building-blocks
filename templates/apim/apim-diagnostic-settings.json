@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "omsWorkspaceResourceGroup": {
+      "type": "string"
+    },
+    "omsWorkspaceName": {
+      "type": "string"
+    },
+    "logRetentionDays": {
+      "type": "int",
+      "defaultValue": 30
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('apimName'), '/', 'Microsoft.Insights/service')]",
+      "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "properties": {
+        "workspaceId": "[resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+        "logs": [
+          {
+            "category": "GatewayLogs",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": true,
+              "days": "[parameters('logRetentionDays')]"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}

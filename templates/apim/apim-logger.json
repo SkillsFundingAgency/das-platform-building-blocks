@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "loggerName": {
+      "type": "string"
+    },
+    "loggerType": {
+      "type": "string",
+      "allowedValues": [
+        "azureEventHub",
+        "applicationInsights"
+      ]
+    },
+    "loggerCredentials": {
+      "type": "object"
+    },
+    "loggerResourceId": {
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('apimName'), '/', parameters('loggerName'))]",
+      "type": "Microsoft.ApiManagement/service/loggers",
+      "apiVersion": "2019-12-01",
+      "properties": {
+        "loggerType": "[parameters('loggerType')]",
+        "description": "[parameters('loggerName')]",
+        "credentials": "[parameters('loggerCredentials')]",
+        "resourceId": "[parameters('loggerResourceId')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('apimName'), '/applicationinsights')]",
+      "type": "Microsoft.ApiManagement/service/diagnostics",
+      "apiVersion": "2019-12-01",
+      "properties": {
+        "alwaysLog": "allErrors",
+        "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('apimName'), parameters('loggerName'))]",
+        "sampling": {
+          "samplingType": "fixed",
+          "percentage": 50
+        }
+      },
+      "dependsOn": [
+        "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apimName')), '/loggers/', parameters('loggerName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

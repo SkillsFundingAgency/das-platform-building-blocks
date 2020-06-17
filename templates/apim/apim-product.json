@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "productResourceName": {
+      "type": "string"
+    },
+    "productDisplayName": {
+      "type": "string"
+    },
+    "productDescription": {
+      "type": "string"
+    },
+    "productSubscriptionRequired": {
+      "type": "bool"
+    },
+    "productApprovalRequired": {
+      "type": "bool"
+    },
+    "productState": {
+      "type": "string"
+    },
+    "productGroups": {
+      "type": "array",
+      "defaultValue": []
+    }
+  },
+  "variables": {
+    "deployProductGroups": "[greater(length(parameters('productGroups')), 0)]"
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
+      "type": "Microsoft.ApiManagement/service/products",
+      "apiVersion": "2019-12-01",
+      "properties": {
+        "displayName": "[parameters('productDisplayName')]",
+        "description": "[parameters('productDescription')]",
+        "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
+        "approvalRequired": "[parameters('productApprovalRequired')]",
+        "state": "[parameters('productState')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('apimName'), '/', if(variables('deployProductGroups'), concat(parameters('productResourceName'), '/', parameters('productGroups')[copyIndex()]), 'placeholder/placeholder'))]",
+      "condition": "[variables('deployProductGroups')]",
+      "type": "Microsoft.ApiManagement/service/products/groups",
+      "apiVersion": "2019-12-01",
+      "copy": {
+        "name": "product-group-copy",
+        "count": "[if(variables('deployProductGroups'), length(parameters('productGroups')), 1)]"
+      },
+      "properties": {
+      },
+      "dependsOn": [
+        "[parameters('productResourceName')]"
+      ]
+    }
+  ],
+  "outputs": {}
+}
