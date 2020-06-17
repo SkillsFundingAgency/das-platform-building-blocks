@@ -5,13 +5,13 @@
     "apimName": {
       "type": "string"
     },
-    "logAnalyticsWorkspaceResourceGroup": {
+    "logAnalyticsWorkspaceResourceGroupName": {
       "type": "string"
     },
     "logAnalyticsWorkspaceName": {
       "type": "string"
     },
-    "logRetentionDays": {
+    "logsRetentionDays": {
       "type": "int",
       "defaultValue": 30
     }
@@ -23,14 +23,14 @@
       "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "properties": {
-        "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+        "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'),'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
         "logs": [
           {
             "category": "GatewayLogs",
             "enabled": true,
             "retentionPolicy": {
               "enabled": true,
-              "days": "[parameters('logRetentionDays')]"
+              "days": "[parameters('logsRetentionDays')]"
             }
           }
         ]
