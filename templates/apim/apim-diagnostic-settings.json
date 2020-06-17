@@ -5,7 +5,7 @@
     "apimName": {
       "type": "string"
     },
-    "logAnalyticsWorkspaceResourceGroupName": {
+    "logAnalyticsWorkspaceResourceGroup": {
       "type": "string"
     },
     "logAnalyticsWorkspaceName": {
@@ -23,7 +23,7 @@
       "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
       "apiVersion": "2017-05-01-preview",
       "properties": {
-        "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'),'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+        "workspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
         "logs": [
           {
             "category": "GatewayLogs",
