@@ -2,10 +2,7 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "resourceEnvironmentName": {
-      "type": "string"
-    },
-    "serviceName": {
+    "apimName": {
       "type": "string"
     },
     "apimInitialDeploy": {
@@ -98,21 +95,18 @@
   },
   "variables": {
     "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-    "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
-    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-    "apimName": "[concat(variables('resourceNamePrefix'), '-apim')]",
     "deployCustomHostnames": "[and(greater(length(parameters('portalKeyVaultCertificateName')), 0), greater(length(parameters('gatewayKeyVaultCertificateName')), 0))]",
     "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "subnetResourceId": "[concat(resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('subnetName'))]",
     "vnetConfiguration": {
       "subnetResourceId": "[variables('subnetResourceId')]"
     },
-    "apimManagedIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    "apimManagedIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
   },
   "resources": [
     {
       "apiVersion": "2019-12-01",
-      "name": "[variables('apimName')]",
+      "name": "[parameters('apimName')]",
       "condition": "[parameters('apimInitialDeploy')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
@@ -132,7 +126,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(variables('apimName'),'-keyvault-accesspolicy')]",
+      "name": "[concat(parameters('apimName'),'-keyvault-accesspolicy')]",
       "resourceGroup": "[parameters('keyVaultResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
       "condition": "[variables('deployCustomHostnames')]",
@@ -162,23 +156,23 @@
         }
       },
       "dependsOn": [
-        "[variables('apimName')]"
+        "[parameters('apimName')]"
       ]
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(variables('apimName'),'-with-hostname-configurations')]",
+      "name": "[concat(parameters('apimName'),'-with-hostname-configurations')]",
       "type": "Microsoft.Resources/deployments",
       "condition": "[variables('deployCustomHostnames')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(variables('apimDeploymentUrlBase'),'apim-service-with-hostnames.json')]",
+          "uri": "[concat(variables('deploymentUrlBase'),'apim/apim-service-with-hostnames.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "apimName": {
-            "value": "[variables('apimName')]"
+            "value": "[parameters('apimName')]"
           },
           "publisherEmail": {
             "value": "[parameters('publisherEmail')]"
@@ -213,7 +207,7 @@
         }
       },
       "dependsOn": [
-        "[concat(variables('apimName'),'-keyvault-accesspolicy')]"
+        "[concat(parameters('apimName'),'-keyvault-accesspolicy')]"
       ]
     }
   ]
