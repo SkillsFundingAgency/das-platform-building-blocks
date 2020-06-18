@@ -101,6 +101,7 @@
     "apimDeploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/api-m/templates/apim/",
     "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
     "apimName": "[concat(variables('resourceNamePrefix'), '-apim')]",
+    "deployCustomHostnames": "[and(greater(length(parameters('portalKeyVaultCertificateName')), 0), greater(length(parameters('gatewayKeyVaultCertificateName')), 0))]",
     "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "subnetResourceId": "[concat(resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('subnetName'))]",
     "vnetConfiguration": {
@@ -134,6 +135,7 @@
       "name": "[concat(variables('apimName'),'-keyvault-accesspolicy')]",
       "resourceGroup": "[parameters('keyVaultResourceGroup')]",
       "type": "Microsoft.Resources/deployments",
+      "condition": "[variables('deployCustomHostnames')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -167,6 +169,7 @@
       "apiVersion": "2017-05-10",
       "name": "[concat(variables('apimName'),'-with-hostname-configurations')]",
       "type": "Microsoft.Resources/deployments",
+      "condition": "[variables('deployCustomHostnames')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -193,13 +196,13 @@
             "value": "[parameters('portalHostname')]"
           },
           "portalKeyVaultSecretId": {
-            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion, json('null'))]"
           },
           "gatewayHostname": {
             "value": "[parameters('gatewayHostname')]"
           },
           "gatewayKeyVaultSecretId": {
-            "value": "[reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion, json('null'))]"
           },
           "virtualNetworkType": {
             "value": "[parameters('virtualNetworkType')]"
