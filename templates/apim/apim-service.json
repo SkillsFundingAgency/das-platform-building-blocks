@@ -8,7 +8,7 @@
     "serviceName": {
       "type": "string"
     },
-    "initialApimDeploy": {
+    "apimInitialDeploy": {
       "type": "bool"
     },
     "publisherEmail": {
@@ -112,7 +112,7 @@
     {
       "apiVersion": "2019-12-01",
       "name": "[variables('apimName')]",
-      "condition": "[parameters('initialApimDeploy')]",
+      "condition": "[parameters('apimInitialDeploy')]",
       "type": "Microsoft.ApiManagement/service",
       "location": "[resourceGroup().location]",
       "sku": {
