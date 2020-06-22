@@ -100,8 +100,7 @@
     "subnetResourceId": "[concat(resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('subnetName'))]",
     "vnetConfiguration": {
       "subnetResourceId": "[variables('subnetResourceId')]"
-    },
-    "apimManagedIdentityResourceId": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('apimName')),'/providers/Microsoft.ManagedIdentity/Identities/default')]"
+    }
   },
   "resources": [
     {
@@ -126,44 +125,9 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[concat(parameters('apimName'),'-keyvault-accesspolicy')]",
-      "resourceGroup": "[parameters('keyVaultResourceGroup')]",
-      "type": "Microsoft.Resources/deployments",
-      "condition": "[variables('deployCustomHostnames')]",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('deploymentUrlBase'),'keyvault-accesspolicies.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[parameters('keyvaultName')]"
-          },
-          "accessPolicies": {
-            "value": [
-              {
-                "tenantId": "[reference(variables('apimManagedIdentityResourceId'), '2015-08-31-PREVIEW').tenantId]",
-                "objectId": "[reference(variables('apimManagedIdentityResourceId'), '2015-08-31-PREVIEW').principalId]",
-                "permissions": {
-                  "secrets": [
-                    "Get"
-                  ]
-                }
-              }
-            ]
-          }
-        }
-      },
-      "dependsOn": [
-        "[parameters('apimName')]"
-      ]
-    },
-    {
-      "apiVersion": "2017-05-10",
       "name": "[concat(parameters('apimName'),'-with-hostname-configurations')]",
       "type": "Microsoft.Resources/deployments",
-      "condition": "[variables('deployCustomHostnames')]",
+      "condition": "[and(variables('deployCustomHostnames'), not(parameters('apimInitialDeploy')))]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
