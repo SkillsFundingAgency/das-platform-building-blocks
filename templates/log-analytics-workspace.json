@@ -5,7 +5,7 @@
     "logAnalyticsWorkspaceName": {
       "type": "string"
     },
-    "logAnalyticsWorkspaceSkuName": {
+    "logAnalyticsWorkspaceSku": {
       "type": "string",
       "allowedValues": [
         "PerGB2018",
@@ -44,7 +44,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "sku": {
-          "name": "[parameters('logAnalyticsWorkspaceSkuName')]"
+          "name": "[parameters('logAnalyticsWorkspaceSku')]"
         },
         "retentionInDays": "[parameters('dataRetentionDays')]",
         "publicNetworkAccessForIngestion": "[parameters('publicNetworkAccessForIngestion')]",
