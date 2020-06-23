@@ -169,10 +169,7 @@
             "value": "[variables('subnetResourceId')]"
           }
         }
-      },
-      "dependsOn": [
-        "[concat(parameters('apimName'),'-keyvault-accesspolicy')]"
-      ]
+      }
     }
   ]
 }
