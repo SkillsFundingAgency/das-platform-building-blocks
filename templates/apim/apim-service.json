@@ -169,9 +169,7 @@
             "value": "[variables('subnetResourceId')]"
           }
         }
-      },
-      "dependsOn": [
-      ]
+      }
     }
   ]
 }
