@@ -171,7 +171,6 @@
         }
       },
       "dependsOn": [
-        "[concat(parameters('apimName'),'-keyvault-accesspolicy')]"
       ]
     }
   ]
