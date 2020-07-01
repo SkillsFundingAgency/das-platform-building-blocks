@@ -72,6 +72,14 @@
     "gatewayKeyVaultSecretId": {
       "type": "string",
       "defaultValue": ""
+    },
+    "managementHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "managementKeyVaultSecretId": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -102,6 +110,12 @@
             "type": "Proxy",
             "hostName": "[parameters('gatewayHostname')]",
             "keyVaultId": "[parameters('gatewayKeyVaultSecretId')]",
+            "negotiateClientCertificate": false
+          },
+          {
+            "type": "Management",
+            "hostName": "[parameters('managementHostname')]",
+            "keyVaultId": "[parameters('managementKeyVaultSecretId')]",
             "negotiateClientCertificate": false
           }
         ],
