@@ -31,7 +31,21 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "An array of delegations. Object referance can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#Delegation"
+        "description": "An array of delegations. Object reference can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#Delegation"
+      }
+    },
+    "routeTable": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "An object of the route table. Object reference can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#routetable-object"
+      }
+    },
+    "networkSecurityGroup": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "An object of the Network Security Group. Object reference can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#NetworkSecurityGroup"
       }
     }
   },
@@ -45,18 +59,27 @@
         }
       }
     ],
-    "serviceEndPointsEmpty": []
+    "serviceEndPointsEmpty": [],
+    "networkSecurityGroupSubnetProperty": {
+      "networkSecurityGroup": "[parameters('networkSecurityGroup')]"
+    },
+    "routeTableSubnetProperty": {
+      "routeTable": "[parameters('routeTable')]"
+    },
+    "baseSubnetProperties": {
+      "addressPrefix": "[parameters('subnetAddressPrefix')]",
+      "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
+      "delegations": "[parameters('delegations')]"
+    },
+    "networkSecurityGroupIncludedSubnetProperties": "[if(empty(parameters('networkSecurityGroup')), variables('baseSubnetProperties'), union(variables('baseSubnetProperties'), variables('networkSecurityGroupSubnetProperty')))]",
+    "subnetProperties": "[if(empty(parameters('routeTable')), variables('networkSecurityGroupIncludedSubnetProperties'), union(variables('networkSecurityGroupIncludedSubnetProperties'), variables('routeTableSubnetProperty')))]"
   },
   "resources": [
     {
       "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2018-11-01",
-      "properties": {
-        "addressPrefix": "[parameters('subnetAddressPrefix')]",
-        "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
-        "delegations": "[parameters('delegations')]"
-      }
+      "properties": "[variables('subnetProperties')]"
     }
   ],
   "outputs": {
