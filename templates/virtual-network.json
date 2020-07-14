@@ -13,12 +13,6 @@
       "metadata": {
         "description": "CIDR for the address space of the ARM Vnet"
       }
-    },
-    "subnetConfiguration": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of objects in the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks#Subnet"
-      }
     }
   },
   "variables": {},
@@ -33,8 +27,7 @@
           "addressPrefixes": [
             "[parameters('armVnetAddressSpaceCIDR')]"
           ]
-        },
-        "subnets": "[parameters('subnetConfiguration')]"
+        }
       }
     }
   ],
