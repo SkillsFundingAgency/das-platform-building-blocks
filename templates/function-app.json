@@ -36,6 +36,13 @@
       "metadata": {
         "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
       }
+    },
+    "subnetResourceId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource ID of the subnet used for vNet integration"
+      }
     }
   },
   "variables": {
@@ -74,6 +81,20 @@
       "properties": {
         "sslState": "SniEnabled",
         "thumbprint": "[parameters('certificateThumbprint')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
+      "name": "[concat(parameters('functionAppName'), '/virtualNetwork')]",
+      "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "subnetResourceId": "[parameters('subnetResourceId')]",
+        "swiftSupported": true
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
