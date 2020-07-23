@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apimName": {
+            "type": "string"
+        },
+        "subscriptionName": {
+            "type": "string"
+        },
+        "subscriptionScope": {
+            "type": "string",
+            "metadata": {
+                "description": "Scope like /products/{productId} or /apis or /apis/{apiId}",
+                "example": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/das-at-apim-rg/providers/Microsoft.ApiManagement/service/das-at-shared-apim/products/ProductFoo"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('apimName'), '/', parameters('subscriptionName'))]",
+            "type": "Microsoft.ApiManagement/service/subscriptions",
+            "apiVersion": "2019-12-01",
+            "properties": {
+                "scope": "[parameters('subscriptionScope')]",
+                "displayName": "[parameters('subscriptionName')]",
+                "state": "active"
+            }
+        }
+    ],
+    "outputs": {}
+}
