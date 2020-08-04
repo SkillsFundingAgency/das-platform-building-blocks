@@ -1,0 +1,12 @@
+steps:
+- task: esfadevops.DependencyCheck.custom-dependency-check.DependencyCheck@2
+  displayName: 'Dependency Check'
+  inputs:
+    enableVulnerabilityFilesMaintenance: false
+    logAnalyticsWorkspaceId: '$(LogAnalyticsWorkspaceId)'
+    logAnalyticsWorkspaceKey: '$(LogAnalyticsWorkspaceKey)'
+    enableSelfHostedVulnerabilityFiles: true
+    readStorageAccountContainerSasUri: '$(DependencyCheckSasUri)'
+    excludedScanPathPatterns: '$(DependencyCheckExcludedScanPathPatterns)'
+    severityThreshold: '$(DependencyCheckSeverityThreshold)'
+    dependencyCheckDashboardUrl: '$(DependencyCheckDashboardUrl)'
