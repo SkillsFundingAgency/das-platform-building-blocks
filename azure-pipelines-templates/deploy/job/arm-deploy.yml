@@ -25,7 +25,7 @@ jobs:
           displayName: 'Create and Tag Resource Group'
           inputs:
             azureSubscription: ${{ parameters.AzureSubscription }}
-            ScriptPath: $(System.ArtifactsDirectory)/Infrastructure-Scripts/Set-AzResourceGroupTags.ps1
+            ScriptPath: $(System.ArtifactsDirectory)/Set-AzResourceGroupTags.ps1
             ScriptArguments: '-ResourceGroupName "$(ResourceGroupName)" -Tags "$(Tags)"'
             azurePowerShellVersion: LatestVersion
 
