@@ -5,7 +5,7 @@ parameters:
   ConfigSchemaPath: ''
 
 jobs:
-- deployment: DeployInfrastructure_${{ parameters.Environment }}
+- deployment: DeployInfrastructure
   pool:
     name: DAS - Continuous Deployment
   environment: ${{ parameters.Environment }}

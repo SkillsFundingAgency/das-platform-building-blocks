@@ -5,7 +5,7 @@ parameters:
   DeploymentPackagePath: ''
 
 jobs:
-- deployment: DeployApp_${{ parameters.Environment }}
+- deployment: DeployApp
   pool:
     name: DAS - Continuous Deployment
   environment: ${{ parameters.Environment }}
