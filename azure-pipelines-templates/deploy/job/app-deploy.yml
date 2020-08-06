@@ -5,7 +5,7 @@ parameters:
   DeploymentPackagePath: ''
 
 jobs:
-- deployment: DeployApp
+- deployment: DeployApp_${{ parameters.AppServiceName }}
   condition: succeeded()
   pool:
     name: DAS - Continuous Deployment
