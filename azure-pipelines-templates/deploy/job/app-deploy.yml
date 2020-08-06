@@ -6,6 +6,7 @@ parameters:
 
 jobs:
 - deployment: DeployApp
+  condition: succeeded()
   pool:
     name: DAS - Continuous Deployment
   environment: ${{ parameters.Environment }}
