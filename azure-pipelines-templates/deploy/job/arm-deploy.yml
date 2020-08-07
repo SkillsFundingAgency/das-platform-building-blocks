@@ -1,7 +1,8 @@
 parameters:
   AzureSubscription: ''
   Environment: ''
-  ArmTemplatePath: ''
+  TemplatePath: ''
+  ParametersPath: ''
   ConfigSchemaPath: ''
 
 jobs:
@@ -35,9 +36,8 @@ jobs:
             azureSubscription: ${{ parameters.AzureSubscription }}
             resourceGroupName: $(ResourceGroupName)
             location: West Europe
-            csmFile: ${{ parameters.ArmTemplatePath }}
-            # Will be passing in a parameters.json instead - override used for POC
-            overrideParameters: '-environmentName "$(EnvironmentName)" -resourceEnvironmentName "$(ResourceEnvironmentName)" -serviceName "$(ServiceName)" -outerApiArray "$(OuterApiArray)"' # lots of stuff
+            csmFile: ${{ parameters.TemplatePath }}
+            csmParametersFile: ${{ parameters.ParametersPath }}
             deploymentOutputs: ARMOutputs
 
         - task: esfadevops.ARMTemplateOutputs.custom-build-task.ARMTemplateOutputs@0
