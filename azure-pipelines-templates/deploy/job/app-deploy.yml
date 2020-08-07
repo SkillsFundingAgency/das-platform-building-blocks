@@ -3,11 +3,11 @@ parameters:
   Environment: ''
   AppServiceName: ''
   DeploymentPackagePath: ''
-  AppName: ''
+  DependsOn: ''
 
 jobs:
-- deployment: DeployApp_${{ parameters.AppName }}
-  condition: succeeded()
+- deployment: DeployApp_${{ parameters.AppServiceName }}
+  dependsOn: ${{ parameters.DependsOn }}
   pool:
     name: DAS - Continuous Deployment
   environment: ${{ parameters.Environment }}
