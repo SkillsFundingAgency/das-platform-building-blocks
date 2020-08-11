@@ -22,7 +22,16 @@ jobs:
             connection: GitHub (SFA)
             userRepository: SkillsFundingAgency/das-platform-automation
             defaultVersionType: specificTag
-            version: 4.0.3
+            version: 4.1.0
+
+        - task: PowerShell@2
+          displayName: Generate Parameters File
+          inputs:
+            filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1
+            arguments: >
+              -TemplateFilePath ${{ parameters.TemplatePath }}
+              -ParametersFilePath ${{ parameters.ParametersPath }}
+            pwsh: true
 
         - task: AzurePowerShell@5
           displayName: 'Create and Tag Resource Group'
