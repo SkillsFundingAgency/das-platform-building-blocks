@@ -6,6 +6,14 @@ parameters:
   ConfigSchemaPath: ''
   TemplateSecrets: {}
 
+resources:
+  repositories:
+  - repository: das-platform-automation
+    type: github
+    name: SkillsFundingAgency/das-platform-automation
+    ref: refs/tags/4.1.0
+    endpoint: GitHub (SFA)
+
 jobs:
 - deployment: DeployInfrastructure
   pool:
@@ -17,18 +25,19 @@ jobs:
     runOnce:
       deploy:
         steps:
-        - task: DownloadGitHubRelease@0
-          displayName: Download das-platform-automation Github Artifact
-          inputs:
-            connection: GitHub (SFA)
-            userRepository: SkillsFundingAgency/das-platform-automation
-            defaultVersionType: specificTag
-            version: 4.1.0
+        # - task: DownloadGitHubRelease@0
+        #   displayName: Download das-platform-automation Github Artifact
+        #   inputs:
+        #     connection: GitHub (SFA)
+        #     userRepository: SkillsFundingAgency/das-platform-automation
+        #     defaultVersionType: specificTag
+        #     version: 4.1.0
 
         - task: PowerShell@2
           displayName: Generate Parameters File
           inputs:
-            filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1
+            #filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1 das-platform-automation
+            filePath: Infrastructure-Scripts/New-ParametersFile.ps1@das-platform-automation
             arguments: >
               -TemplateFilePath ${{ parameters.TemplatePath }}
               -ParametersFilePath ${{ parameters.ParametersPath }}
@@ -39,7 +48,8 @@ jobs:
           displayName: 'Create and Tag Resource Group'
           inputs:
             azureSubscription: ${{ parameters.AzureSubscription }}
-            ScriptPath: $(System.ArtifactsDirectory)/Set-AzResourceGroupTags.ps1
+            #ScriptPath: $(System.ArtifactsDirectory)/Set-AzResourceGroupTags.ps1
+            ScriptPath: Infrastructure-Scripts/Set-AzResourceGroupTags.ps1
             ScriptArguments: '-ResourceGroupName "$(ResourceGroupName)" -Tags "$(Tags)"'
             azurePowerShellVersion: LatestVersion
 
