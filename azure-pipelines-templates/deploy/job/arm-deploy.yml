@@ -32,6 +32,10 @@ jobs:
               -TemplateFilePath ${{ parameters.TemplatePath }}
               -ParametersFilePath ${{ parameters.ParametersPath }}
             pwsh: true
+          # Hard code these in for now for testing
+          env:
+            LoggingRedisConnectionString: $(LogginRedisConnectionString)
+            ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
 
         - task: AzurePowerShell@5
           displayName: 'Create and Tag Resource Group'
