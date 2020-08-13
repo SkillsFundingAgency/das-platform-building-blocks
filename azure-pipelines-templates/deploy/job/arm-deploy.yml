@@ -28,8 +28,8 @@ jobs:
         - task: PowerShell@2
           displayName: Generate Parameters File
           inputs:
-            #filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1 das-platform-automation
-            filePath: $(Pipeline.Workspace)/New-ParametersFile.ps1 das-platform-automation
+            #filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1
+            filePath: $(Pipeline.Workspace)/New-ParametersFile.ps1
             arguments: >
               -TemplateFilePath ${{ parameters.TemplatePath }}
               -ParametersFilePath ${{ parameters.ParametersPath }}
