@@ -4,7 +4,7 @@ parameters:
   TemplatePath: ''
   ParametersPath: ''
   ConfigSchemaPath: ''
-  TemplateSecrets: []
+  TemplateSecrets: {}
 
 jobs:
 - deployment: DeployInfrastructure
@@ -33,8 +33,7 @@ jobs:
               -TemplateFilePath ${{ parameters.TemplatePath }}
               -ParametersFilePath ${{ parameters.ParametersPath }}
             pwsh: true
-          env:
-            ${{ parameters.TemplateSecrets }}
+          env: ${{ parameters.TemplateSecrets }}
 
         - task: AzurePowerShell@5
           displayName: 'Create and Tag Resource Group'
