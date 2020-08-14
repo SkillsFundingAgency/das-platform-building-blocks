@@ -67,3 +67,20 @@ jobs:
             SpecifySlotOrASE: true
             ResourceGroupName: $(ResourceGroupName)
             Slot: staging
+
+        - task: AzurePowerShell@5
+          displayName: Import-ApimSwaggerApiDefinition - $(ReservationsOuterApiAppServiceName)
+          inputs:
+            azureSubscription: SFA-DAS-DevTest-ARM
+            ScriptPath: Infrastructure-Scripts/Import-ApimSwaggerApiDefinition.ps1
+            ScriptArguments:
+              -ApimResourceGroup $(ApimResourceGroup) `
+              -InstanceName $(InstanceName) `
+              -AppServiceResourceGroup $(ResourceGroupName) `
+              -ApiVersionSetName $(ReservationsOuterApiVersionSetName) `
+              -ApiPath $(ReservationsOuterApiPath) `
+              -ApiBaseUrl $(ReservationsOuterApiBaseUrl) `
+              -ProductId $(ReservationsProductId) `
+              -ApplicationIdentifierUri $(ReservationsOuterApiIdentifierUri)
+            azurePowerShellVersion: LatestVersion
+            pwsh: true
