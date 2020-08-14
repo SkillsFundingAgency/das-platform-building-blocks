@@ -30,7 +30,7 @@ jobs:
           displayName: Generate Parameters File
           inputs:
             #filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1
-            filePath: Infrastructure-Scripts/New-ParametersFile.ps1@das-platform-automation
+            filePath: Infrastructure-Scripts/New-ParametersFile.ps1
             arguments: >
               -TemplateFilePath ${{ parameters.TemplatePath }}
               -ParametersFilePath ${{ parameters.ParametersPath }}
@@ -42,7 +42,7 @@ jobs:
           inputs:
             azureSubscription: ${{ parameters.AzureSubscription }}
             #ScriptPath: $(System.ArtifactsDirectory)/Set-AzResourceGroupTags.ps1
-            ScriptPath: Infrastructure-Scripts/Set-AzResourceGroupTags.ps1@das-platform-automation
+            ScriptPath: Infrastructure-Scripts/Set-AzResourceGroupTags.ps1
             ScriptArguments: '-ResourceGroupName "$(ResourceGroupName)" -Tags "$(Tags)"'
             azurePowerShellVersion: LatestVersion
 
