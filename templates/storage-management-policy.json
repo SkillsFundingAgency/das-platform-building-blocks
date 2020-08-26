@@ -12,7 +12,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "A list of management policy rules"
+        "description": "A list of management policy rules. See https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/2019-06-01/storageaccounts/managementpolicies#managementpolicyrule-object for required properties"
       }
     }
   },
