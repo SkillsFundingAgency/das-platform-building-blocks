@@ -20,6 +20,10 @@
     "enableNonSslPort": {
       "type": "bool",
       "defaultValue": false
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "1.2"
     }
   },
   "resources": [
@@ -30,6 +34,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "enableNonSslPort": "[parameters('enableNonSslPort')]",
+        "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
         "sku": {
           "capacity": "[parameters('redisCacheCapacity')]",
           "family": "[parameters('redisCacheFamily')]",
