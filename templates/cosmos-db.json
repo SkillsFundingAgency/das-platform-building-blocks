@@ -33,6 +33,10 @@
     "ipRangeFilter": {
       "type": "string",
       "defaultValue": ""
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
     }
   },
   "variables": {
@@ -53,7 +57,7 @@
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2015-04-08",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": {
         "consistencyPolicy": {
