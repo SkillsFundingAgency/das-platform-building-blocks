@@ -57,6 +57,7 @@
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2015-04-08",
+      "location": "[parameters('location')]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": {
         "consistencyPolicy": {
