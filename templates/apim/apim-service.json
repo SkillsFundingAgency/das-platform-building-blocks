@@ -162,19 +162,19 @@
             "value": "[parameters('portalHostname')]"
           },
           "portalKeyVaultSecretId": {
-            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion, json('null'))]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('portalKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "gatewayHostname": {
             "value": "[parameters('gatewayHostname')]"
           },
           "gatewayKeyVaultSecretId": {
-            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion, json('null'))]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "managementHostname": {
             "value": "[parameters('managementHostname')]"
           },
           "managementKeyVaultSecretId": {
-            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('managementKeyVaultCertificateName')), '2018-02-14').secretUriWithVersion, json('null'))]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('managementKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "virtualNetworkType": {
             "value": "[parameters('virtualNetworkType')]"
