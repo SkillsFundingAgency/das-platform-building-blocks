@@ -33,6 +33,10 @@
     "ipRangeFilter": {
       "type": "string",
       "defaultValue": ""
+    },
+    "advancedThreatProtectionEnabled": {
+      "type": "bool",
+      "defaultValue": false
     }
   },
   "variables": {
@@ -63,7 +67,21 @@
         "ipRangeFilter": "[parameters('ipRangeFilter')]",
         "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
         "virtualNetworkRules": "[variables('virtualNetworkRules')]"
-      }
+      },
+      "resources": [
+        {
+          "condition": "[and(parameters('advancedThreatProtectionEnabled'), equals('GlobalDocumentDB', parameters('cosmosDbType')))]",
+          "type": "providers/advancedThreatProtectionSettings",
+          "name": "Microsoft.Security/current",
+          "apiVersion": "2019-01-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]"
+          ],
+          "properties": {
+            "isEnabled": true
+          }
+        }
+      ]
     }
   ],
   "outputs": {
