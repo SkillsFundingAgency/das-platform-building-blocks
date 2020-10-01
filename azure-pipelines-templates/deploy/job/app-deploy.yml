@@ -1,5 +1,5 @@
 parameters:
-  AzureSubscription: ''
+  ServiceConnection: ''
   Environment: ''
   AppServiceName: ''
   DeploymentPackagePath: ''
@@ -19,7 +19,7 @@ jobs:
         - task: AzureRmWebAppDeployment@3
           displayName: Deploy Staging Slot - ${{ parameters.AppServiceName }}
           inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
+            azureSubscription: ${{ parameters.ServiceConnection }}
             appType: webApp
             WebAppName: ${{ parameters.AppServiceName }}
             DeployToSlotFlag: true
@@ -32,7 +32,7 @@ jobs:
         - task: AzureAppServiceManage@0
           displayName: Start Staging Slot - ${{ parameters.AppServiceName }}
           inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
+            azureSubscription: ${{ parameters.ServiceConnection }}
             Action: Start Azure App Service
             WebAppName: ${{ parameters.AppServiceName }}
             ResourceGroupName: $(ResourceGroupName)
@@ -42,7 +42,7 @@ jobs:
         - task: AzureAppServiceManage@0
           displayName: Start Swap Slots - ${{ parameters.AppServiceName }}
           inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
+            azureSubscription: ${{ parameters.ServiceConnection }}
             Action: Start Swap With Preview
             WebAppName: ${{ parameters.AppServiceName }}
             ResourceGroupName: $(ResourceGroupName)
@@ -51,7 +51,7 @@ jobs:
         - task: AzureAppServiceManage@0
           displayName: Complete Swap Slot
           inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
+            azureSubscription: ${{ parameters.ServiceConnection }}
             Action: Complete Swap
             WebAppName: ${{ parameters.AppServiceName }}
             ResourceGroupName: $(ResourceGroupName)
@@ -61,7 +61,7 @@ jobs:
           displayName: Stop Staging Slot - ${{ parameters.AppServiceName }}
           condition: always()
           inputs:
-            azureSubscription:  ${{ parameters.AzureSubscription }}
+            azureSubscription:  ${{ parameters.ServiceConnection }}
             Action: Stop Azure App Service
             WebAppName: ${{ parameters.AppServiceName }}
             SpecifySlotOrASE: true

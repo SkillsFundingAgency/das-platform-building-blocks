@@ -56,7 +56,7 @@ jobs:
 
         - template: ../step/generate-config.yml
           parameters:
-            AzureSubscription: ${{ parameters.AzureSubscription }}
+            ServiceConnection: ${{ parameters.ServiceConnection }}
             SourcePath: ${{ parameters.ConfigSchemaPath }}
             TargetFileName: '*.schema.json'
             TableName: Configuration

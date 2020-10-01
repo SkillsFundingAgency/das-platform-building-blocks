@@ -1,5 +1,5 @@
 parameters:
-  AzureSubscription: ''
+  ServiceConnection: ''
   SourcePath: ''
   TargetFileName: ''
   TableName: ''
@@ -8,7 +8,7 @@ steps:
 - task: esfadevops.GenerateEnvironmentConfiguration.custom-build-task.GenerateEnvironmentConfiguration@3
   displayName: 'Generate Configuration'
   inputs:
-    ServiceConnectionName: ${{ parameters.AzureSubscription }}
+    ServiceConnectionName: ${{ parameters.ServiceConnection }}
     SourcePath: ${{ parameters.SourcePath }}
     TargetFilename: ${{ parameters.TargetFileName }}
     StorageAccountName: '$(ConfigurationStorageAccountName)'
