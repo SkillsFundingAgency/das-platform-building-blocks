@@ -1,6 +1,6 @@
 parameters:
-  AzureServiceConnection: ''
-  AzureSubscription: ''
+  ServiceConnection: ''
+  SubscriptionId: ''
   Environment: ''
   TemplatePath: ''
   ParametersPath: ''
@@ -42,8 +42,8 @@ jobs:
           displayName: Azure Subscription Deployment - Create/Tag $(ResourceGroupName) and deploy resources
           inputs:
             deploymentScope: Subscription
-            azureResourceManageConnection: ${{ parameters.AzureServiceConnection }}
-            subscriptionId: ${{ parameters.AzureSubscription }}
+            azureResourceManageConnection: ${{ parameters.ServiceConnection }}
+            subscriptionId: ${{ parameters.SubscriptionId }}
             location: West Europe
             csmFile: ${{ parameters.TemplatePath }}
             csmParametersFile: ${{ parameters.ParametersPath }}
