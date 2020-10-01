@@ -37,20 +37,11 @@ jobs:
             pwsh: true
           env: ${{ parameters.TemplateSecrets }}
 
-        - task: AzurePowerShell@5
-          displayName: 'Create and Tag Resource Group'
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: Azure Subscription Deployment - Create/Tag $(ResourceGroupName) and deploy resources
           inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
-            #ScriptPath: $(System.ArtifactsDirectory)/Set-AzResourceGroupTags.ps1
-            ScriptPath: Infrastructure-Scripts/Set-AzResourceGroupTags.ps1
-            ScriptArguments: '-ResourceGroupName "$(ResourceGroupName)" -Tags "$(Tags)"'
-            azurePowerShellVersion: LatestVersion
-
-        - task: AzureResourceGroupDeployment@2
-          displayName: Azure Deployment - Deploy resources to $(ResourceGroupName)
-          inputs:
-            azureSubscription: ${{ parameters.AzureSubscription }}
-            resourceGroupName: $(ResourceGroupName)
+            deploymentScope: Subscription
+            azureResourceManageConnection: ${{ parameters.AzureSubscription }}
             location: West Europe
             csmFile: ${{ parameters.TemplatePath }}
             csmParametersFile: ${{ parameters.ParametersPath }}
