@@ -18,15 +18,6 @@ jobs:
     runOnce:
       deploy:
         steps:
-        # - task: DownloadGitHubRelease@0
-        #   displayName: Download das-platform-automation Github Artifact
-        #   inputs:
-        #     connection: GitHub (SFA)
-        #     userRepository: SkillsFundingAgency/das-platform-automation
-        #     defaultVersionType: specificTag
-        #     version: 4.1.0
-        - checkout: das-platform-automation
-
         - task: PowerShell@2
           displayName: Generate Parameters File
           inputs:
