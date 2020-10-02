@@ -18,10 +18,10 @@ jobs:
     runOnce:
       deploy:
         steps:
+        - checkout: das-platform-automation
         - task: PowerShell@2
           displayName: Generate Parameters File
           inputs:
-            #filePath: $(System.ArtifactsDirectory)/New-ParametersFile.ps1
             filePath: Infrastructure-Scripts/New-ParametersFile.ps1
             arguments: >
               -TemplateFilePath ${{ parameters.TemplatePath }}
