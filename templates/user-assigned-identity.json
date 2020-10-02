@@ -26,7 +26,7 @@
     },
     "clientId": {
       "type": "string",
-      "value": "[reference(parameters('userAssignedIdentityName')).tenantId]"
+      "value": "[reference(parameters('userAssignedIdentityName')).clientId]"
     }
   }
 }
