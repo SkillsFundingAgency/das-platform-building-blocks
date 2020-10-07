@@ -21,14 +21,14 @@ stages:
             steps:
               - task: GitHubRelease@0
                 inputs:
-                  gitHubConnection: "SFA-temp"
-                  repositoryName: "$(Build.Repository.Name)"
-                  action: "create"
-                  target: "$(Build.SourceVersion)"
-                  tagSource: "manual"
-                  tag: 0.0.1
+                  gitHubConnection: SFA
+                  repositoryName: $(Build.Repository.Name)
+                  action: create
+                  target: $(Build.SourceVersion)
+                  tagSource: manual
+                  tag: $(Build.BuildNumber)
                   addChangeLog: true
                   assets: |
-                    "$(Build.ArtifactStagingDirectory)/**/*.yml"
-                    "$(Build.ArtifactStagingDirectory)/**/*.json"
+                    $(Build.ArtifactStagingDirectory)/**/*.yml
+                    $(Build.ArtifactStagingDirectory)/**/*.json
                   isPreRelease: true # to remove
