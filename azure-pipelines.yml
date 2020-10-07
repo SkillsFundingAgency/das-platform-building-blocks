@@ -21,7 +21,7 @@ stages:
             steps:
               - task: GitHubRelease@0
                 inputs:
-                  gitHubConnection: "SkillsFundingAgency"
+                  gitHubConnection: "SFA-temp"
                   repositoryName: "$(Build.Repository.Name)"
                   action: "create"
                   target: "$(Build.SourceVersion)"
