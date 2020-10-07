@@ -1,6 +1,7 @@
 parameters:
   ServiceConnection: ''
   SubscriptionId: ''
+  Location: ''
   Environment: ''
   TemplatePath: ''
   ParametersPath: ''
@@ -35,7 +36,7 @@ jobs:
             deploymentScope: Subscription
             ConnectedServiceName: ${{ parameters.ServiceConnection }}
             subscriptionId: ${{ parameters.SubscriptionId }}
-            location: West Europe
+            location: ${{ parameters.Location }}
             csmFile: ${{ parameters.TemplatePath }}
             csmParametersFile: ${{ parameters.ParametersPath }}
             deploymentOutputs: ARMOutputs
