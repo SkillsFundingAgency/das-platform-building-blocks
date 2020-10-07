@@ -7,7 +7,21 @@ trigger:
 pr: none
 
 stages:
+  - stage: Versioning
+    dependsOn: []
+    jobs:
+    - job: GitVersion
+      displayName: Version
+      pool:
+        name: DAS - Continuous Integration
+      steps:
+        - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+          displayName: GitVersion
+          inputs:
+            configFilePath: GitVersion.yml
+
   - stage: Release
+    dependsOn: Versioning
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     jobs:
     - deployment: GitHubRelease
