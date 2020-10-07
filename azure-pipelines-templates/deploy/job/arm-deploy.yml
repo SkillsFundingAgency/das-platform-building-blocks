@@ -1,0 +1,54 @@
+parameters:
+  ServiceConnection: ''
+  SubscriptionId: ''
+  Location: ''
+  Environment: ''
+  TemplatePath: ''
+  ParametersPath: ''
+  ConfigSchemaPath: ''
+  TemplateSecrets: {}
+
+jobs:
+- deployment: DeployInfrastructure
+  pool:
+    name: DAS - Continuous Deployment
+  environment: ${{ parameters.Environment }}
+  workspace:
+    clean: all
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: das-platform-automation
+        - task: PowerShell@2
+          displayName: Generate Parameters File
+          inputs:
+            filePath: Infrastructure-Scripts/New-ParametersFile.ps1
+            arguments: >
+              -TemplateFilePath ${{ parameters.TemplatePath }}
+              -ParametersFilePath ${{ parameters.ParametersPath }}
+            pwsh: true
+          env: ${{ parameters.TemplateSecrets }}
+
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
+          inputs:
+            deploymentScope: Subscription
+            ConnectedServiceName: ${{ parameters.ServiceConnection }}
+            subscriptionId: ${{ parameters.SubscriptionId }}
+            location: ${{ parameters.Location }}
+            csmFile: ${{ parameters.TemplatePath }}
+            csmParametersFile: ${{ parameters.ParametersPath }}
+            deploymentOutputs: ARMOutputs
+
+        - task: esfadevops.ARMTemplateOutputs.custom-build-task.ARMTemplateOutputs@0
+          displayName: Convert ARM Template Outputs to Variables
+          inputs:
+            ARMOutputs: $(ARMOutputs)
+
+        - template: ../step/generate-config.yml
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SourcePath: ${{ parameters.ConfigSchemaPath }}
+            TargetFileName: '*.schema.json'
+            TableName: Configuration

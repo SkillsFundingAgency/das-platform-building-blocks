@@ -1,0 +1,15 @@
+parameters:
+  ServiceConnection: ''
+  SourcePath: ''
+  TargetFileName: ''
+  TableName: ''
+
+steps:
+- task: esfadevops.GenerateEnvironmentConfiguration.custom-build-task.GenerateEnvironmentConfiguration@3
+  displayName: 'Generate Configuration'
+  inputs:
+    ServiceConnectionName: ${{ parameters.ServiceConnection }}
+    SourcePath: ${{ parameters.SourcePath }}
+    TargetFilename: ${{ parameters.TargetFileName }}
+    StorageAccountName: '$(ConfigurationStorageAccountName)'
+    TableName: ${{ parameters.TableName }}
