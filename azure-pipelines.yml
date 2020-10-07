@@ -8,7 +8,7 @@ pr: none
 
 stages:
   - stage: Release
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    #condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
     jobs:
     - deployment: GitHubRelease
       displayName: Create Release in GitHub
