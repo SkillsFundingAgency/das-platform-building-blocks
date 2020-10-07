@@ -45,4 +45,3 @@ stages:
                   assets: |
                     $(Build.ArtifactStagingDirectory)/**/*.yml
                     $(Build.ArtifactStagingDirectory)/**/*.json
-                  isPreRelease: true # to remove
