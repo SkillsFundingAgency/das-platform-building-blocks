@@ -5,6 +5,7 @@
 2. [Branching](#Branching)
 3. [Resource naming and parameter metadata description properties](#Resource-naming-and-parameter-metadata-description-properties)
 4. [Property name formatting](#Property-name-formatting)
+5. [GitHub Releases and Versioning](#GitHub-Releases-and-Versioning)
 
 ### Usage
 
@@ -123,3 +124,28 @@ The convention of property name formatting, as used in the examples above:
 2. Variables: camelCase
 3. Resource Deployments: lowercase-with-hyphens
 4. Outputs: PascalCase (matching the release pipeline variables)
+
+## GitHub Releases and Versioning
+
+This section provides an overview of the following:
+
+| Section Header | Description |
+| - | - |
+| GitHub Releases | This section provides an overview of the das-platform-building-blocks repository release, how to approve a release to GitHub and how to use the Azure DevOps GitHub Release Task within a release pipeline. |
+| Release Versioning | This section provides an overview of how to ensure a consistent release versioning policy is used, and GitHub releases are appropriately incremented. |
+
+### GitHub Releases
+
+The das-platform-building-blocks repository is published as a release on GitHub.com. Releases provide a list of changes made to a specific release as well as links to the assets available. Using GitHub releases enables the use of the Azure DevOps GitHub Release Task so that the templates in das-platform-building-blocks can be consumed within Azure Pipeline deployments.
+
+### Release Versioning
+
+To ensure a consistent release versioning policy the following can be used as a reference:
+
+| Increment Type | When to use | How to use |
+| -- | -- | -- |
+| Major | Breaking changes to scripts | Add `+semver: major` to pull request title. |
+| Minor | Addition of new scripts | Add `+semver: minor` to pull request title. |
+| Patch | Non-breaking changes to existing scripts | Automatically incremented for every merge if a major or minor is not defined. |
+
+[GitVersion](https://gitversion.readthedocs.io/en/latest/) is used to achieve release versioning. Read more about [Version Incrementing](https://gitversion.readthedocs.io/en/latest/more-info/version-increments/).
