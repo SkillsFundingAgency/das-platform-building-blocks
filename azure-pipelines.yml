@@ -1,0 +1,33 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - "master"
+
+pr: none
+
+stages:
+  - stage: Release
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    jobs:
+    - deployment: GitHubRelease
+      displayName: Create Release in GitHub
+      pool:
+        name: DAS - Continuous Deployment
+      environment: GitHub
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: GitHubRelease@0
+                inputs:
+                  gitHubConnection: SFA
+                  repositoryName: $(Build.Repository.Name)
+                  action: create
+                  target: $(Build.SourceVersion)
+                  tagSource: manual
+                  tag: $(Build.BuildNumber)
+                  addChangeLog: true
+                  assets: |
+                    $(Build.ArtifactStagingDirectory)/**/*.yml
+                    $(Build.ArtifactStagingDirectory)/**/*.json
