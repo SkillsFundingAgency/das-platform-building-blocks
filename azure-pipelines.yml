@@ -26,9 +26,9 @@ stages:
                   action: create
                   target: $(Build.SourceVersion)
                   tagSource: manual
-                  tag: $(Build.BuildNumber)
+                  tag: 0.0.1
                   addChangeLog: true
                   assets: |
                     $(Build.ArtifactStagingDirectory)/**/*.yml
                     $(Build.ArtifactStagingDirectory)/**/*.json
-                  isPreRelease: true
+                  isPreRelease: true # to remove
