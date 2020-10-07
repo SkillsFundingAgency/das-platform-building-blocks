@@ -31,7 +31,7 @@ jobs:
           env: ${{ parameters.TemplateSecrets }}
 
         - task: AzureResourceManagerTemplateDeployment@3
-          displayName: Azure Subscription Deployment - Create/Tag $(ResourceGroupName) and deploy resources
+          displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
           inputs:
             deploymentScope: Subscription
             ConnectedServiceName: ${{ parameters.ServiceConnection }}
