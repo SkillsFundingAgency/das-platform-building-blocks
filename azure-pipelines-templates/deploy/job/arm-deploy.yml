@@ -41,11 +41,14 @@ jobs:
             csmParametersFile: ${{ parameters.ParametersPath }}
             deploymentOutputs: ARMOutputs
 
-        - task: esfadevops.ARMTemplateOutputs.custom-build-task.ARMTemplateOutputs@0
+        - task: PowerShell@2
           name: ArmOutputs
           displayName: Convert ARM Template Outputs to Variables
           inputs:
-            ARMOutputs: $(ARMOutputs)
+            filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
+            arguments: >
+              -ARMOutputs $(ARMOutputs)
+            pwsh: true
 
         - template: ../step/generate-config.yml
           parameters:
