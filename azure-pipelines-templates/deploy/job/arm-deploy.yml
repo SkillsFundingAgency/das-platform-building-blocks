@@ -47,7 +47,7 @@ jobs:
           inputs:
             filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
             arguments: >
-              -ARMOutputs $(ARMOutputs)
+              -ARMOutputs '$(ARMOutputs)'
             pwsh: true
 
         - template: ../step/generate-config.yml
