@@ -42,6 +42,7 @@ jobs:
             deploymentOutputs: ARMOutputs
 
         - task: esfadevops.ARMTemplateOutputs.custom-build-task.ARMTemplateOutputs@0
+          name: ArmOutputs
           displayName: Convert ARM Template Outputs to Variables
           inputs:
             ARMOutputs: $(ARMOutputs)
