@@ -39,7 +39,7 @@ jobs:
             location: ${{ parameters.Location }}
             csmFile: ${{ parameters.TemplatePath }}
             csmParametersFile: ${{ parameters.ParametersPath }}
-            deploymentOutputs: ARMOutputs
+            deploymentOutputs: ARMOutput
 
         - task: PowerShell@2
           name: ArmOutputs
@@ -47,7 +47,7 @@ jobs:
           inputs:
             filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
             arguments: >
-              -ARMOutputs '$(ARMOutputs)'
+              -ARMOutput '$(ARMOutput)'
             pwsh: true
 
         - template: ../step/generate-config.yml
