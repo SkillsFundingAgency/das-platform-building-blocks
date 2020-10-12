@@ -49,11 +49,10 @@ jobs:
             arguments: >
               -ARMOutput '$(ARMOutput)'
 
-        - bash: |
-            Write-Host "my environment variable is $ResourceGroupName"
-
-        - pwsh: |
-            Write-Host "my environment variable is $env:ResourceGroupName"
+        - task: PowerShell@2
+          inputs:
+            targetType: inline
+            script: Write-Host Resource Group - $(ArmOutputs.ResourceGroupName)
 
         - template: ../step/generate-config.yml
           parameters:
