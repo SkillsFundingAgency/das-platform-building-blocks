@@ -49,6 +49,11 @@ jobs:
             arguments: >
               -ARMOutput '$(ARMOutput)'
 
+        - task: PowerShell@2
+          inputs:
+            targetType: inline
+            script: Write-Host Resource Group - $(ResourceGroupName)
+
         - template: ../step/generate-config.yml
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
