@@ -11,10 +11,6 @@
     "appServicePlanResourceGroup": {
       "type": "string"
     },
-    "alwaysOn": {
-      "type": "bool",
-      "defaultValue": true
-    },
     "appServiceAppSettings": {
       "type": "array",
       "defaultValue": [
@@ -142,7 +138,7 @@
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
         "siteConfig": {
-          "alwaysOn": "[parameters('alwaysOn')]",
+          "alwaysOn": true,
           "appSettings": "[variables('appServiceProductionSlotAppSettingsCombined')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings')]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
