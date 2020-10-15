@@ -9,10 +9,6 @@
       "type": "string",
       "defaultValue": "20"
     },
-    "numberOfWorkers": {
-      "type": "String",
-      "defaultValue": "1"
-    },
     "premiumPlanLocation": {
       "type": "string",
       "allowedValues": [
@@ -29,14 +25,6 @@
         "EP3"
       ],
       "defaultValue": "EP1"
-    },
-    "workerSize": {
-      "type": "String",
-      "defaultValue": "3"
-    },
-    "workerSizeId": {
-      "type": "String",
-      "defaultValue": "3"
     }
   },
   "variables": {},
@@ -52,9 +40,6 @@
       },
       "properties": {
         "name": "[parameters('premiumPlanName')]",
-        "workerSize": "[parameters('workerSize')]",
-        "workerSizeId": "[parameters('workerSizeId')]",
-        "numberOfWorkers": "[parameters('numberOfWorkers')]",
         "maximumElasticWorkerCount": "[parameters('maximumElasticWorkerCount')]"
       }
     }
