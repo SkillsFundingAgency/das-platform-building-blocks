@@ -39,7 +39,6 @@
         "tier": "ElasticPremium"
       },
       "properties": {
-        "name": "[parameters('premiumPlanName')]",
         "maximumElasticWorkerCount": "[parameters('maximumElasticWorkerCount')]"
       }
     }
