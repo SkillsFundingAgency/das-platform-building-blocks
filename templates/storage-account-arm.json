@@ -125,7 +125,7 @@
     "networkAclObject": {
       "bypass": "Logging, Metrics",
       "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules'), json('null'))]",
-      "ipRules": "[if(greater(length(parameters('allowedIpAddresses')), 0), variables('allowedIpRules'), json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddresses')), 0), variables('allowedIpRules'), json('[]'))]",
       "defaultAction": "Deny"
     }
   },
