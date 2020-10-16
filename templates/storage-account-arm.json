@@ -101,7 +101,6 @@
     "virtualNetworkRules": {
       "copy": [
         {
-          "name": "virtualNetworkRules",
           "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
           "input": {
             "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
@@ -113,7 +112,6 @@
     "allowedIpRules": {
       "copy": [
         {
-          "name": "ipRules",
           "count": "[if(greater(length(parameters('allowedIpAddresses')), 0), length(parameters('allowedIpAddresses')), 1)]",
           "input": {
             "value": "[if(greater(length(parameters('allowedIpAddresses')), 0), parameters('allowedIpAddresses')[copyIndex('ipRules')], json('null'))]",
@@ -124,24 +122,8 @@
     },
     "networkAclObject": {
       "bypass": "Logging, Metrics",
-      "copy": [
-        {
-          "name": "virtualNetworkRules",
-          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
-          "input": {
-            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
-            "action": "Allow"
-          }
-        },
-        {
-          "name": "ipRules",
-          "count": "[if(greater(length(parameters('allowedIpAddresses')), 0), length(parameters('allowedIpAddresses')), 1)]",
-          "input": {
-            "value": "[if(greater(length(parameters('allowedIpAddresses')), 0), parameters('allowedIpAddresses')[copyIndex('ipRules')], json('[]'))]",
-            "action": "Allow"
-          }
-        }
-      ],
+      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules'), json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddresses')), 0), variables('allowedIpRules'), json('null'))]",
       "defaultAction": "Deny"
     }
   },
