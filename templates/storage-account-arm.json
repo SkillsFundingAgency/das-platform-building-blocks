@@ -98,8 +98,7 @@
     }
   },
   "variables": {
-    "networkAclObject": {
-      "bypass": "Logging, Metrics",
+    "virtualNetworkRules": {
       "copy": [
         {
           "name": "virtualNetworkRules",
@@ -108,7 +107,11 @@
             "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
             "action": "Allow"
           }
-        },
+        }
+      ]
+    },
+    "allowedIpRules": {
+      "copy": [
         {
           "name": "ipRules",
           "count": "[if(greater(length(parameters('allowedIpAddresses')), 0), length(parameters('allowedIpAddresses')), 1)]",
@@ -117,7 +120,12 @@
             "action": "Allow"
           }
         }
-      ],
+      ]
+    },
+    "networkAclObject": {
+      "bypass": "Logging, Metrics",
+      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules'), json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddresses')), 0), variables('allowedIpRules'), json('null'))]",
       "defaultAction": "Deny"
     }
   },
