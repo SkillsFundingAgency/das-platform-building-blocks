@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "premiumPlanName": {
+      "type": "string"
+    },
+    "maximumElasticWorkerCount": {
+      "type": "string",
+      "defaultValue": "20"
+    },
+    "premiumPlanLocation": {
+      "type": "string",
+      "allowedValues": [
+        "North Europe",
+        "West Europe"
+      ],
+      "defaultValue": "West Europe"
+    },
+    "skuName": {
+      "type": "string",
+      "allowedValues": [
+        "EP1",
+        "EP2",
+        "EP3"
+      ],
+      "defaultValue": "EP1"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('premiumPlanName')]",
+      "location": "[parameters('premiumPlanLocation')]",
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "ElasticPremium"
+      },
+      "properties": {
+        "maximumElasticWorkerCount": "[parameters('maximumElasticWorkerCount')]"
+      }
+    }
+  ],
+  "outputs": {
+    "PremiumPlanName": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('premiumPlanName'))]"
+    }
+  }
+}
