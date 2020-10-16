@@ -53,7 +53,7 @@
         "description": "A list of subnet resource ids."
       }
     },
-    "allowedIpAddresses": {
+    "allowedIpAddressesList": {
       "type": "array",
       "defaultValue": [],
       "metadata": {
@@ -110,13 +110,13 @@
         }
       ]
     },
-    "allowedIpRules": {
+    "ipRules": {
       "copy": [
         {
           "name": "ipRules",
-          "count": "[if(greater(length(parameters('allowedIpAddresses')), 0), length(parameters('allowedIpAddresses')), 1)]",
+          "count": "[if(greater(length(parameters('allowedIpAddressesList')), 0), length(parameters('allowedIpAddressesList')), 1)]",
           "input": {
-            "value": "[if(greater(length(parameters('allowedIpAddresses')), 0), parameters('allowedIpAddresses')[copyIndex('ipRules')], json('null'))]",
+            "value": "[if(greater(length(parameters('allowedIpAddressesList')), 0), parameters('allowedIpAddressesList')[copyIndex('ipRules')], json('null'))]",
             "action": "Allow"
           }
         }
@@ -125,7 +125,7 @@
     "networkAclObject": {
       "bypass": "Logging, Metrics",
       "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
-      "ipRules": "[if(greater(length(parameters('allowedIpAddresses')), 0), variables('allowedIpRules').ipRules, json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
       "defaultAction": "Deny"
     }
   },
@@ -154,7 +154,7 @@
         },
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
         "supportsHttpsTrafficOnly": true,
-        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddresses')), 0)), variables('networkAclObject'), json('null'))]"
+        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       },
       "resources": [
           {
