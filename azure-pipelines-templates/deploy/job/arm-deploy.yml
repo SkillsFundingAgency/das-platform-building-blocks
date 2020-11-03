@@ -19,36 +19,15 @@ jobs:
     runOnce:
       deploy:
         steps:
-        - checkout: das-platform-automation
-        - task: PowerShell@2
-          displayName: Generate Parameters File
-          inputs:
-            filePath: Infrastructure-Scripts/New-ParametersFile.ps1
-            arguments: >
-              -TemplateFilePath ${{ parameters.TemplatePath }}
-              -ParametersFilePath ${{ parameters.ParametersPath }}
-            pwsh: true
-          env: ${{ parameters.TemplateSecrets }}
-
-        - task: AzureResourceManagerTemplateDeployment@3
-          displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
-          inputs:
-            deploymentScope: Subscription
-            ConnectedServiceName: ${{ parameters.ServiceConnection }}
-            subscriptionId: ${{ parameters.SubscriptionId }}
-            location: ${{ parameters.Location }}
-            csmFile: ${{ parameters.TemplatePath }}
-            csmParametersFile: ${{ parameters.ParametersPath }}
-            deploymentOutputs: ARMOutput
-
-        - task: PowerShell@2
-          name: ArmOutputs
-          displayName: Convert ARM Template Outputs to Variables
-          inputs:
-            filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
-            arguments: >
-              -ARMOutput '$(ARMOutput)'
-
+        - template: ../step/arm-deploy.yml
+          parameters:
+            Location: ${{ parameters.Location }}
+            ParametersPath: ${{ parameters.ParametersPath }}
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: ${{ parameters.SubscriptionId }}
+            TemplatePath: ${{ parameters.TemplatePath }}
+            TemplateSecrets: ${{ parameters.TemplateSecrets }}
+            
         - template: ../step/generate-config.yml
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
