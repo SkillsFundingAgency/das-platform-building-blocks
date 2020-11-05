@@ -197,8 +197,7 @@
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
-        },
-        "windowsProfile": "[parameters('windowsProfile')]"
+        }
       }
     }
   ],
