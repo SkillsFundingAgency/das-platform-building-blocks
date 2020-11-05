@@ -148,7 +148,6 @@
         },
         "managed": {
           "managed": true,
-          "enableAzureRBAC": true,
           "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
         }
     },
