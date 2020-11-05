@@ -125,9 +125,8 @@
     },
     "windowsProfile": {
       "type": "secureObject",
-      "defaultValue": {},
       "metadata": {
-        "description": "adminUsername and adminPassword for Windows nodes"
+        "description": "adminUsername and adminPassword for Windows nodes, if windowsProfile not required pass in an empty object '{}'"
       }
     },
     "adminGroupObjectId": {
@@ -154,15 +153,8 @@
         }
     },
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
-    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
-  },
-  "resources": [
-    {
-      "apiVersion": "2019-08-01",
-      "type": "Microsoft.ContainerService/managedClusters",
-      "location": "[resourceGroup().location]",
-      "name": "[parameters('clusterName')]",
-      "properties": {
+    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+    "aksBaseProperties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
         "agentPoolProfiles": [
@@ -197,9 +189,20 @@
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
-        },
-        "windowsProfile": "[parameters('windowsProfile')]"
-      }
+        }
+    },
+    "windowsProfile": {
+      "windowsProfile": "[parameters('windowsProfile')]"
+    },
+    "aksProperties": "[if(empty(parameters('windowsProfile')), variables('aksBaseProperties'), union(variables('aksBaseProperties'), variables('windowsProfile')))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2019-08-01",
+      "type": "Microsoft.ContainerService/managedClusters",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('clusterName')]",
+      "properties": "[variables('aksProperties')]"
     }
   ],
   "outputs": {
