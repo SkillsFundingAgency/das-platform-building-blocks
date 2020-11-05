@@ -182,7 +182,7 @@
           "clientId": "[parameters('servicePrincipalClientId')]",
           "secret": "[parameters('servicePrincipalSecret')]"
         },
-        "aadProfile": "[if(equals(parameters('adminGroupObjectId'), ''), variables('aadProfile').configured, variables('aadProfile').managed)]",
+        "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
         "networkProfile": {
           "networkPlugin": "kubenet",
           "serviceCidr": "[parameters('serviceCidr')]",
