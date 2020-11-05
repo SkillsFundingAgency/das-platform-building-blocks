@@ -162,6 +162,7 @@
             "count": "[parameters('agentNodeCount')]",
             "vmSize": "[parameters('agentVMSize')]",
             "osType": "Linux",
+            "mode": "System",
             "vnetSubnetID": "[variables('vnetSubnetID')]",
             "type": "VirtualMachineScaleSets",
             "storageProfile": "ManagedDisks"
