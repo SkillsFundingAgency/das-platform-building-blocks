@@ -125,7 +125,7 @@
     },
     "windowsProfile": {
       "type": "secureObject",
-      "defaultValue": null,
+      "defaultValue": {},
       "metadata": {
         "description": "adminUsername and adminPassword for Windows nodes"
       }
