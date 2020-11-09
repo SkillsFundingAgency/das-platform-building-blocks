@@ -15,10 +15,12 @@
       }
     },
     "servicePrincipalClientId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "servicePrincipalSecret": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": ""
     },
     "rbacClientAppId": {
       "type": "string",
