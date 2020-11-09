@@ -138,24 +138,38 @@
         "description": "If specified then AKS-managed Azure AD will be configured and the group this Object ID represents will have admin rights over the cluster",
         "documentation": "https://docs.microsoft.com/en-gb/azure/aks/managed-aad"
       }
+    },
+    "legacyDeployment": {
+      "type": "bool",
+      "defaultValue": true
     }
   },
   "variables": {
+    "agentPoolProfile": {
+      "withMode": [{
+        "name": "[parameters('agentPoolName')]",
+        "count": "[parameters('agentNodeCount')]",
+        "vmSize": "[parameters('agentVMSize')]",
+        "osType": "Linux",
+        "mode": "System",
+        "vnetSubnetID": "[variables('vnetSubnetID')]",
+        "type": "VirtualMachineScaleSets",
+        "storageProfile": "ManagedDisks"
+      }],
+      "withoutMode": [{
+        "name": "[parameters('agentPoolName')]",
+        "count": "[parameters('agentNodeCount')]",
+        "vmSize": "[parameters('agentVMSize')]",
+        "osType": "Linux",
+        "vnetSubnetID": "[variables('vnetSubnetID')]",
+        "type": "VirtualMachineScaleSets",
+        "storageProfile": "ManagedDisks"
+      }]
+    },
     "aksBaseProperties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
-        "agentPoolProfiles": [
-          {
-            "name": "[parameters('agentPoolName')]",
-            "count": "[parameters('agentNodeCount')]",
-            "vmSize": "[parameters('agentVMSize')]",
-            "osType": "Linux",
-            "mode": "System",
-            "vnetSubnetID": "[variables('vnetSubnetID')]",
-            "type": "VirtualMachineScaleSets",
-            "storageProfile": "ManagedDisks"
-          }
-        ],
+        "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
         "addonProfiles": {
           "omsagent": {
             "enabled": true,
@@ -205,7 +219,7 @@
   },
   "resources": [
     {
-      "apiVersion": "2020-09-01",
+      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', '2020-09-01')]",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
