@@ -141,27 +141,6 @@
     }
   },
   "variables": {
-    "aadProfile": {
-      "configured": {
-          "clientAppID": "[parameters('rbacClientAppId')]",
-          "serverAppID": "[parameters('rbacServerAppId')]",
-          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
-          "tenantID": "[parameters('rbacTenantId')]"
-        },
-        "managed": {
-          "managed": true,
-          "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
-        }
-    },
-    "emptyObject": {},
-    "servicePrincipalProfile": {
-      "servicePrincipalProfile": {
-          "clientId": "[parameters('servicePrincipalClientId')]",
-          "secret": "[parameters('servicePrincipalSecret')]"
-      }
-    },
-    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
-    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
     "aksBaseProperties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
@@ -196,6 +175,27 @@
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
         }
     },
+    "aadProfile": {
+      "configured": {
+          "clientAppID": "[parameters('rbacClientAppId')]",
+          "serverAppID": "[parameters('rbacServerAppId')]",
+          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
+          "tenantID": "[parameters('rbacTenantId')]"
+        },
+        "managed": {
+          "managed": true,
+          "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
+        }
+    },
+    "emptyObject": {},
+    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+    "servicePrincipalProfile": {
+      "servicePrincipalProfile": {
+          "clientId": "[parameters('servicePrincipalClientId')]",
+          "secret": "[parameters('servicePrincipalSecret')]"
+      }
+    },
+    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     "windowsProfile": {
       "windowsProfile": "[parameters('windowsProfile')]"
     },
