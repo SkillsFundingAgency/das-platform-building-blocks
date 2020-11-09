@@ -209,7 +209,9 @@
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
-      "identity": "[if(empty(parameters('servicePrincipalClientId')), 'None', 'SystemAssigned')]",
+      "identity": {
+        "type": "[if(empty(parameters('servicePrincipalClientId')), 'None', 'SystemAssigned')]"
+      },
       "properties": "[variables('aksProperties')]"
     }
   ],
