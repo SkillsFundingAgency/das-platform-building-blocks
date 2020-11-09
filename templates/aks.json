@@ -154,12 +154,9 @@
         }
     },
     "servicePrincipalProfile": {
-      "configured": {
+      "servicePrincipalProfile": {
           "clientId": "[parameters('servicePrincipalClientId')]",
           "secret": "[parameters('servicePrincipalSecret')]"
-      },
-      "managed": {
-        "clientId": "msi"
       }
     },
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
@@ -189,7 +186,6 @@
         },
         "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
         "enableRBAC": true,
-        "servicePrincipalProfile": "[if(empty(parameters('servicePrincipalClientId')), variables('servicePrincipalProfile').managed, variables('servicePrincipalProfile').configured)]",
         "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
         "networkProfile": {
           "networkPlugin": "kubenet",
@@ -202,7 +198,9 @@
     "windowsProfile": {
       "windowsProfile": "[parameters('windowsProfile')]"
     },
-    "aksProperties": "[if(empty(parameters('windowsProfile')), variables('aksBaseProperties'), union(variables('aksBaseProperties'), variables('windowsProfile')))]"
+    "servicePrincipalProperties": "[if(empty(parameters('servicePrincipalClientId')), null(), variables('servicePrincipalProfile'))]",
+    "windowsProfileProperties": "[if(empty(parameters('windowsProfile')), null(), variables('windowsProfile'))]",
+    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'))]"
   },
   "resources": [
     {
@@ -210,6 +208,7 @@
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
+      "identity": "[if(empty(parameters('servicePrincipalClientId')), 'None', 'SystemAssigned')]",
       "properties": "[variables('aksProperties')]"
     }
   ],
