@@ -153,6 +153,7 @@
           "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
         }
     },
+    "emptyObject": {},
     "servicePrincipalProfile": {
       "servicePrincipalProfile": {
           "clientId": "[parameters('servicePrincipalClientId')]",
@@ -198,8 +199,8 @@
     "windowsProfile": {
       "windowsProfile": "[parameters('windowsProfile')]"
     },
-    "servicePrincipalProperties": "[if(empty(parameters('servicePrincipalClientId')), null(), variables('servicePrincipalProfile'))]",
-    "windowsProfileProperties": "[if(empty(parameters('windowsProfile')), null(), variables('windowsProfile'))]",
+    "servicePrincipalProperties": "[if(empty(parameters('servicePrincipalClientId')), variables('emptyObject'), variables('servicePrincipalProfile'))]",
+    "windowsProfileProperties": "[if(empty(parameters('windowsProfile')), variables('emptyObject'), variables('windowsProfile'))]",
     "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'))]"
   },
   "resources": [
