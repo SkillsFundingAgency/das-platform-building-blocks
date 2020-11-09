@@ -151,6 +151,15 @@
           "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
         }
     },
+    "servicePrincipalProfile": {
+      "configured": {
+          "clientId": "[parameters('servicePrincipalClientId')]",
+          "secret": "[parameters('servicePrincipalSecret')]"
+      },
+      "managed": {
+        "clientId": "msi"
+      }
+    },
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
     "aksBaseProperties": {
@@ -178,10 +187,7 @@
         },
         "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
         "enableRBAC": true,
-        "servicePrincipalProfile": {
-          "clientId": "[parameters('servicePrincipalClientId')]",
-          "secret": "[parameters('servicePrincipalSecret')]"
-        },
+        "servicePrincipalProfile": "[if(empty(parameters('servicePrincipalClientId')), variables('servicePrincipalProfile').managed, variables('servicePrincipalProfile').configured)]",
         "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
         "networkProfile": {
           "networkPlugin": "kubenet",
