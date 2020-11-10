@@ -15,22 +15,40 @@
       }
     },
     "servicePrincipalClientId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "servicePrincipalSecret": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": ""
     },
     "rbacClientAppId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The ID of the separately created client app service principal, ignored if adminGroupObjectId is set"
+      }
     },
     "rbacServerAppId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The ID of the separately created server app service principal, ignored if adminGroupObjectId is set"
+      }
     },
     "rbacServerAppSecret": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The secret of the separately created server app service principal, ignored if adminGroupObjectId is set"
+      }
     },
     "rbacTenantId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The tenant ID of for legacy AAD integration, ignored if adminGroupObjectId is set"
+      }
     },
     "serviceCidr": {
       "type": "string"
@@ -109,36 +127,49 @@
     },
     "windowsProfile": {
       "type": "secureObject",
-      "defaultValue": null,
       "metadata": {
-        "description": "adminUsername and adminPassword for Windows nodes"
+        "description": "adminUsername and adminPassword for Windows nodes, if windowsProfile not required pass in an empty object '{}'"
       }
+    },
+    "adminGroupObjectId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "If specified then AKS-managed Azure AD will be configured and the group this Object ID represents will have admin rights over the cluster",
+        "documentation": "https://docs.microsoft.com/en-gb/azure/aks/managed-aad"
+      }
+    },
+    "legacyDeployment": {
+      "type": "bool",
+      "defaultValue": true
     }
   },
   "variables": {
-    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
-    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
-  },
-  "resources": [
-    {
-      "apiVersion": "2019-08-01",
-      "type": "Microsoft.ContainerService/managedClusters",
-      "location": "[resourceGroup().location]",
-      "name": "[parameters('clusterName')]",
-      "properties": {
+    "agentPoolProfile": {
+      "withMode": [{
+        "name": "[parameters('agentPoolName')]",
+        "count": "[parameters('agentNodeCount')]",
+        "vmSize": "[parameters('agentVMSize')]",
+        "osType": "Linux",
+        "mode": "System",
+        "vnetSubnetID": "[variables('vnetSubnetID')]",
+        "type": "VirtualMachineScaleSets",
+        "storageProfile": "ManagedDisks"
+      }],
+      "withoutMode": [{
+        "name": "[parameters('agentPoolName')]",
+        "count": "[parameters('agentNodeCount')]",
+        "vmSize": "[parameters('agentVMSize')]",
+        "osType": "Linux",
+        "vnetSubnetID": "[variables('vnetSubnetID')]",
+        "type": "VirtualMachineScaleSets",
+        "storageProfile": "ManagedDisks"
+      }]
+    },
+    "aksBaseProperties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
         "dnsPrefix": "[parameters('clusterName')]",
-        "agentPoolProfiles": [
-          {
-            "name": "[parameters('agentPoolName')]",
-            "count": "[parameters('agentNodeCount')]",
-            "vmSize": "[parameters('agentVMSize')]",
-            "osType": "Linux",
-            "vnetSubnetID": "[variables('vnetSubnetID')]",
-            "type": "VirtualMachineScaleSets",
-            "storageProfile": "ManagedDisks"
-          }
-        ],
+        "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
         "addonProfiles": {
           "omsagent": {
             "enabled": true,
@@ -149,25 +180,53 @@
         },
         "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
         "enableRBAC": true,
-        "servicePrincipalProfile": {
-          "clientId": "[parameters('servicePrincipalClientId')]",
-          "secret": "[parameters('servicePrincipalSecret')]"
-        },
-        "aadProfile": {
-          "clientAppID": "[parameters('rbacClientAppId')]",
-          "serverAppID": "[parameters('rbacServerAppId')]",
-          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
-          "tenantID": "[parameters('rbacTenantId')]"
-        },
+        "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
         "networkProfile": {
           "networkPlugin": "kubenet",
           "serviceCidr": "[parameters('serviceCidr')]",
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
+        }
+    },
+    "aadProfile": {
+      "configured": {
+          "clientAppID": "[parameters('rbacClientAppId')]",
+          "serverAppID": "[parameters('rbacServerAppId')]",
+          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
+          "tenantID": "[parameters('rbacTenantId')]"
         },
-        "windowsProfile": "[parameters('windowsProfile')]"
+        "managed": {
+          "managed": true,
+          "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
+        }
+    },
+    "emptyObject": {},
+    "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+    "servicePrincipalProfile": {
+      "servicePrincipalProfile": {
+          "clientId": "[parameters('servicePrincipalClientId')]",
+          "secret": "[parameters('servicePrincipalSecret')]"
       }
+    },
+    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
+    "windowsProfile": {
+      "windowsProfile": "[parameters('windowsProfile')]"
+    },
+    "servicePrincipalProperties": "[if(empty(parameters('servicePrincipalClientId')), variables('emptyObject'), variables('servicePrincipalProfile'))]",
+    "windowsProfileProperties": "[if(empty(parameters('windowsProfile')), variables('emptyObject'), variables('windowsProfile'))]",
+    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', '2020-09-01')]",
+      "type": "Microsoft.ContainerService/managedClusters",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('clusterName')]",
+      "identity": {
+        "type": "[if(empty(parameters('servicePrincipalClientId')), 'SystemAssigned', 'None')]"
+      },
+      "properties": "[variables('aksProperties')]"
     }
   ],
   "outputs": {
