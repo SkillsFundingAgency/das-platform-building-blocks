@@ -18,6 +18,7 @@ steps:
       -ParametersFilePath ${{ parameters.ParametersPath }}
     pwsh: true
   env: ${{ parameters.TemplateSecrets }}
+  workingDirectory: $(Pipeline.Workspace)
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
