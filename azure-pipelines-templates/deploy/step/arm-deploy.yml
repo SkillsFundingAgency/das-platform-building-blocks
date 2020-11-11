@@ -4,10 +4,13 @@
   ServiceConnection: 
   SubscriptionId: 
   TemplatePath: 
+  MultiRepoCheckout: false
   TemplateSecrets: {}
 
 steps:
 - checkout: das-platform-automation
+  ${{ if eq(parameters.MultiRepoCheckout, true)  }}:
+    path: 'das-platform-automation/'
 - task: PowerShell@2
   displayName: Generate Parameters File
   inputs:
@@ -16,7 +19,6 @@ steps:
       -TemplateFilePath ${{ parameters.TemplatePath }}
       -ParametersFilePath ${{ parameters.ParametersPath }}
     pwsh: true
-    workingDirectory: $(Pipeline.Workspace)
   env: ${{ parameters.TemplateSecrets }}
   
 
