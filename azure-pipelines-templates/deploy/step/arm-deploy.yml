@@ -4,6 +4,7 @@
   ServiceConnection: 
   SubscriptionId: 
   TemplatePath: 
+  IsMultiRepoCheckout: false
   TemplateSecrets: {}
 
 steps:
@@ -11,7 +12,10 @@ steps:
 - task: PowerShell@2
   displayName: Generate Parameters File
   inputs:
-    filePath: Infrastructure-Scripts/New-ParametersFile.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
+      filePath: Infrastructure-Scripts/New-ParametersFile.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
+      filePath: das-platform-automation/Infrastructure-Scripts/New-ParametersFile.ps1
     arguments: >
       -TemplateFilePath ${{ parameters.TemplatePath }}
       -ParametersFilePath ${{ parameters.ParametersPath }}
@@ -33,6 +37,9 @@ steps:
   name: ArmOutputs
   displayName: Convert ARM Template Outputs to Variables
   inputs:
-    filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
+      filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
+      filePath: das-platform-automation/Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
     arguments: >
       -ARMOutput '$(ARMOutput)'
