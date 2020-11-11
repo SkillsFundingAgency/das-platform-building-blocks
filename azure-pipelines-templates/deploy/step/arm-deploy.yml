@@ -9,8 +9,6 @@
 
 steps:
 - checkout: das-platform-automation
-  ${{ if eq(parameters.MultiRepoCheckout, true)  }}:
-    path: 'das-platform-automation/'
 - task: PowerShell@2
   displayName: Generate Parameters File
   inputs:
