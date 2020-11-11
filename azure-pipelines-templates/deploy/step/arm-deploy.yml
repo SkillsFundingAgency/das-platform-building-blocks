@@ -36,6 +36,6 @@ steps:
   name: ArmOutputs
   displayName: Convert ARM Template Outputs to Variables
   inputs:
-    filePath: $(Pipeline.Workspace)/das-platform-automation/Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
+    filePath: Infrastructure-Scripts/ConvertTo-AzureDevOpsVariables.ps1
     arguments: >
       -ARMOutput '$(ARMOutput)'
