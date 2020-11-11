@@ -8,7 +8,6 @@
 
 steps:
 - checkout: das-platform-automation
-  path: 'das-platform-automation/'
 - task: PowerShell@2
   displayName: Generate Parameters File
   inputs:
