@@ -14,13 +14,12 @@ steps:
 - task: PowerShell@2
   displayName: Generate Parameters File
   inputs:
-    filePath: $(Pipeline.Workspace)/das-platform-automation/Infrastructure-Scripts/New-ParametersFile.ps1
+    filePath: Infrastructure-Scripts/New-ParametersFile.ps1
     arguments: >
       -TemplateFilePath ${{ parameters.TemplatePath }}
       -ParametersFilePath ${{ parameters.ParametersPath }}
     pwsh: true
   env: ${{ parameters.TemplateSecrets }}
-  
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
