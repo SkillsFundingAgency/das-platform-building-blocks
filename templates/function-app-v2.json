@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string"
+    },
+    "appServicePlanName": {
+      "type": "string"
+    },
+    "appServicePlanResourceGroup": {
+      "type": "string"
+    },
+    "functionAppAppSettings": {
+      "type": "secureObject",
+      "defaultValue": {
+        "array": []
+      }
+    },
+    "functionAppConnectionStrings": {
+      "type": "secureObject",
+      "defaultValue": {
+        "array": []
+      }
+    },
+    "customHostName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "certificateThumbprint": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "This can be passed into the template via the reference function: [reference(resourceId(parameters('certificateResourceGroup'), 'Microsoft.Web/certificates', parameters('certificateName')), '2016-03-01').Thumbprint]"
+      }
+    },
+    "ipSecurityRestrictions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
+      }
+    },
+    "subnetResourceId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource ID of the subnet used for vNet integration"
+      }
+    }
+  },
+  "variables": {
+    "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+    "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+    "functionAppApiVersion": "2019-08-01"
+  },
+  "resources": [
+    {
+      "name": "[parameters('functionAppName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[variables('appServicePlanId')]",
+        "clientAffinityEnabled": false,
+        "siteConfig": {
+          "alwaysOn": "[if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')]",
+          "appSettings": "[parameters('functionAppAppSettings').array]",
+          "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+        },
+        "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/hostnameBindings",
+      "condition": "[variables('UseCustomHostname')]",
+      "name": "[concat(parameters('functionAppName'), '/', if(variables('useCustomHostname'), parameters('customHostname'), 'placeholder'))]",
+      "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sslState": "SniEnabled",
+        "thumbprint": "[parameters('certificateThumbprint')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "condition": "[greater(length(parameters('subnetResourceId')), 0)]",
+      "name": "[concat(parameters('functionAppName'), '/virtualNetwork')]",
+      "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "subnetResourceId": "[parameters('subnetResourceId')]",
+        "swiftSupported": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(parameters('functionAppName'), variables('functionAppApiVersion'), 'Full').identity.principalId]"
+    }
+  }
+}
