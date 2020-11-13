@@ -180,7 +180,7 @@
         },
         "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
         "enableRBAC": true,
-        "aadProfile": "[if(empty(parameters('rbacServerAppId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
+        "aadProfile": "[if(empty(parameters('rbacServerAppId')), variables('aadProfile').managed, variables('aadProfile').configured)]",
         "networkProfile": {
           "networkPlugin": "kubenet",
           "serviceCidr": "[parameters('serviceCidr')]",
