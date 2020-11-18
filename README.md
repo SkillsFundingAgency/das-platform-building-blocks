@@ -22,7 +22,7 @@
     }
     ```
 
-3. Select the Azure Resource template you wish to use, (eg. https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json) by setting the concatenation of the deploymentUrlBase variable and the file name as the uri of the templateLink property as follows:
+3. Select the Azure Resource template you wish to use, (eg. https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service-v2.json) by setting the concatenation of the deploymentUrlBase variable and the file name as the uri of the templateLink property as follows:
 
     ```json
     {
@@ -32,7 +32,7 @@
         "properties": {
             "mode": "Incremental", //or Complete
             "templateLink": {
-                "uri": "[concat(variables('deploymentUrlBase'),'app-service.json')]",
+                "uri": "[concat(variables('deploymentUrlBase'),'app-service-v2.json')]",
                 "contentVersion": "1.0.0.0"
             },
             "parameters": {
