@@ -142,6 +142,14 @@
     "legacyDeployment": {
       "type": "bool",
       "defaultValue": true
+    },
+    "networkPlugin": {
+      "type": "string",
+      "defaultValue": "kubenet",
+      "allowedValues": [
+        "azure",
+        "kubenet"
+      ]
     }
   },
   "variables": {
@@ -182,7 +190,7 @@
         "enableRBAC": true,
         "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
         "networkProfile": {
-          "networkPlugin": "kubenet",
+          "networkPlugin": "[parameters('networkPlugin')]",
           "serviceCidr": "[parameters('serviceCidr')]",
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
