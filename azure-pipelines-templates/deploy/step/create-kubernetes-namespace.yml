@@ -1,8 +1,9 @@
 parameters:
-  AksResourceGroupName: 
-  AzureSubscription: 
-  AksClusterName: 
-  Namespace: 
+  AksResourceGroupName:
+  AzureSubscription:
+  AksClusterName:
+  Namespace:
+  Validate: false
   IsMultiRepoCheckout: true
 
 steps:
@@ -22,14 +23,14 @@ steps:
   displayName: 'PowerShell: Test-NamespaceExists.ps1'
   inputs:
     targetType: 'filePath'
-    ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
+    ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
       filePath: das-platform-automation/Infrastructure-Scripts/Test-NamespaceExists.ps1
-    ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
+    ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
       filePath: Infrastructure-Scripts/Test-NamespaceExists.ps1
     arguments: -KubectlOutput '$(GetNamespaces.KubectlOutput)' -Namespace ${{ parameters.Namespace }} -Verbose
 - task: Kubernetes@1
   displayName: kubectl create ${{ parameters.Namespace }} namespace
-  condition: eq(variables.NamespaceExists, 'false')
+  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'), eq('${{ parameters.Validate }}', false))
   inputs:
     connectionType: Azure Resource Manager
     azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
