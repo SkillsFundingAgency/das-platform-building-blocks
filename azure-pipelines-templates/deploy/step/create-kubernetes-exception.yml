@@ -20,7 +20,7 @@ steps:
     command: 'get'
     arguments: 'crd ${{ parameters.Exception }} --all-namespaces --ignore-not-found'
 - task: PowerShell@2
-  displayName: 'PowerShell: Test-ExceptionExists.ps1'
+  displayName: 'PowerShell: Test-KubernetesExceptionExists.ps1'
   inputs:
     targetType: 'filePath'
     ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
