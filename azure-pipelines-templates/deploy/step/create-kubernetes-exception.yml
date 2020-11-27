@@ -2,40 +2,40 @@ parameters:
   AksResourceGroupName:
   AzureSubscription:
   AksClusterName:
-  Namespace:
+  Exception:
+  ExceptionFile:
   Validate: false
   IsMultiRepoCheckout: true
 
 steps:
-- checkout: das-platform-automation
 - task: Kubernetes@1
-  displayName: kubectl get namespaces
-  name: GetNamespaces
+  displayName: kubectl get crd ${{ parameters.Exception }}
+  name: GetException
   inputs:
     connectionType: Azure Resource Manager
     azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
-    kubernetesCluster: ${{ parameters.AksClusterName }}
+    kubernetesCluster: ${{ parameters.AKSClusterName }}
     useClusterAdmin: true
     command: 'get'
-    arguments: 'namespace'
+    arguments: 'crd ${{ parameters.Exception }} --all-namespaces --ignore-not-found'
 - task: PowerShell@2
-  displayName: 'PowerShell: Test-NamespaceExists.ps1'
+  displayName: 'PowerShell: Test-ExceptionExists.ps1'
   inputs:
     targetType: 'filePath'
     ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
-      filePath: das-platform-automation/Infrastructure-Scripts/Test-KubernetesNamespaceExists.ps1
+      filePath: das-platform-automation/das-kubernetes/scripts/Test-KubernetesExceptionExists.ps1
     ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
       filePath: Infrastructure-Scripts/Test-KubernetesNamespaceExists.ps1
-    arguments: -KubectlOutput '$(GetNamespaces.KubectlOutput)' -Namespace ${{ parameters.Namespace }} -Verbose
+    arguments: -KubectlOutput '$(GetException.KubectlOutput)' -ExceptionName ${{ parameters.Exception }} -Verbose
 - task: Kubernetes@1
-  displayName: kubectl create ${{ parameters.Namespace }} namespace
-  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'), eq('${{ parameters.Validate }}', false))
+  displayName: kubectl apply ${{ parameters.Exception }}
+  condition: and(succeeded(), eq(variables.ExceptionExists, 'true'), eq('${{ parameters.Validate }}', false))
   inputs:
     connectionType: Azure Resource Manager
     azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
-    kubernetesCluster: ${{ parameters.AksClusterName }}
+    kubernetesCluster: ${{ parameters.AKSClusterName }}
     useClusterAdmin: true
-    command: 'create'
-    arguments: 'namespace ${{ parameters.Namespace }}'
+    command: 'apply'
+    arguments: '-f ${{ parameters.ExceptionFile }}'
