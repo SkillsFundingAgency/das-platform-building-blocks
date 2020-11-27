@@ -1,4 +1,5 @@
 ﻿parameters:
+  Environment: 
   Location: 
   ParametersPath: 
   ServiceConnection: 
@@ -34,7 +35,7 @@ steps:
     deploymentOutputs: ARMOutput
 
 - task: PowerShell@2
-  name: ArmOutputs
+  name: ArmOutputs${{ parameters.Environment }}
   displayName: Convert ARM Template Outputs to Variables
   inputs:
     ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
