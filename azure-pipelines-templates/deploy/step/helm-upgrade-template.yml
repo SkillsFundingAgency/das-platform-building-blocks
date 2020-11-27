@@ -1,0 +1,58 @@
+parameters:
+  AksClusterName:
+  AksResourceGroupName:
+  AzureSubscription:
+  ChartName:
+  HelmClientVersion: 
+  HelmChartVersion: 
+  KubectlVersion: 
+  Namespace: 
+  ReleaseName:
+  # separate the chart name and url with a space, eg 'foocharts https://charts.foo.com/'
+  AdditionalChartRepoNameAndUrl: 'none'
+  AdditionalUpgradeAgs: ''
+  OverrideValues: ''
+  ValuesFile: ''
+
+steps:
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
+- task: HelmInstaller@1
+  displayName: 'Install Helm ${{ parameters.HelmClientVersion }}'
+  inputs:
+    helmVersionToInstall: ${{ parameters.HelmClientVersion }}
+- task: HelmDeploy@0
+  displayName: Helm repo add stable charts
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    command: repo
+    arguments: add stable https://charts.helm.sh/stable
+- task: HelmDeploy@0
+  condition: and(succeeded(), ne('${{ parameters.AdditionalChartRepoNameAndUrl }}', 'none'))
+  displayName: Helm repo add optional charts
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    command: repo
+    arguments: add ${{ parameters.AdditionalChartRepoNameAndUrl }}
+- task: HelmDeploy@0
+  displayName: 'helm upgrade ${{ parameters.ChartName }}'
+  inputs:
+    azureSubscription: '${{ parameters.AzureSubscription }}'
+    azureResourceGroup: '${{ parameters.AksResourceGroupName }}'
+    kubernetesCluster: '${{ parameters.AksClusterName }}'
+    useClusterAdmin: true
+    command: upgrade
+    namespace: '${{ parameters.Namespace }}'
+    chartName: '${{ parameters.ChartName }}'
+    releaseName: '${{ parameters.ReleaseName }}'
+    overrideValues: ${{ parameters.OverrideValues }}
+    valueFile: '${{ parameters.ValuesFile }}'
+    arguments: '--namespace ${{ parameters.Namespace }} --version ${{ parameters.HelmChartVersion }} ${{ parameters.AdditionalUpgradeAgs }}'
