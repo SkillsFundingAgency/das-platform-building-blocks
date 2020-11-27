@@ -24,7 +24,7 @@ steps:
   inputs:
     targetType: 'filePath'
     ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
-      filePath: das-platform-automation/das-kubernetes/scripts/Test-KubernetesExceptionExists.ps1
+      filePath: das-platform-automation/Infrastructure-Scripts/Test-KubernetesExceptionExists.ps1
     ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
       filePath: Infrastructure-Scripts/Test-KubernetesNamespaceExists.ps1
     arguments: -KubectlOutput '$(GetException.KubectlOutput)' -ExceptionName ${{ parameters.Exception }} -Verbose
