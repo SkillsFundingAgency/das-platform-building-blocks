@@ -49,6 +49,10 @@
     "PublicIPAddress": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName')),providers('Microsoft.Network', 'publicIPAddresses').apiVersions[0]).ipAddress]"
+    },
+    "PublicIpAddressId": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
     }
   }
 }
