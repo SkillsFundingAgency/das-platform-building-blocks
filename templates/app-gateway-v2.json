@@ -101,27 +101,6 @@
                 "description": "Https frontend port."
             }
         },
-        "keyVaultName": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The name of the key vault."
-            }
-        },
-        "keyVaultSecretName": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The name of the certificate/secret stored in key vault."
-            }
-        },
-        "userAssignedIdentityName": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The name of the user assigned identity."
-            }
-        },
         "logStorageAccountId": {
             "type": "string",
             "defaultValue": "",
@@ -180,16 +159,7 @@
                 }
             ]
         },
-        "useSslCerts": "[and(greater(length(parameters('keyVaultName')),0), greater(length(parameters('keyVaultSecretName')),0), greater(length(parameters('userAssignedIdentityName')),0))]",
         "blankArray": [],
-        "sslCerts": [
-            {
-                "name": "default-ssl-certificate",
-                "properties": {
-                    "keyVaultSecretId": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/secrets/', parameters('KeyVaultSecretName'))]"
-                }
-            }
-        ],
         "httpListener": [
             {
                 "name": "appGatewayHttpListener",
@@ -201,24 +171,6 @@
                         "Id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/frontendPorts/default-frontend-http-port')]"
                     },
                     "Protocol": "Http",
-                    "customErrorConfigurations": "[parameters('customErrorPages')]"
-                }
-            }
-        ],
-        "httpsListener": [
-            {
-                "name": "appGatewayHttpsListener",
-                "properties": {
-                    "FrontendIpConfiguration": {
-                        "Id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/frontendIPConfigurations/', if(greater(length(parameters('privateIpAddress')),0), 'appGatewayPrivateFrontendIp', 'appGatewayPublicFrontendIp'))]"
-                    },
-                    "FrontendPort": {
-                        "Id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/frontendPorts/default-frontend-https-port')]"
-                    },
-                    "SslCertificate": {
-                        "id": "[resourceId('Microsoft.Network/applicationGateways/sslCertificates', parameters('appGatewayName'), 'default-ssl-certificate')]"
-                    },
-                    "Protocol": "Https",
                     "customErrorConfigurations": "[parameters('customErrorPages')]"
                 }
             }
@@ -237,31 +189,6 @@
                 }
             }
         ],
-        "httpsRouting": [
-            {
-                "Name": "defaultHttpsRoutingRule",
-                "properties": {
-                    "RuleType": "PathBasedRouting",
-                    "httpListener": {
-                        "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGatewayName')), '/httpListeners/appGatewayHttpsListener')]"
-                    },
-                    "urlPathMap": {
-                        "id": "[resourceId('Microsoft.Network/applicationGateways/urlPathMaps', parameters('appGatewayName'), 'default-path-map')]"
-                    }
-                }
-            }
-        ],
-        "identity": {
-            "systemAssigned": {
-                "type": "SystemAssigned"
-            },
-            "userAssigned": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]": {}
-                }
-            }
-        },
         "rewriteRuleSets": [
             {
                 "name": "defaultRewriteRulesSet",
@@ -341,7 +268,7 @@
                     "policyType": "Predefined",
                     "policyName": "AppGwSslPolicy20170401S"
                 },
-                "sslCertificates": "[if(variables('useSslCerts'), variables('sslCerts'), variables('blankArray'))]",
+                "sslCertificates": [],
                 "gatewayIPConfigurations": [
                     {
                         "name": "appGatewayIpConfig",
@@ -370,7 +297,7 @@
                 "probes": "[parameters('customProbes')]",
                 "backendAddressPools": "[variables('backendAddressPools')]",
                 "backendHttpSettingsCollection": "[variables('backendHttpSettings')]",
-                "httpListeners": "[if(variables('useSslCerts'), union(variables('httpListener'), variables('httpsListener')), variables('httpListener'))]",
+                "httpListeners": "[variables('httpListener')]",
                 "urlPathMaps": [
                     {
                         "name": "default-path-map",
@@ -386,7 +313,7 @@
                         }
                     }
                 ],
-                "requestRoutingRules": "[if(variables('useSslCerts'), union(variables('httpRouting'), variables('httpsRouting')), variables('httpRouting'))]",
+                "requestRoutingRules": "[variables('httpRouting')]",
                 "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]"
             },
             "resources": [
@@ -440,8 +367,7 @@
                         ]
                     }
                 }
-            ],
-            "identity": "[if(empty(parameters('userAssignedIdentityName')), variables('identity').systemAssigned, variables('identity').userAssigned)]"
+            ]
         }
     ]
 }
