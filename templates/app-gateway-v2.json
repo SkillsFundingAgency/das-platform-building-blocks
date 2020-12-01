@@ -117,6 +117,7 @@
         },
         "userAssignedIdentityName": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "The name of the user assigned identity."
             }
@@ -250,6 +251,17 @@
                 }
             }
         ],
+        "identity": {
+            "systemAssigned": {
+                "type": "SystemAssigned"
+            },
+            "userAssigned": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]": {}
+                }
+            }
+        },
         "rewriteRuleSets": [
             {
                 "name": "defaultRewriteRulesSet",
@@ -428,7 +440,8 @@
                         ]
                     }
                 }
-            ]
+            ],
+            "identity": "[if(empty(parameters('userAssignedIdentityName')), variables('identity').systemAssigned, variables('identity').userAssigned)]"
         }
     ]
 }
