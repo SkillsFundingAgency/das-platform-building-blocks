@@ -329,7 +329,7 @@
         {
             "name": "[parameters('appGatewayName')]",
             "type": "Microsoft.Network/applicationGateways",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "sku": {
