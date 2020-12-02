@@ -315,8 +315,8 @@
                 "backendAddressPools": "[variables('backendAddressPools')]",
                 "backendHttpSettingsCollection": "[variables('backendHttpSettings')]",
                 "httpListeners": "[variables('httpListener')]",
-                "urlPathMaps": "[if(equals(length(parameters('backendPools')),0), variables('blankArray'), variables('urlPathMaps').defaultPathMap)]",
-                "requestRoutingRules": "[if(equals(length(parameters('backendPools')),0), variables('blankArray'), variables('httpRouting'))]",
+                "urlPathMaps": "[if(equals(length(parameters('backendHttpSettings')),0), variables('blankArray'), variables('urlPathMaps').defaultPathMap)]",
+                "requestRoutingRules": "[if(equals(length(parameters('backendHttpSettings')),0), variables('blankArray'), variables('httpRouting'))]",
                 "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]"
             },
             "resources": [
