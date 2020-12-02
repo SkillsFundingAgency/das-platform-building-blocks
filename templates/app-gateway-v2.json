@@ -316,7 +316,7 @@
                 "backendHttpSettingsCollection": "[variables('backendHttpSettings')]",
                 "httpListeners": "[variables('httpListener')]",
                 "urlPathMaps": "[if(equals(length(parameters('backendPools')),0), variables('blankArray'), variables('urlPathMaps').defaultPathMap)]",
-                "requestRoutingRules": "[variables('httpRouting')]",
+                "requestRoutingRules": "[if(equals(length(parameters('backendPools')),0), variables('blankArray'), variables('httpRouting'))]",
                 "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]"
             },
             "resources": [
