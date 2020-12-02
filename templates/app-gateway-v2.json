@@ -207,10 +207,10 @@
                         "name": "default-path-map",
                         "properties": {
                             "defaultBackendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appGatewayName'), parameters('backendPools')[0].name)]"
+                                "id": "[if(not(empty(parameters('backendPools'))), resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appGatewayName'), parameters('backendPools')[0].name), '')]"
                             },
                             "defaultBackendHttpSettings": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appGatewayName'), parameters('backendHttpSettings')[0].name)]"
+                                "id": "[if(not(empty(parameters('backendHttpSettings'))), resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appGatewayName'), parameters('backendHttpSettings')[0].name), '')]"
                             },
                             "pathRules": "[variables('urlPathRules')]",
                             "defaultRewriteRuleSet": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSetsId'), json('null'))]"
