@@ -8,11 +8,14 @@
                 "description": "Name of the application gateway resource"
             }
         },
-        "subnetRef": {
-            "type": "string",
-            "metadata": {
-                "description": "Vnet subnet resource ID"
-            }
+        "subnetName": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string"
         },
         "appGatewayTier": {
             "type": "string",
@@ -153,7 +156,7 @@
                         "privateIpAddress": "[parameters('privateIpAddress')]",
                         "privateIpAllocationMethod": "Static",
                         "subnet": {
-                            "id": "[parameters('subnetRef')]"
+                            "id": "[variables('subnetResourceId')]"
                         }
                     }
                 }
@@ -201,6 +204,7 @@
         "rewriteRuleSetsId": {
             "id": "[resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', parameters('appGatewayName'), 'defaultRewriteRulesSet')]"
         },
+        "subnetResourceId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'),'/subnets/',parameters('subnetName'))]",
         "copy": [
             {
                 "name": "backendAddressPools",
@@ -274,7 +278,7 @@
                         "name": "appGatewayIpConfig",
                         "properties": {
                             "subnet": {
-                                "id": "[parameters('subnetRef')]"
+                                "id": "[variables('subnetResourceId')]"
                             }
                         }
                     }
