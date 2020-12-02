@@ -201,6 +201,23 @@
         "rewriteRuleSetsId": {
             "id": "[resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', parameters('appGatewayName'), 'defaultRewriteRulesSet')]"
         },
+        "urlPathMaps": {
+            "defaultPathMap": [
+                    {
+                        "name": "default-path-map",
+                        "properties": {
+                            "defaultBackendAddressPool": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appGatewayName'), parameters('backendPools')[0].name)]"
+                            },
+                            "defaultBackendHttpSettings": {
+                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appGatewayName'), parameters('backendHttpSettings')[0].name)]"
+                            },
+                            "pathRules": "[variables('urlPathRules')]",
+                            "defaultRewriteRuleSet": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSetsId'), json('null'))]"
+                        }
+                    }
+            ]
+        },
         "copy": [
             {
                 "name": "backendAddressPools",
@@ -298,21 +315,7 @@
                 "backendAddressPools": "[variables('backendAddressPools')]",
                 "backendHttpSettingsCollection": "[variables('backendHttpSettings')]",
                 "httpListeners": "[variables('httpListener')]",
-                "urlPathMaps": [
-                    {
-                        "name": "default-path-map",
-                        "properties": {
-                            "defaultBackendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', parameters('appGatewayName'), parameters('backendPools')[0].name)]"
-                            },
-                            "defaultBackendHttpSettings": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', parameters('appGatewayName'), parameters('backendHttpSettings')[0].name)]"
-                            },
-                            "pathRules": "[variables('urlPathRules')]",
-                            "defaultRewriteRuleSet": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSetsId'), json('null'))]"
-                        }
-                    }
-                ],
+                "urlPathMaps": "[if(equals(length(parameters('backendPools')),0), variables('blankArray'), variables('urlPathMaps').defaultPathMap)]",
                 "requestRoutingRules": "[variables('httpRouting')]",
                 "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]"
             },
