@@ -8,6 +8,7 @@ steps:
   displayName: Azure Function App Deploy - ${{ parameters.FunctionAppName }}
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
+    appType: functionApp
     appName: ${{ parameters.FunctionAppName }}
     package: ${{ parameters.DeploymentPackagePath }}
 
