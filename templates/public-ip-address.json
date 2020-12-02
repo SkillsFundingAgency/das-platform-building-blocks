@@ -50,7 +50,7 @@
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName')),providers('Microsoft.Network', 'publicIPAddresses').apiVersions[0]).ipAddress]"
     },
-    "PublicIpAddressId": {
+    "PublicIpAddressResourceId": {
         "type": "string",
         "value": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
     }
