@@ -130,11 +130,6 @@
         "logDiagnosticEnabled": "[or(not(empty(parameters('logStorageAccountId'))),not(empty(parameters('logWorkspaceId'))))]",
         "logRetentionEnabled": "[if(equals(parameters('logRetention'),0), json('false'), json('true'))]",
         "tier": {
-            "Standard_Small": "Standard",
-            "Standard_Medium": "Standard",
-            "Standard_Large": "Standard",
-            "WAF_Medium": "WAF",
-            "WAF_Large": "WAF",
             "Standard_v2": "Standard_v2",
             "WAF_v2": "WAF_v2"
         },
