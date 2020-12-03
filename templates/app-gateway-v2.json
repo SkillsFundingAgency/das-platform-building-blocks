@@ -83,7 +83,7 @@
                 "description": "Set the private IP address for application gateway (public IP address only generated if empty)"
             }
         },
-        "publicIpAddressId": {
+        "publicIpAddressResourceId": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -145,7 +145,7 @@
                     "name": "appGatewayPublicFrontendIp",
                     "properties": {
                         "PublicIPAddress": {
-                            "id": "[parameters('publicIpAddressId')]"
+                            "id": "[parameters('publicIpAddressResourceId')]"
                         }
                     }
                 }
@@ -284,7 +284,7 @@
                         }
                     }
                 ],
-                "frontendIPConfigurations": "[if(and(greater(length(parameters('privateIpAddress')),0),greater(length(parameters('publicIpAddressId')),0)), union(variables('frontendIp').public,variables('frontendIp').private), if(greater(length(parameters('privateIpAddress')),0), variables('frontendIp').private, if(greater(length(parameters('publicIpAddressId')),0), variables('frontendIp').public, variables('blankArray'))))]",
+                "frontendIPConfigurations": "[if(and(greater(length(parameters('privateIpAddress')),0),greater(length(parameters('publicIpAddressResourceId')),0)), union(variables('frontendIp').public,variables('frontendIp').private), if(greater(length(parameters('privateIpAddress')),0), variables('frontendIp').private, if(greater(length(parameters('publicIpAddressResourceId')),0), variables('frontendIp').public, variables('blankArray'))))]",
                 "frontendPorts": [
                     {
                         "name": "default-frontend-http-port",
