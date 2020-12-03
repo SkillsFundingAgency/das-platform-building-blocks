@@ -89,19 +89,16 @@
                 "description": "Https frontend port."
             }
         },
-        "logStorageAccountId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Storage account to archive logs to (leave blank to disable)"
-            }
-        },
-        "logWorkspaceId": {
+        "logAnalyticsWorkspaceName": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Log analytics workspace to send logs to (leave blank to disable)"
             }
+        },
+        "logAnalyticsWorkspaceResourceGroupName": {
+            "type": "string",
+            "defaultValue": ""
         },
         "logRetention": {
             "type": "int",
@@ -140,8 +137,9 @@
         }
     },
     "variables": {
-        "logDiagnosticEnabled": "[or(not(empty(parameters('logStorageAccountId'))),not(empty(parameters('logWorkspaceId'))))]",
+        "logDiagnosticEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
         "logRetentionEnabled": "[if(equals(parameters('logRetention'),0), json('false'), json('true'))]",
+        "logWorkspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
         "tier": {
             "Standard_v2": "Standard_v2",
             "WAF_v2": "WAF_v2"
@@ -336,8 +334,7 @@
                     "condition": "[variables('logDiagnosticEnabled')]",
                     "properties": {
                         "name": "[concat(parameters('appGatewayName'), '-diagnositics')]",
-                        "storageAccountId": "[if(empty(parameters('logStorageAccountId')), json('null'), parameters('logStorageAccountId'))]",
-                        "workspaceId": "[if(empty(parameters('logWorkspaceId')), json('null'), parameters('logWorkspaceId'))]",
+                        "workspaceId": "[if(empty(parameters('logAnalyticsWorkspaceName')), json('null'), variables('logWorkspaceId'))]",
                         "logs": [ 
                             {
                                 "category": "ApplicationGatewayAccessLog",
