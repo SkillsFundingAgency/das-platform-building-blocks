@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appGatewayName": {
@@ -102,6 +102,12 @@
             "defaultValue": 443,
             "metadata": {
                 "description": "Https frontend port."
+            }
+        },
+        "userAssignedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the user assigned identity."
             }
         },
         "logStorageAccountId": {
@@ -366,7 +372,13 @@
                         ]
                     }
                 }
-            ]
+            ],
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]": {}
+                }
+            }
         }
     ]
 }
