@@ -87,7 +87,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Reference ID for a public IP address"
+                "description": "Resource ID for a public IP address"
             }
         },
         "httpFrontendPort": {
