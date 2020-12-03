@@ -1,10 +1,13 @@
 ﻿parameters:
+  Environment: 
   Location: 
   ParametersPath: 
   ServiceConnection: 
   SubscriptionId: 
   TemplatePath: 
   IsMultiRepoCheckout: false
+  ResourceGroupName: ''
+  Scope: Subscription
   TemplateSecrets: {}
 
 steps:
@@ -25,8 +28,10 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: Azure Subscription Deployment - Create/Tag resource group and deploy resources
   inputs:
-    deploymentScope: Subscription
+    deploymentScope: ${{ parameters.Scope }}
     ConnectedServiceName: ${{ parameters.ServiceConnection }}
+    ${{ if eq(parameters.Scope, 'Resource Group') }}:
+      resourceGroupName: ${{ parameters.ResourceGroupName }}
     subscriptionId: ${{ parameters.SubscriptionId }}
     location: ${{ parameters.Location }}
     csmFile: ${{ parameters.TemplatePath }}
@@ -34,7 +39,7 @@ steps:
     deploymentOutputs: ARMOutput
 
 - task: PowerShell@2
-  name: ArmOutputs
+  name: ArmOutputs${{ parameters.Environment }}
   displayName: Convert ARM Template Outputs to Variables
   inputs:
     ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
