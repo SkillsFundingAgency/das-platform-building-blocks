@@ -8,26 +8,6 @@
                 "description": "Name of the application gateway resource"
             }
         },
-        "subnetName": {
-            "type": "string"
-        },
-        "virtualNetworkName": {
-            "type": "string"
-        },
-        "virtualNetworkResourceGroup": {
-            "type": "string"
-        },
-        "appGatewayTier": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_v2",
-                "WAF_v2"
-            ],
-            "defaultValue": "Standard_v2",
-            "metadata": {
-                "description": "Application gateway tier"
-            }
-        },
         "backendPools": {
             "type": "array",
             "metadata": {
@@ -46,6 +26,41 @@
                 "description": "routing rules"
             }
         },
+        "subnetName": {
+            "type": "string"
+        },
+        "userAssignedIdentityName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the user assigned identity."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string"
+        },
+        "appGatewayTier": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_v2",
+                "WAF_v2"
+            ],
+            "defaultValue": "Standard_v2",
+            "metadata": {
+                "description": "Application gateway tier"
+            }
+        },
+        "capacity": {
+            "type": "int",
+            "minValue": 2,
+            "maxValue": 75,
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of instances of the app gateway running"
+            }
+        },
         "customProbes": {
             "type": "array",
             "defaultValue": [],
@@ -60,36 +75,6 @@
                 "description": "Optionally set custom error pages"
             }
         },
-        "rewriteRules": {
-            "type": "array",
-            "defaultValue": [],
-            "metadata": {
-                "description": "routing"
-            }
-        },
-        "capacity": {
-            "type": "int",
-            "minValue": 2,
-            "maxValue": 75,
-            "defaultValue": 2,
-            "metadata": {
-                "description": "Number of instances of the app gateway running"
-            }
-        },
-        "privateIpAddress": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Set the private IP address for application gateway (public IP address only generated if empty)"
-            }
-        },
-        "publicIpAddressResourceId": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Reference ID for a public IP address"
-            }
-        },
         "httpFrontendPort": {
             "type": "int",
             "defaultValue": 80,
@@ -102,12 +87,6 @@
             "defaultValue": 443,
             "metadata": {
                 "description": "Https frontend port."
-            }
-        },
-        "userAssignedIdentityName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the user assigned identity."
             }
         },
         "logStorageAccountId": {
@@ -129,6 +108,27 @@
             "defaultValue": 0,
             "metadata": {
                 "description": "Number of days to retain the log files for (set to 0 to disable retention policy)"
+            }
+        },
+        "privateIpAddress": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Set the private IP address for application gateway (public IP address only generated if empty)"
+            }
+        },
+        "publicIpAddressResourceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Reference ID for a public IP address"
+            }
+        },
+        "rewriteRules": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "routing"
             }
         }
     },
