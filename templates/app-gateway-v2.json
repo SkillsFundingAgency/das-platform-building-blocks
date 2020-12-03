@@ -130,6 +130,13 @@
             "metadata": {
                 "description": "routing"
             }
+        },
+        "sslPolicy": {
+            "type": "object",
+            "defaultValue": {
+                "policyType": "Predefined",
+                "policyName": "AppGwSslPolicy20170401S"
+            }
         }
     },
     "variables": {
@@ -269,10 +276,7 @@
                     "tier": "[variables('tier')[parameters('appGatewayTier')]]",
                     "capacity": "[parameters('capacity')]"
                 },
-                "sslPolicy": {
-                    "policyType": "Predefined",
-                    "policyName": "AppGwSslPolicy20170401S"
-                },
+                "sslPolicy": "[parameters('sslPolicy')]",
                 "sslCertificates": [],
                 "gatewayIPConfigurations": [
                     {
