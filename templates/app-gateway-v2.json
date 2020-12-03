@@ -140,10 +140,6 @@
         "logDiagnosticEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
         "logRetentionEnabled": "[if(equals(parameters('logRetention'),0), json('false'), json('true'))]",
         "logWorkspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
-        "tier": {
-            "Standard_v2": "Standard_v2",
-            "WAF_v2": "WAF_v2"
-        },
         "frontendIp": {
             "public": [
                 {
@@ -271,7 +267,7 @@
             "properties": {
                 "sku": {
                     "name": "[parameters('appGatewayTier')]",
-                    "tier": "[variables('tier')[parameters('appGatewayTier')]]",
+                    "tier": "[parameters('appGatewayTier')]",
                     "capacity": "[parameters('capacity')]"
                 },
                 "sslPolicy": "[parameters('sslPolicy')]",
