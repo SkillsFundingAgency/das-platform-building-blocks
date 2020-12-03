@@ -1,0 +1,20 @@
+parameters:
+  ServiceConnection: ''
+  FunctionAppName: ''
+  DeploymentPackagePath: ''
+
+steps:
+- task: AzureFunctionApp@1
+  displayName: Azure Function App Deploy - ${{ parameters.FunctionAppName }}
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    appType: functionApp
+    appName: ${{ parameters.FunctionAppName }}
+    package: ${{ parameters.DeploymentPackagePath }}
+
+- task: AzureAppServiceManage@0
+  displayName: Restart Function App - ${{ parameters.FunctionAppName }}
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    Action: Restart Azure App Service
+    WebAppName: ${{ parameters.FunctionAppName }}
