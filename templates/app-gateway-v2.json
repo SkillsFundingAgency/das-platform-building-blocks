@@ -118,7 +118,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Reference ID for a public IP address"
+                "description": "Resource Id for a public IP address"
             }
         },
         "rewriteRules": {
