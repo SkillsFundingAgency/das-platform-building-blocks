@@ -71,7 +71,7 @@
             "type": "int",
             "defaultValue": 30,
             "metadata": {
-                "description": "The number of nodes for the cluster."
+                "description": "The maximum number of pods per node."
             },
             "minValue": 30,
             "maxValue": 250
