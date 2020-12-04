@@ -134,12 +134,57 @@
                 "policyType": "Predefined",
                 "policyName": "AppGwSslPolicy20170401S"
             }
+        },
+        "wafDisabledRuleGroups": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "wafExclusions": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "wafFileUploadLimitInMb": {
+            "type": "int",
+            "defaultValue": 100
+        },
+        "wafFirewallCustomRules": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "wafFirewallMode": {
+            "type": "string",
+            "allowedValues": [
+                "Detection",
+                "Prevention"
+            ],
+            "defaultValue": "Prevention"
+        },
+        "wafMaxRequestBodySizeInKb": {
+            "type": "int",
+            "defaultValue": 128
+        },
+        "wafRequestBodyCheck": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "wafRuleSetVersion": {
+            "type": "string",
+            "defaultValue": "3.1"
+        },
+        "wafState": {
+            "type": "string",
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ]
         }
     },
     "variables": {
         "logDiagnosticEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
         "logRetentionEnabled": "[if(equals(parameters('logRetention'),0), json('false'), json('true'))]",
         "logWorkspaceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+        "firewallPolicyName": "[concat(replace(parameters('appGatewayName'),'-',''),'wp')]",
         "frontendIp": {
             "public": [
                 {
@@ -214,11 +259,11 @@
                 "input": {
                     "name": "[parameters('backendPools')[copyIndex('backendAddressPools')].name]",
                     "properties": {
-                      "BackendAddresses": [
-                          {
-                            "fqdn": "[parameters('backendPools')[copyIndex('backendAddressPools')].fqdn]"
-                          }
-                      ]
+                        "BackendAddresses": [
+                            {
+                                "fqdn": "[parameters('backendPools')[copyIndex('backendAddressPools')].fqdn]"
+                            }
+                        ]
                     }
                 }
             },
@@ -260,10 +305,39 @@
     },
     "resources": [
         {
+            "name": "[variables('firewallPolicyName')]",
+            "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+            "apiVersion": "2020-04-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "policySettings": {
+                    "state": "[parameters('wafState')]",
+                    "mode": "[parameters('wafFirewallMode')]",
+                    "requestBodyCheck": "[parameters('wafRequestBodyCheck')]",
+                    "maxRequestBodySizeInKb": "[parameters('wafMaxRequestBodySizeInKb')]",
+                    "fileUploadLimitInMb": "[parameters('wafFileUploadLimitInMb')]"
+                },
+                "customRules": "[parameters('wafFirewallCustomRules')]",
+                "managedRules": {
+                    "exclusions": "[parameters('wafExclusions')]",
+                    "managedRuleSets": [
+                        {
+                            "ruleSetType": "OWASP",
+                            "ruleSetVersion": "[parameters('wafRuleSetVersion')]",
+                            "ruleGroupOverrides": "[parameters('wafDisabledRuleGroups')]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
             "name": "[parameters('appGatewayName')]",
             "type": "Microsoft.Network/applicationGateways",
             "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
+            "dependsOn":[
+                "[variables('firewallPolicyName')]"
+            ],
             "properties": {
                 "sku": {
                     "name": "[parameters('appGatewayTier')]",
@@ -317,7 +391,16 @@
                     }
                 ],
                 "requestRoutingRules": "[variables('httpRouting')]",
-                "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]"
+                "rewriteRuleSets": "[if(greater(length(parameters('rewriteRules')),0), variables('rewriteRuleSets'), variables('blankArray'))]",
+                "firewallPolicy": {
+                    "id": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', variables('firewallPolicyName'))]"
+                }
+            },
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]": {}
+                }
             },
             "resources": [
                 {
@@ -331,7 +414,7 @@
                     "properties": {
                         "name": "[concat(parameters('appGatewayName'), '-diagnositics')]",
                         "workspaceId": "[if(empty(parameters('logAnalyticsWorkspaceName')), json('null'), variables('logWorkspaceId'))]",
-                        "logs": [ 
+                        "logs": [
                             {
                                 "category": "ApplicationGatewayAccessLog",
                                 "enabled": true,
@@ -369,13 +452,7 @@
                         ]
                     }
                 }
-            ],
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentityName'))]": {}
-                }
-            }
+            ]
         }
     ]
 }
