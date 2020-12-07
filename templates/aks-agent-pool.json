@@ -66,6 +66,15 @@
         "nodeTaints": {
             "type": "array",
             "defaultValue": []
+        },
+        "maxPods": {
+            "type": "int",
+            "defaultValue": 30,
+            "metadata": {
+                "description": "The maximum number of pods per node."
+            },
+            "minValue": 30,
+            "maxValue": 250
         }
     },
     "variables": {
@@ -85,7 +94,8 @@
                 "type": "VirtualMachineScaleSets",
                 "vnetSubnetID": "[variables('vnetSubnetId')]",
                 "orchestratorVersion": "[parameters('kubernetesVersion')]",
-                "nodeTaints": "[parameters('nodeTaints')]"
+                "nodeTaints": "[parameters('nodeTaints')]",
+                "maxPods": "[parameters('maxPods')]"
             }
         }
     ]
