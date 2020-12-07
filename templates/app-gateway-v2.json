@@ -307,7 +307,7 @@
         {
             "name": "[variables('firewallPolicyName')]",
             "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
-            "apiVersion": "2020-04-01",
+            "apiVersion": "2020-06-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "policySettings": {
