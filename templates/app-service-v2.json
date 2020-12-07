@@ -116,7 +116,7 @@
       },
       {
         "name": "WEBSITE_LOCAL_CACHE_SIZEINMB",
-        "value": "300"
+        "value": "1000"
       }
     ],
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
