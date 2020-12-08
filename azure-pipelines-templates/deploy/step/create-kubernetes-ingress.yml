@@ -11,7 +11,7 @@
 
 steps:
 - checkout: das-platform-automation
-- task: AzurePowerShell@4
+- task: AzurePowerShell@5
   displayName: 'Azure PowerShell: Add-AppGatewayKubernetesIngressCert.ps1'
   inputs:
     azureSubscription: ${{ parameters.AzureServiceConnection }}
