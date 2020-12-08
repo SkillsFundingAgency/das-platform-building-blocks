@@ -1,0 +1,86 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "firewallPolicyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Must be only lowercase alphanumeric characters"
+            }
+        },
+        "disabledRuleGroups": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "exclusions": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "fileUploadLimitInMb": {
+            "type": "int",
+            "defaultValue": 100
+        },
+        "firewallCustomRules": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "firewallMode": {
+            "type": "string",
+            "allowedValues": [
+                "Detection",
+                "Prevention"
+            ],
+            "defaultValue": "Prevention"
+        },
+        "maxRequestBodySizeInKb": {
+            "type": "int",
+            "defaultValue": 128
+        },
+        "requestBodyCheck": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "ruleSetVersion": {
+            "type": "string",
+            "defaultValue": "3.1"
+        },
+        "state": {
+            "type": "string",
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ]
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('firewallPolicyName')]",
+            "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+            "apiVersion": "2020-06-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "policySettings": {
+                    "state": "[parameters('state')]",
+                    "mode": "[parameters('firewallMode')]",
+                    "requestBodyCheck": "[parameters('requestBodyCheck')]",
+                    "maxRequestBodySizeInKb": "[parameters('maxRequestBodySizeInKb')]",
+                    "fileUploadLimitInMb": "[parameters('fileUploadLimitInMb')]"
+                },
+                "customRules": "[parameters('firewallCustomRules')]",
+                "managedRules": {
+                    "exclusions": "[parameters('exclusions')]",
+                    "managedRuleSets": [
+                        {
+                            "ruleSetType": "OWASP",
+                            "ruleSetVersion": "[parameters('ruleSetVersion')]",
+                            "ruleGroupOverrides": "[parameters('disabledRuleGroups')]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
