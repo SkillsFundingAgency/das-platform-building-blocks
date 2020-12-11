@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "VirtualMachineContributor"
+            ]
+        },
+        "principalId": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "scope": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "VirtualMachineContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '9980e02c-c2be-4d73-94e8-173b1dc7cf3c')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[parameters('scope')]"
+            }
+        }
+    ]
+}
