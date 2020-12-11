@@ -6,7 +6,8 @@
             "type": "string",
             "allowedValues": [
                 "Contributor",
-                "Reader"
+                "Reader",
+                "VirtualMachineContributor"
             ]
         },
         "principalId": {
