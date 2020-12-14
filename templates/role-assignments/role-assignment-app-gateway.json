@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "Contributor"
+            ]
+        },
+        "principalId": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "scope": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/applicationgateways/providers/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId')), 'app-gateway'))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[parameters('scope')]"
+            }
+        }
+    ]
+}

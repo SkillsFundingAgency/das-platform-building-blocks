@@ -24,7 +24,6 @@
   },
   "resources": [
     {
-      "condition": "[startsWith(parameters('assignmentType'), 'ServiceBus')]",
       "type": "Microsoft.ServiceBus/namespaces/providers/roleAssignments",
       "apiVersion": "2018-09-01-preview",
       "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
