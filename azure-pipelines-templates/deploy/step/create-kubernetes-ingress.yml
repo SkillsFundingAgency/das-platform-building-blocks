@@ -1,0 +1,36 @@
+﻿parameters:
+  AksClusterName:
+  AksResourceGroupName:
+  AppGatewayName:
+  AppGatewayResourceGroup: 
+  AzureServiceConnection:
+  IngressManifestPath: 
+  KeyVaultName: 
+  Namespace:
+  IsMultiRepoCheckout: true
+
+steps:
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: 'Azure PowerShell: Add-AppGatewayKubernetesIngressCert.ps1'
+  inputs:
+    azureSubscription: ${{ parameters.AzureServiceConnection }}
+    ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
+      scriptPath: das-platform-automation/Infrastructure-Scripts/Add-AppGatewayKubernetesIngressCert.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
+      scriptPath: Infrastructure-Scripts/Add-AppGatewayKubernetesIngressCert.ps1
+    scriptArguments: -AppGatewayName ${{ parameters.AppGatewayName }} -AppGatewayResourceGroup ${{ parameters.AppGatewayResourceGroup }} -IngressManifestPath ${{ parameters.IngressManifestPath }} -KeyVaultName ${{ parameters.KeyVaultName }}
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
+- task: Kubernetes@1
+  displayName: kubectl apply ${{ parameters.IngressManifestPath }}
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
+    command: apply
+    useConfigurationFile: true
+    configuration: ${{ parameters.IngressManifestPath }}
