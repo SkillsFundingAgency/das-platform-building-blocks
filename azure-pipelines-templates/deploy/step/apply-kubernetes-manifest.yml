@@ -4,6 +4,7 @@ parameters:
   AzureSubscription:
   KubectlVersion: 
   ManifestFile: 
+  Namespace: 
 
 steps:
 - task: KubectlInstaller@0
@@ -18,6 +19,7 @@ steps:
     azureResourceGroup: '${{parameters.AksResourceGroupName}}'
     kubernetesCluster: '${{parameters.AksClusterName}}'
     useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
     command: apply
     useConfigurationFile: true
     configuration: '${{parameters.ManifestFile}}'
