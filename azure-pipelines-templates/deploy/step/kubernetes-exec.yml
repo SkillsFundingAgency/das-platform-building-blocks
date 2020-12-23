@@ -1,10 +1,11 @@
+##TO DO: rename other templates
 parameters:
   AksClusterName:
   AksResourceGroupName:
   AzureServiceConnection:
   Command:
-  ContainerName:
-  IncrementingCounter:
+  ContainerName: ##TO DO: make optional
+  IncrementingCounter: ##TO DO: make optional
   PodLabel:
   PodNamespace:
   ExecuteTasks: true
@@ -16,7 +17,7 @@ steps:
   name: GetPodName${{ parameters.IncrementingCounter }}
   inputs:
     connectionType: Azure Resource Manager
-    AzureServiceConnectionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
@@ -34,7 +35,7 @@ steps:
   condition: and(${{ parameters.ExecuteTasks }}, succeeded())
   inputs:
     connectionType: Azure Resource Manager
-    AzureServiceConnectionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
