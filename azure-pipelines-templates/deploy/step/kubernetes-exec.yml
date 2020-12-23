@@ -1,0 +1,42 @@
+parameters:
+  AksClusterName:
+  AksResourceGroupName:
+  AzureServiceConnection:
+  Command:
+  ContainerName:
+  IncrementingCounter:
+  PodLabel:
+  PodNamespace:
+  ExecuteTasks: true
+
+steps:
+- task: Kubernetes@1
+  displayName: kubectl get pod name for ${{ parameters.PodLabel }}
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+  name: GetPodName${{ parameters.IncrementingCounter }}
+  inputs:
+    connectionType: Azure Resource Manager
+    AzureServiceConnectionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    useClusterAdmin: true
+    command: 'get'
+    arguments: 'pod -l ${{ parameters.PodLabel }} --namespace ${{ parameters.PodNamespace }}'
+    outputFormat: name
+- pwsh: |
+    $Name = "$(GetPodName${{ parameters.IncrementingCounter }}.KubectlOutput)"
+    Write-Output "Setting PodName variable to $Name"
+    Write-Output "##vso[task.setvariable variable=PodName]$Name"
+  displayName: 'PowerShell: Output PodName'
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+- task: Kubernetes@1
+  displayName: kubectl exec "${{ parameters.Command }}" on "${{ parameters.ContainerName }}"
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+  inputs:
+    connectionType: Azure Resource Manager
+    AzureServiceConnectionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    useClusterAdmin: true
+    command: 'exec'
+    arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'
