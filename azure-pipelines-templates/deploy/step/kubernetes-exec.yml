@@ -3,8 +3,8 @@ parameters:
   AksResourceGroupName:
   AzureServiceConnection:
   Command:
+  Namespace:
   PodLabel:
-  PodNamespace:
   ContainerName: ''
   ExecuteTasks: true
   # Pass in a unique value (ie an incrementing counter) when using this step template multiple times to avoid conflicting task names
@@ -21,8 +21,9 @@ steps:
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
     command: 'get'
-    arguments: 'pod -l ${{ parameters.PodLabel }} --namespace ${{ parameters.PodNamespace }}'
+    arguments: 'pod -l ${{ parameters.PodLabel }}'
     outputFormat: name
 - pwsh: |
     $Name = "$(GetPodName${{ parameters.IncrementingCounter }}.KubectlOutput)"
@@ -39,8 +40,9 @@ steps:
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
     command: 'exec'
     ${{ if eq(parameters.ContainerName, '') }}:
-      arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -- ${{ parameters.Command }}'
+      arguments: '$(PodName) -- ${{ parameters.Command }}'
     ${{ if ne(parameters.ContainerName, '') }}:
-      arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'
+      arguments: '$(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'
