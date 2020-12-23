@@ -4,11 +4,12 @@ parameters:
   AksResourceGroupName:
   AzureServiceConnection:
   Command:
-  ContainerName: ##TO DO: make optional
-  IncrementingCounter: ##TO DO: make optional
   PodLabel:
   PodNamespace:
+  ContainerName: ''
   ExecuteTasks: true
+  # Pass in a unique value (ie an incrementing counter) when using this step template multiple times to avoid conflicting task names
+  IncrementingCounter: ''
 
 steps:
 - task: Kubernetes@1
@@ -40,4 +41,7 @@ steps:
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
     command: 'exec'
-    arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'
+    ${{ if eq(parameters.ContainerName, '') }}:
+      arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -- ${{ parameters.Command }}'
+    ${{ if ne(parameters.ContainerName, '') }}:
+      arguments: '--namespace ${{ parameters.PodNamespace }} $(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'
