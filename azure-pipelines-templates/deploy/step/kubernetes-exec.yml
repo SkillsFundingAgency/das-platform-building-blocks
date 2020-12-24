@@ -1,0 +1,48 @@
+parameters:
+  AksClusterName:
+  AksResourceGroupName:
+  AzureServiceConnection:
+  Command:
+  Namespace:
+  PodLabel:
+  ContainerName: ''
+  ExecuteTasks: true
+  # Pass in a unique value (ie an incrementing counter) when using this step template multiple times to avoid conflicting task names
+  IncrementingCounter: ''
+
+steps:
+- task: Kubernetes@1
+  displayName: kubectl get pod name for ${{ parameters.PodLabel }}
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+  name: GetPodName${{ parameters.IncrementingCounter }}
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
+    command: 'get'
+    arguments: 'pod -l ${{ parameters.PodLabel }}'
+    outputFormat: name
+- pwsh: |
+    $Name = "$(GetPodName${{ parameters.IncrementingCounter }}.KubectlOutput)"
+    Write-Output "Setting PodName variable to $Name"
+    Write-Output "##vso[task.setvariable variable=PodName]$Name"
+  displayName: 'PowerShell: Output PodName'
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+- task: Kubernetes@1
+  displayName: kubectl exec "${{ parameters.Command }}" on "${{ parameters.ContainerName }}"
+  condition: and(${{ parameters.ExecuteTasks }}, succeeded())
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
+    command: 'exec'
+    ${{ if eq(parameters.ContainerName, '') }}:
+      arguments: '$(PodName) -- ${{ parameters.Command }}'
+    ${{ if ne(parameters.ContainerName, '') }}:
+      arguments: '$(PodName) -c ${{ parameters.ContainerName }} -- ${{ parameters.Command }}'

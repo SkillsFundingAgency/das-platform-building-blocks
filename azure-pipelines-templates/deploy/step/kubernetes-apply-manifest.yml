@@ -1,0 +1,25 @@
+parameters:
+  AksClusterName:
+  AksResourceGroupName:
+  AzureServiceConnection:
+  KubectlVersion: 
+  ManifestFile: 
+  Namespace: 
+
+steps:
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
+- task: Kubernetes@1
+  displayName: 'kubectl apply ${{parameters.ManifestFile}}'
+  inputs:
+    connectionType: 'Azure Resource Manager'
+    azureSubscriptionEndpoint: '${{parameters.AzureServiceConnection}}'
+    azureResourceGroup: '${{parameters.AksResourceGroupName}}'
+    kubernetesCluster: '${{parameters.AksClusterName}}'
+    useClusterAdmin: true
+    namespace: ${{ parameters.Namespace }}
+    command: apply
+    useConfigurationFile: true
+    configuration: '${{parameters.ManifestFile}}'
