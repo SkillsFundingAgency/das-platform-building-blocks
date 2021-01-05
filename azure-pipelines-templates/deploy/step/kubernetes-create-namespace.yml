@@ -3,8 +3,6 @@ parameters:
   AksResourceGroupName:
   AzureServiceConnection:
   Namespace:
-  ##TO DO: is this needed?
-  Validate: false
   IsMultiRepoCheckout: true
   KubectlVersion: 'latest'
 
@@ -36,7 +34,7 @@ steps:
     arguments: -KubectlOutput '$(GetNamespaces.KubectlOutput)' -Namespace ${{ parameters.Namespace }} -Verbose
 - task: Kubernetes@1
   displayName: kubectl create ${{ parameters.Namespace }} namespace
-  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'), eq('${{ parameters.Validate }}', false))
+  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'))
   inputs:
     connectionType: Azure Resource Manager
     azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
