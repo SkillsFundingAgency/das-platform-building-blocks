@@ -1,8 +1,9 @@
 parameters:
+  AksClusterName:
   AksResourceGroupName:
   AzureSubscription:
-  AksClusterName:
   Namespace:
+  ##TO DO: is this needed?
   Validate: false
   IsMultiRepoCheckout: true
   KubectlVersion: 'latest'
