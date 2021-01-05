@@ -1,7 +1,7 @@
 parameters:
   AksClusterName:
   AksResourceGroupName:
-  AzureSubscription:
+  AzureServiceConnection:
   Namespace:
   ##TO DO: is this needed?
   Validate: false
@@ -19,7 +19,7 @@ steps:
   name: GetNamespaces
   inputs:
     connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
@@ -39,7 +39,7 @@ steps:
   condition: and(succeeded(), eq(variables.NamespaceExists, 'false'), eq('${{ parameters.Validate }}', false))
   inputs:
     connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
