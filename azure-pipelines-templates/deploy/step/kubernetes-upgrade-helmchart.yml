@@ -55,4 +55,4 @@ steps:
     releaseName: '${{ parameters.ReleaseName }}'
     overrideValues: ${{ parameters.OverrideValues }}
     valueFile: '${{ parameters.ValuesFile }}'
-    arguments: '--namespace ${{ parameters.Namespace }} --version ${{ parameters.HelmChartVersion }} ${{ parameters.AdditionalUpgradeAgs }}'
+    arguments: '--version ${{ parameters.HelmChartVersion }} ${{ parameters.AdditionalUpgradeAgs }}'
