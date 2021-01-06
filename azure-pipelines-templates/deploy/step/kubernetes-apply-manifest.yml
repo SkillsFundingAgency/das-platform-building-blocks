@@ -21,5 +21,4 @@ steps:
     useClusterAdmin: true
     namespace: ${{ parameters.Namespace }}
     command: apply
-    useConfigurationFile: true
-    configuration: ${{parameters.ManifestFile}}
+    arguments: -f ${{parameters.ManifestFile}}
