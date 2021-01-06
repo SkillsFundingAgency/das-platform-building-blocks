@@ -22,4 +22,4 @@ steps:
     namespace: ${{ parameters.Namespace }}
     command: apply
     useConfigurationFile: true
-    configuration: '${{parameters.ManifestFile}}'
+    configuration: ${{parameters.ManifestFile}}
