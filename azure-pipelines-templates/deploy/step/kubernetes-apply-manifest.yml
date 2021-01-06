@@ -5,6 +5,8 @@ parameters:
   KubectlVersion: 
   ManifestFile: 
   Namespace: 
+  # Allowed values are 'json', 'yaml' and 'name'
+  OutputFormat: 'name'
 
 steps:
 - task: KubectlInstaller@0
@@ -22,4 +24,4 @@ steps:
     namespace: ${{ parameters.Namespace }}
     command: apply
     arguments: -f ${{parameters.ManifestFile}}
-    outputFormat: name
+    outputFormat: ${{parameters.OutputFormat}}
