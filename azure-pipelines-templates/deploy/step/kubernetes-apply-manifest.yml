@@ -22,4 +22,4 @@ steps:
     namespace: ${{ parameters.Namespace }}
     command: apply
     arguments: -f ${{parameters.ManifestFile}}
-    outputFormat: yaml
+    outputFormat: name
