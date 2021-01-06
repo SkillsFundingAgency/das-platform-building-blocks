@@ -15,6 +15,10 @@ parameters:
   ValuesFile: ''
 
 steps:
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
 - task: HelmInstaller@1
   displayName: 'Install Helm ${{ parameters.HelmClientVersion }}'
   inputs:
