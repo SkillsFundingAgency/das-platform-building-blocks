@@ -1,19 +1,23 @@
 parameters:
-  AksResourceGroupName:
-  AzureSubscription:
   AksClusterName:
+  AksResourceGroupName:
+  AzureServiceConnection:
   Namespace:
-  Validate: false
   IsMultiRepoCheckout: true
+  KubectlVersion: 'latest'
 
 steps:
 - checkout: das-platform-automation
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
 - task: Kubernetes@1
   displayName: kubectl get namespaces
   name: GetNamespaces
   inputs:
     connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true
@@ -30,10 +34,10 @@ steps:
     arguments: -KubectlOutput '$(GetNamespaces.KubectlOutput)' -Namespace ${{ parameters.Namespace }} -Verbose
 - task: Kubernetes@1
   displayName: kubectl create ${{ parameters.Namespace }} namespace
-  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'), eq('${{ parameters.Validate }}', false))
+  condition: and(succeeded(), eq(variables.NamespaceExists, 'false'))
   inputs:
     connectionType: Azure Resource Manager
-    azureSubscriptionEndpoint: ${{ parameters.AzureSubscription }}
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
     azureResourceGroup: ${{ parameters.AksResourceGroupName }}
     kubernetesCluster: ${{ parameters.AksClusterName }}
     useClusterAdmin: true

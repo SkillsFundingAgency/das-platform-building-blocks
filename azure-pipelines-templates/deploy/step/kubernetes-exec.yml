@@ -7,10 +7,15 @@ parameters:
   PodLabel:
   ContainerName: ''
   ExecuteTasks: true
+  KubectlVersion: 'latest'
   # Pass in a unique value (ie an incrementing counter) when using this step template multiple times to avoid conflicting task names
   IncrementingCounter: ''
 
 steps:
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
 - task: Kubernetes@1
   displayName: kubectl get pod name for ${{ parameters.PodLabel }}
   condition: and(${{ parameters.ExecuteTasks }}, succeeded())

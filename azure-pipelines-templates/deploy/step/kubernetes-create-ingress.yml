@@ -8,9 +8,14 @@
   KeyVaultName: 
   Namespace:
   IsMultiRepoCheckout: true
+  KubectlVersion: 'latest'
 
 steps:
 - checkout: das-platform-automation
+- task: KubectlInstaller@0
+  displayName: 'Install Kubectl ${{ parameters.KubectlVersion }}'
+  inputs:
+    kubectlVersion: ${{ parameters.KubectlVersion }}
 - task: AzurePowerShell@5
   displayName: 'Azure PowerShell: Add-AppGatewayKubernetesIngressCert.ps1'
   inputs:
