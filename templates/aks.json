@@ -161,8 +161,7 @@
         "osType": "Linux",
         "mode": "System",
         "vnetSubnetID": "[variables('vnetSubnetID')]",
-        "type": "VirtualMachineScaleSets",
-        "storageProfile": "ManagedDisks"
+        "type": "VirtualMachineScaleSets"
       }],
       "withoutMode": [{
         "name": "[parameters('agentPoolName')]",
@@ -170,8 +169,7 @@
         "vmSize": "[parameters('agentVMSize')]",
         "osType": "Linux",
         "vnetSubnetID": "[variables('vnetSubnetID')]",
-        "type": "VirtualMachineScaleSets",
-        "storageProfile": "ManagedDisks"
+        "type": "VirtualMachineScaleSets"
       }]
     },
     "aksBaseProperties": {
