@@ -174,7 +174,7 @@
     },
     "aksBaseProperties": {
         "kubernetesVersion": "[parameters('kubernetesVersion')]",
-        "dnsPrefix": "[parameters('clusterName')]",
+        "dnsPrefix": "das-dta-shared2-aks-dns",
         "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
         "addonProfiles": {
           "omsagent": {
