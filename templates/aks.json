@@ -167,7 +167,7 @@
                 },
                 {
                     "name": "test02",
-                    "count": "1",
+                    "count": 1,
                     "vmSize": "Standard_B2s",
                     "osType": "Linux",
                     "mode": "user",
