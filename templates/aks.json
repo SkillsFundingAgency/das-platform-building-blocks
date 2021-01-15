@@ -163,7 +163,8 @@
                     "mode": "System",
                     "vnetSubnetID": "[variables('vnetSubnetID')]",
                     "type": "VirtualMachineScaleSets",
-                    "orchestratorVersion": "1.18.10"
+                    "orchestratorVersion": "1.18.10",
+                    "storageProfile": "ManagedDisks"
                 },
                 {
                     "name": "test02",
@@ -173,7 +174,8 @@
                     "mode": "user",
                     "vnetSubnetID": "[variables('vnetSubnetID')]",
                     "type": "VirtualMachineScaleSets",
-                    "orchestratorVersion": "1.17.13"
+                    "orchestratorVersion": "1.17.13",
+                    "storageProfile": "ManagedDisks"
                 },
                 {
                     "name": "test03",
@@ -183,7 +185,8 @@
                     "mode": "user",
                     "vnetSubnetID": "[variables('vnetSubnetID')]",
                     "type": "VirtualMachineScaleSets",
-                    "orchestratorVersion": "1.18.10"
+                    "orchestratorVersion": "1.18.10",
+                    "storageProfile": "ManagedDisks"
                 }
             ],
             "withoutMode": [
