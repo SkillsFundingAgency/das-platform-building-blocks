@@ -26,6 +26,10 @@
       "metadata": {
         "description": "Webhook receiver service URI."
       }
+    },
+    "enableActionGroup": {
+      "type": "bool",
+      "defaultValue": true
     }
   },
   "resources": [
@@ -36,7 +40,7 @@
       "location": "Global",
       "properties": {
         "groupShortName": "[parameters('actionGroupShortName')]",
-        "enabled": true,
+        "enabled": "[parameters('enableActionGroup')]",
         "smsReceivers": [
         ],
         "emailReceivers": [
