@@ -99,6 +99,15 @@
     "managementKeyVaultCertificateName": {
       "type": "string",
       "defaultValue": ""
+    },
+    "tenantPrimaryDomain": {
+      "type": "string"
+    },
+    "apimAppRegistrationClientId": {
+      "type": "string"
+    },
+    "apimAppRegistrationClientSecret": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -181,7 +190,16 @@
           },
           "subnetResourceId": {
             "value": "[variables('subnetResourceId')]"
-          }
+          },
+          "tenantPrimaryDomain": {
+            "value": "[parameters('tenantPrimaryDomain')]"
+          },
+          "apimAppRegistrationClientId": {
+            "value": "[parameters('apimAppRegistrationClientId')]"
+          },
+          "apimAppRegistrationClientSecret": {
+            "value": "[parameters('apimAppRegistrationClientSecret')]"
+          },
         }
       }
     }
