@@ -1,0 +1,140 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertFrequency": {
+            "type": "int",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertMessageSubject": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertPeriod": {
+            "type": "int",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertResourceName": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertTriggerOperator": {
+            "type": "string",
+            "allowedValues": [
+                "GreaterThan",
+                "EqualTo"
+            ],
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertTriggerMetricTriggerType": {
+            "type": "string",
+            "allowedValues": [
+                "Consecutive",
+                "Total"
+            ],
+            "metadata": {
+                "description": ""
+            }
+        },
+        "alertTriggerThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": ""
+            }
+
+        },
+        "kustoQuery": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "logAnalyticsId": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "queryMetricThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "severity": {
+            "type": "int",
+            "minValue": 0,
+            "maxValue": 4,
+            "metadata": {
+                "description": ""
+            }
+
+        },
+        "enableAlert": {
+            "type": "bool",
+            "defaultValue": true
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "name": "[parameters('alertResourceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "description": "[parameters('alertDescription')]",
+                "enabled": "[parameters('enableAlert')]",
+                "source": {
+                    "query": "[parameters('kustoQuery')]",
+                    "dataSourceId": "[parameters('logAnalyticsId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('alertFrequency')]",
+                    "timeWindowInMinutes": "[parameters('alertPeriod')]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[string(parameters('severity'))]",
+                    "aznsAction":{
+                        "actionGroup": "[array(parameters('actionGroupId'))]",
+                        "emailSubject": "[parameters('alertMessageSubject')]"
+                    },
+                    "throttlingInMin": 20,
+                    "trigger":{
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": "[parameters('queryMetricThreshold')]",
+                        "metricTrigger":{
+                            "thresholdOperator": "[parameters('alertTriggerOperator')]",
+                            "threshold": "[parameters('alertTriggerThreshold')]",
+                            "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]",
+                            "metricColumn": "Computer"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
