@@ -129,8 +129,7 @@
                         "metricTrigger":{
                             "thresholdOperator": "[parameters('alertTriggerOperator')]",
                             "threshold": "[parameters('alertTriggerThreshold')]",
-                            "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]",
-                            "metricColumn": "Computer"
+                            "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]"
                         }
                     }
                 }
