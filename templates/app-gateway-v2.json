@@ -335,7 +335,7 @@
                 {
                     "type": "providers/diagnosticSettings",
                     "name": "[concat('Microsoft.Insights/', parameters('appGatewayName'), '-ds')]",
-                    "apiVersion": "2020-05-01",
+                    "apiVersion": "2017-05-01-preview",
                     "dependsOn": [
                         "[concat('Microsoft.Network/applicationGateways/',parameters('appGatewayName'))]"
                     ],
