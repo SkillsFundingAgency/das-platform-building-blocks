@@ -5,37 +5,37 @@
         "actionGroupId": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "The id of the action group to send the alert to as outputed by action-group.json."
             }
         },
         "alertDescription": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "A friendly description for the alert."
             }
         },
         "alertFrequency": {
             "type": "int",
             "metadata": {
-                "description": ""
+                "description": "The frequency that the queryMetricThreshold is assessed."
             }
         },
         "alertMessageSubject": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "The subject of the alert email (this may also be visible in other action group types)."
             }
         },
         "alertPeriod": {
             "type": "int",
             "metadata": {
-                "description": ""
+                "description": "The timespan over which to measure the queryMetricThreshold."
             }
         },
         "alertResourceName": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "The name of the Azure Resource Manager resource that represents the alert."
             }
         },
         "alertTriggerOperator": {
@@ -45,7 +45,7 @@
                 "EqualTo"
             ],
             "metadata": {
-                "description": ""
+                "description": "The operator used to assess the queryMetricThreshold against the query result."
             }
         },
         "alertTriggerMetricTriggerType": {
@@ -55,32 +55,32 @@
                 "Total"
             ],
             "metadata": {
-                "description": ""
+                "description": "Whether to trigger the alert based on the total number of breaches or the consecutive number."
             }
         },
         "alertTriggerThreshold": {
             "type": "int",
             "metadata": {
-                "description": ""
+                "description": "The threshold for the trigger."
             }
 
         },
         "kustoQuery": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "The kusto query used to retrieve the query metric."
             }
         },
         "logAnalyticsId": {
             "type": "string",
             "metadata": {
-                "description": ""
+                "description": "The id of the log analytics workspace as outputed by log-analtyics-workspace.json."
             }
         },
         "queryMetricThreshold": {
             "type": "int",
             "metadata": {
-                "description": ""
+                "description": "The threshold used to assess the results of the kusto query."
             }
         },
         "severity": {
@@ -88,7 +88,7 @@
             "minValue": 0,
             "maxValue": 4,
             "metadata": {
-                "description": ""
+                "description": "The alert severity, used to group alerts by Azure."
             }
 
         },
