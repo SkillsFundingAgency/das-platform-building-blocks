@@ -1,0 +1,137 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the action group to send the alert to as outputed by action-group.json."
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "metadata": {
+                "description": "A friendly description for the alert."
+            }
+        },
+        "alertFrequency": {
+            "type": "int",
+            "metadata": {
+                "description": "The frequency that the queryMetricThreshold is assessed."
+            }
+        },
+        "alertMessageSubject": {
+            "type": "string",
+            "metadata": {
+                "description": "The subject of the alert email (this may also be visible in other action group types)."
+            }
+        },
+        "alertPeriod": {
+            "type": "int",
+            "metadata": {
+                "description": "The timespan over which to measure the queryMetricThreshold."
+            }
+        },
+        "alertResourceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Resource Manager resource that represents the alert."
+            }
+        },
+        "alertTriggerOperator": {
+            "type": "string",
+            "allowedValues": [
+                "GreaterThan",
+                "EqualTo"
+            ],
+            "metadata": {
+                "description": "The operator used to assess the queryMetricThreshold against the query result."
+            }
+        },
+        "alertTriggerMetricTriggerType": {
+            "type": "string",
+            "allowedValues": [
+                "Consecutive",
+                "Total"
+            ],
+            "metadata": {
+                "description": "Whether to trigger the alert based on the total number of breaches or the consecutive number."
+            }
+        },
+        "alertTriggerThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The threshold for the trigger."
+            }
+        },
+        "kustoQuery": {
+            "type": "string",
+            "metadata": {
+                "description": "The kusto query used to retrieve the query metric."
+            }
+        },
+        "logAnalyticsId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the log analytics workspace as outputed by log-analtyics-workspace.json."
+            }
+        },
+        "queryMetricThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The threshold used to assess the results of the kusto query."
+            }
+        },
+        "severity": {
+            "type": "int",
+            "minValue": 0,
+            "maxValue": 4,
+            "metadata": {
+                "description": "The alert severity, used to group alerts by Azure."
+            }
+        },
+        "enableAlert": {
+            "type": "bool",
+            "defaultValue": true
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "name": "[parameters('alertResourceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "description": "[parameters('alertDescription')]",
+                "enabled": "[parameters('enableAlert')]",
+                "source": {
+                    "query": "[parameters('kustoQuery')]",
+                    "dataSourceId": "[parameters('logAnalyticsId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('alertFrequency')]",
+                    "timeWindowInMinutes": "[parameters('alertPeriod')]"
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "[string(parameters('severity'))]",
+                    "aznsAction":{
+                        "actionGroup": "[array(parameters('actionGroupId'))]",
+                        "emailSubject": "[parameters('alertMessageSubject')]"
+                    },
+                    "throttlingInMin": 20,
+                    "trigger":{
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": "[parameters('queryMetricThreshold')]",
+                        "metricTrigger":{
+                            "thresholdOperator": "[parameters('alertTriggerOperator')]",
+                            "threshold": "[parameters('alertTriggerThreshold')]",
+                            "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
