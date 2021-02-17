@@ -63,7 +63,6 @@
             "metadata": {
                 "description": "The threshold for the trigger."
             }
-
         },
         "kustoQuery": {
             "type": "string",
@@ -90,7 +89,6 @@
             "metadata": {
                 "description": "The alert severity, used to group alerts by Azure."
             }
-
         },
         "enableAlert": {
             "type": "bool",
