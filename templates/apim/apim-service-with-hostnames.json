@@ -80,6 +80,15 @@
     "managementKeyVaultSecretId": {
       "type": "string",
       "defaultValue": ""
+    },
+    "tenantPrimaryDomain": {
+      "type": "string"
+    },
+    "apimAppRegistrationClientId": {
+      "type": "string"
+    },
+    "apimAppRegistrationClientSecret": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -127,6 +136,23 @@
       "identity": {
         "type": "SystemAssigned"
       }
+    },
+    {
+      "name": "[concat(parameters('apimName'), '/Aad')]",
+      "type": "Microsoft.ApiManagement/service/identityProviders",
+      "apiVersion": "2019-12-01",
+      "properties": {
+        "type": "aad",
+        "allowedTenants": [
+          "[parameters('tenantPrimaryDomain')]"
+        ],
+        "authority": "login.windows.net",
+        "clientId": "[parameters('apimAppRegistrationClientId')]",
+        "clientSecret": "[parameters('apimAppRegistrationClientSecret')]"
+      },
+      "dependsOn": [
+        "[parameters('apimName')]"
+      ]
     }
   ]
 }
