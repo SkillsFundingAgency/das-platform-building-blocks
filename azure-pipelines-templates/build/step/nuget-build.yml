@@ -1,0 +1,38 @@
+﻿# this template depends on GitVersion being implemented earlier in the pipeline using Mainline mode
+# this template should be placed at the end of a code-build stage or in a separate stage to prevent the publish task breaking the pipeline in the event that it needs to be reran
+parameters:
+  DotNetFrameworkPackagesToPack: ''
+  DotNetStandardPackagesToPack: ''
+
+steps:
+- task: PowerShell@2
+  displayName: 'Set NuGet Package Version'
+  inputs:
+    targetType: inline
+    script: |
+      if ("$(GitVersion.PreReleaseLabel)" -ne "") { $NuGetPackageVersion = "$(GitVersion.MajorMinorPatch)-prerelease-$(PreReleaseNumber)" } else { $NuGetPackageVersion = "$(GitVersion.MajorMinorPatch)" }
+      Write-Host "NuGetPackageVersion: $NuGetPackageVersion"
+      Write-Host "##vso[task.setvariable variable=NuGetPackageVersion]$NuGetPackageVersion"
+- task: DotNetCoreCLI@2
+  condition: ne('${{ parameters.DotNetStandardPackagesToPack }}', '')
+  displayName: 'dotnet pack'
+  inputs:
+    command: pack
+    packagesToPack: ${{ parameters.DotNetStandardPackagesToPack }}
+    versioningScheme: byEnvVar
+    versionEnvVar: NuGetPackageVersion
+    packDirectory: $(build.artifactstagingdirectory)/NuGetPackages
+- task: NuGetCommand@2
+  condition: ne('${{ parameters.DotNetFrameworkPackagesToPack }}', '')
+  displayName: 'NuGet pack'
+  inputs:
+    command: pack
+    packagesToPack: ${{ parameters.DotNetFrameworkPackagesToPack }}
+    versioningScheme: byEnvVar
+    versionEnvVar: NuGetPackageVersion
+    packDestination: $(build.artifactstagingdirectory)/NuGetPackages
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: NuGetPackages'
+  inputs:
+    ArtifactName: NuGetPackages
+    pathtoPublish: '$(build.artifactstagingdirectory)/NuGetPackages'

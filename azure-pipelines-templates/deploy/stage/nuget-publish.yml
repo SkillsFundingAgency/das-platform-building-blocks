@@ -1,0 +1,28 @@
+﻿# this template expects packages to be built with azure-pipelines-templates/build/step/nuget-build.yml
+stages:
+- stage: NuGetPublish
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+  displayName: Publish NuGet Package
+  pool:
+    name: 'DAS - Continuous Deployment'
+  jobs:
+  - job: CleanArtifacts
+    displayName: Clean artifacts directory
+    workspace:
+      clean: all
+  - deployment: NuGetPush
+    dependsOn: CleanArtifacts
+    environment: Nuget
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: NuGetPackages
+          - task: NuGetCommand@2
+            displayName: NuGet push
+            inputs:
+              command: push
+              packagesToPush: '$(Pipeline.Workspace)/NuGetPackages/*.nupkg;!$(Pipeline.Workspace)/NuGetPackages/*.symbols.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'SFA NuGet'
