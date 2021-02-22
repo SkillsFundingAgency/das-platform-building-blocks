@@ -43,6 +43,15 @@ steps:
     command: repo
     arguments: add ${{ parameters.AdditionalChartRepoNameAndUrl }}
 - task: HelmDeploy@0
+  displayName: Helm repo update
+  inputs:
+    connectionType: Azure Resource Manager
+    azureSubscriptionEndpoint: ${{ parameters.AzureServiceConnection }}
+    azureResourceGroup: ${{ parameters.AksResourceGroupName }}
+    kubernetesCluster: ${{ parameters.AksClusterName }}
+    command: repo
+    arguments: update
+- task: HelmDeploy@0
   displayName: 'helm upgrade ${{ parameters.ChartName }}'
   inputs:
     azureSubscription: '${{ parameters.AzureServiceConnection }}'
