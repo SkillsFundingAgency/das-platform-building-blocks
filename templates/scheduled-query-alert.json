@@ -93,6 +93,20 @@
         "enableAlert": {
             "type": "bool",
             "defaultValue": true
+        },
+        "queryMetricThresholdOperator": {
+            "type": "string",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+            ],
+            "defaultValue": "GreaterThan",
+            "metadata": {
+                "description": "The operator used to assess the results of the kusto query against the threshold."
+            }
         }
     },
     "resources": [
@@ -122,7 +136,7 @@
                     },
                     "throttlingInMin": 20,
                     "trigger":{
-                        "thresholdOperator": "GreaterThan",
+                        "thresholdOperator": "[parameters('queryMetricThresholdOperator')]",
                         "threshold": "[parameters('queryMetricThreshold')]",
                         "metricTrigger":{
                             "thresholdOperator": "[parameters('alertTriggerOperator')]",
