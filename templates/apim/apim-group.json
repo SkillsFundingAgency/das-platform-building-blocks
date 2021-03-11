@@ -1,11 +1,14 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "apimName": {
       "type": "string"
     },
-    "groupResourceName": {
+    "tenantPrimaryDomain": {
+      "type": "string"
+    },
+    "aadGroupObjectId": {
       "type": "string"
     },
     "groupDisplayName": {
@@ -13,21 +16,19 @@
     },
     "groupDescription": {
       "type": "string"
-    },
-    "groupType": {
-      "type": "string"
     }
   },
   "variables": {},
   "resources": [
     {
-      "name": "[concat(parameters('apimName'), '/', parameters('groupResourceName'))]",
+      "name": "[concat(parameters('apimName'), '/', parameters('aadGroupObjectId'))]",
       "type": "Microsoft.ApiManagement/service/groups",
       "apiVersion": "2019-12-01",
       "properties": {
         "displayName": "[parameters('groupDisplayName')]",
         "description": "[parameters('groupDescription')]",
-        "type": "[parameters('groupType')]"
+        "type": "external",
+        "externalId": "[concat('aad://', parameters('tenantPrimaryDomain'), '/groups/', parameters('aadGroupObjectId'))]"
       }
     }
   ],
