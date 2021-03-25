@@ -17,20 +17,17 @@
     "productSubscriptionRequired": {
       "type": "bool"
     },
+    "productSubscriptionsLimit": {
+      "type": "int"
+    },
     "productApprovalRequired": {
       "type": "bool"
     },
     "productState": {
       "type": "string"
-    },
-    "productGroups": {
-      "type": "array",
-      "defaultValue": []
     }
   },
-  "variables": {
-    "deployProductGroups": "[greater(length(parameters('productGroups')), 0)]"
-  },
+  "variables": {},
   "resources": [
     {
       "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
@@ -40,24 +37,10 @@
         "displayName": "[parameters('productDisplayName')]",
         "description": "[parameters('productDescription')]",
         "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
+        "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]",
         "approvalRequired": "[parameters('productApprovalRequired')]",
         "state": "[parameters('productState')]"
       }
-    },
-    {
-      "name": "[concat(parameters('apimName'), '/', if(variables('deployProductGroups'), concat(parameters('productResourceName'), '/', parameters('productGroups')[copyIndex()]), 'placeholder/placeholder'))]",
-      "condition": "[variables('deployProductGroups')]",
-      "type": "Microsoft.ApiManagement/service/products/groups",
-      "apiVersion": "2019-12-01",
-      "copy": {
-        "name": "product-group-copy",
-        "count": "[if(variables('deployProductGroups'), length(parameters('productGroups')), 1)]"
-      },
-      "properties": {
-      },
-      "dependsOn": [
-        "[parameters('productResourceName')]"
-      ]
     }
   ],
   "outputs": {}
