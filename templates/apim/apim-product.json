@@ -27,8 +27,7 @@
       "type": "string"
     }
   },
-  "variables": {
-  },
+  "variables": {},
   "resources": [
     {
       "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
