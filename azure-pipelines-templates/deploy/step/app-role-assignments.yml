@@ -16,4 +16,3 @@ steps:
       -Environment ${{ parameters.ResourceEnvironmentName }}
       -AppServiceName ${{ parameters.AppServiceName }}
       -DryRun ${{ parameters.DryRun }}
-  enabled: false
