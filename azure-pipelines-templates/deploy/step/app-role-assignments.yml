@@ -1,0 +1,18 @@
+parameters:
+  ServiceConnection:
+  ResourceEnvironmentName:
+  AppServiceName:
+  ScriptPath:
+
+steps:
+- task: AzureCLI@2
+  displayName: Azure CLI - app role assignments
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    scriptType: pscore
+    scriptPath: ${{ parameters.ScriptPath }}
+    arguments:
+      -Environment ${{ parameters.ResourceEnvironmentName }}
+      -AppServiceName ${{ parameters.AppServiceName }}
+      -DryRun ${{ parameters.DryRun }}
+  enabled: false
