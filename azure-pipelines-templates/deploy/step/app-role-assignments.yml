@@ -3,6 +3,7 @@ parameters:
   ResourceEnvironmentName:
   AppServiceName:
   ScriptPath:
+  DryRun: false
 
 steps:
 - task: AzureCLI@2
