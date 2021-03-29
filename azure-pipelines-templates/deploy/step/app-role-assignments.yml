@@ -1,11 +1,11 @@
 parameters:
+- name: DryRun
+  type: boolean
+  default: false
   ServiceConnection:
   ResourceEnvironmentName:
   AppServiceName:
   ScriptPath:
-  - name: DryRun
-    type: boolean
-    default: false
 
 
 steps:
