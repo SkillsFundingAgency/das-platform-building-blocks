@@ -10,7 +10,7 @@ steps:
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
-    scriptPath: ${{ parameters.ScriptPath }}
+    scriptPath: $(Pipeline.Workspace)/das-infrastructure-config/Configuration/app-role-assignments/scripts/Set-AppRoleAssignments.ps1
     arguments:
       -AppServiceName ${{ parameters.AppServiceName }}
       -DryRun ${{ parameters.DryRun }}
