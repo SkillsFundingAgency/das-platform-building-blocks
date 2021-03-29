@@ -1,6 +1,5 @@
 parameters:
   ServiceConnection:
-  ResourceEnvironmentName:
   AppServiceName:
   ScriptPath:
   DryRun: $false
@@ -13,6 +12,5 @@ steps:
     scriptType: pscore
     scriptPath: ${{ parameters.ScriptPath }}
     arguments:
-      -Environment ${{ parameters.ResourceEnvironmentName }}
       -AppServiceName ${{ parameters.AppServiceName }}
       -DryRun ${{ parameters.DryRun }}
