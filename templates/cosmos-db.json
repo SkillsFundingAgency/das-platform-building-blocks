@@ -12,6 +12,14 @@
         "MongoDB"
       ]
     },
+    "cosmosServerVersion": {
+      "type": "string",
+      "defaultValue": "3.2"
+      "allowedValues": [
+        "3.2",
+        "3.6"
+      ]
+    },
     "defaultConsistencyLevel": {
       "type": "string",
       "allowedValues": [
@@ -58,6 +66,9 @@
       "properties": {
         "consistencyPolicy": {
           "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
+        },
+        "apiProperties": {
+          "serverVersion": "[parameters('cosmosServerVersion')]"
         },
         "databaseAccountOfferType": "Standard",
         "ipRangeFilter": "[parameters('ipRangeFilter')]",
