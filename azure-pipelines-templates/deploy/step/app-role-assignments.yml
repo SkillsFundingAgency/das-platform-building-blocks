@@ -1,7 +1,6 @@
 parameters:
   ServiceConnection:
   AppServiceName:
-  ScriptPath:
   DryRun: $false
 
 steps:
