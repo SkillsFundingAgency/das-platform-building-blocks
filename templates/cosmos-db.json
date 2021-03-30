@@ -60,7 +60,7 @@
     {
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2015-04-08",
+      "apiVersion": "2021-01-15",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": {
