@@ -1,6 +1,5 @@
 parameters:
   ServiceConnection:
-  AppRegistrationConfigurationFilePath:
   AppServiceName:
   Tenant:
   DryRun: $false
@@ -14,7 +13,7 @@ steps:
     scriptType: pscore
     scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
     arguments:
-      -AppRegistrationConfigurationFilePath ${{ parameters.AppRegistrationConfigurationFilePath }}
+      -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
       -AppServiceName ${{ parameters.AppServiceName }}
       -Tenant ${{ parameters.Tenant }}
       -DryRun ${{ parameters.DryRun }}
