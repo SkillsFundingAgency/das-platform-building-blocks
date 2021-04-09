@@ -1,15 +1,19 @@
 parameters:
   ServiceConnection:
   AppServiceName:
+  Tenant:
   DryRun: $false
 
 steps:
+- checkout: das-platform-automation
 - task: AzureCLI@2
   displayName: Azure CLI - app role assignments
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
-    scriptPath: $(Pipeline.Workspace)/das-infrastructure-config/Configuration/app-role-assignments/scripts/Set-AppRoleAssignments.ps1
+    scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
     arguments:
+      -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
       -AppServiceName ${{ parameters.AppServiceName }}
+      -Tenant ${{ parameters.Tenant }}
       -DryRun ${{ parameters.DryRun }}
