@@ -17,7 +17,8 @@
       "defaultValue": "3.2",
       "allowedValues": [
         "3.2",
-        "3.6"
+        "3.6",
+        "4.0"
       ]
     },
     "defaultConsistencyLevel": {
