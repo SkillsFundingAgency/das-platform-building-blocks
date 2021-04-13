@@ -40,7 +40,7 @@
       "defaultValue": []
     },
     "ipRules": {
-      "type": "string",
+      "type": "array",
       "defaultValue": []
     }
   },
