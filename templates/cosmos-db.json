@@ -39,9 +39,9 @@
       "type": "array",
       "defaultValue": []
     },
-    "ipRangeFilter": {
+    "ipRules": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": []
     }
   },
   "variables": {
@@ -72,7 +72,7 @@
           "serverVersion": "[parameters('cosmosServerVersion')]"
         },
         "databaseAccountOfferType": "Standard",
-        "ipRangeFilter": "[parameters('ipRangeFilter')]",
+        "ipRules": "[parameters('ipRules')]",
         "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
         "virtualNetworkRules": "[variables('virtualNetworkRules')]"
       }
