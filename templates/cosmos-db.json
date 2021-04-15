@@ -26,6 +26,15 @@
       "type": "bool",
       "defaultValue": false
     },
+    "serverVersion": {
+      "type": "string",
+      "allowedValues": [
+        "3.2",
+        "3.6",
+        "4.0"
+      ],
+      "defaultValue": "3.6"
+    },
     "subnetResourceIdList": {
       "type": "array",
       "defaultValue": []
@@ -36,6 +45,21 @@
     }
   },
   "variables": {
+    "apiProperties": {
+      "apiProperties": {
+        "serverVersion": "[parameters('serverVersion')]"
+      }
+    },
+    "baseCosmosProperties": {
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
+        },
+        "databaseAccountOfferType": "Standard",
+        "ipRangeFilter": "[parameters('ipRangeFilter')]",
+        "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
+        "virtualNetworkRules": "[variables('virtualNetworkRules')]"
+    },
+    "mongoCosmosProperties": "[union(variables('baseCosmosProperties'), variables('apiProperties'))]",
     "copy": [
       {
         "name": "virtualNetworkRulesCopy",
@@ -55,15 +79,7 @@
       "apiVersion": "2015-04-08",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
-      "properties": {
-        "consistencyPolicy": {
-          "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
-        },
-        "databaseAccountOfferType": "Standard",
-        "ipRangeFilter": "[parameters('ipRangeFilter')]",
-        "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
-        "virtualNetworkRules": "[variables('virtualNetworkRules')]"
-      }
+      "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]"
     }
   ],
   "outputs": {
