@@ -51,13 +51,18 @@
       }
     },
     "baseCosmosProperties": {
-        "consistencyPolicy": {
-          "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
-        },
-        "databaseAccountOfferType": "Standard",
-        "ipRangeFilter": "[parameters('ipRangeFilter')]",
-        "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
-        "virtualNetworkRules": "[variables('virtualNetworkRules')]"
+      "consistencyPolicy": {
+        "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
+      },
+      "databaseAccountOfferType": "Standard",
+      "ipRangeFilter": "[parameters('ipRangeFilter')]",
+      "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
+      "locations": [
+        {
+          "locationName": "[resourceGroup().location]"
+        }
+      ],
+      "virtualNetworkRules": "[variables('virtualNetworkRules')]"
     },
     "mongoCosmosProperties": "[union(variables('baseCosmosProperties'), variables('apiProperties'))]",
     "copy": [
