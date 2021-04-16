@@ -41,7 +41,10 @@
     },
     "ipRangeFilter": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "A comma separated list of single IP addresses and/or CIDR ranges"
+      }
     }
   },
   "variables": {
@@ -55,7 +58,7 @@
         "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
       },
       "databaseAccountOfferType": "Standard",
-      "ipRangeFilter": "[parameters('ipRangeFilter')]",
+      "ipRules": "[variables('ipRulesCopy')]",
       "isVirtualNetworkFilterEnabled": "[if(greater(length(variables('virtualNetworkRules')), 0), bool('true'), bool('false'))]",
       "locations": [
         {
@@ -64,7 +67,10 @@
       ],
       "virtualNetworkRules": "[variables('virtualNetworkRules')]"
     },
+    "ipRangeFilterArray": "[split(parameters('ipRangeFilter'),',')]",
     "mongoCosmosProperties": "[union(variables('baseCosmosProperties'), variables('apiProperties'))]",
+    "virtualNetworkRulesEmpty": [],
+    "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRulesCopy'), variables('virtualNetworkRulesEmpty'))]",
     "copy": [
       {
         "name": "virtualNetworkRulesCopy",
@@ -72,16 +78,21 @@
         "input": {
           "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRulesCopy')], json('null'))]"
         }
-      }
-    ],
-    "virtualNetworkRulesEmpty": [],
-    "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRulesCopy'), variables('virtualNetworkRulesEmpty'))]"
+      },
+      {
+            "name": "ipRulesCopy",
+            "count": "[length(variables('ipRangeFilterArray'))]",
+            "input": {
+                "ipAddressOrRange": "[variables('ipRangeFilterArray')[copyIndex('ipRangeFilterCopy')]]"
+            }
+        }
+    ]
   },
   "resources": [
     {
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2020-03-01",
+      "apiVersion": "2021-01-15",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]"
