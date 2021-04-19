@@ -83,7 +83,7 @@
             "name": "ipRulesCopy",
             "count": "[length(variables('ipRangeFilterArray'))]",
             "input": {
-                "ipAddressOrRange": "[variables('ipRangeFilterArray')[copyIndex('ipRangeFilterCopy')]]"
+                "ipAddressOrRange": "[variables('ipRangeFilterArray')[copyIndex('ipRulesCopy')]]"
             }
         }
     ]
