@@ -2,8 +2,8 @@ parameters:
   ServiceConnection:
   ResourceName:
   Tenant:
-  DryRun: $false
   IsMultiRepoCheckout: false
+  DryRun: $false
 
 steps:
 - checkout: das-platform-automation
