@@ -21,9 +21,3 @@ steps:
       -ResourceName ${{ parameters.ResourceName }}
       -Tenant ${{ parameters.Tenant }}
       -DryRun ${{ parameters.DryRun }}
-
-
-    ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
-      filePath: Infrastructure-Scripts/New-ParametersFile.ps1
-    ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
-      filePath: das-platform-automation/Infrastructure-Scripts/New-ParametersFile.ps1
