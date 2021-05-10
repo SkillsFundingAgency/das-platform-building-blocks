@@ -1,15 +1,12 @@
 parameters:
   SolutionBaseName:
   BuildConfiguration:
-  Environment:
-  ArtifactStagingDirectory:
 
 jobs:
 - job: DacpacBuild
   pool:
     name: DAS - Continuous Integration
     demands: Agent.OS -equals Windows_NT
-  environment: ${{ parameters.Environment }}
   workspace:
     clean: all
   strategy:
@@ -17,22 +14,22 @@ jobs:
       deploy:
         steps:
         - task: VSBuild@1
-          displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
+          displayName: Build DACPAC
           inputs:
             solution: src/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.sqlproj
             platform: any cpu
             configuration: ${{ parameters.BuildConfiguration }}
-            msbuildArgs: /p:PackageLocation="${{ parameters.ArtifactStagingDirectory }}/publish"
+            msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
 
         - task: CopyFiles@2
-          displayName: Copy Files to ${{ parameters.ArtifactStagingDirectory }}/publish
+          displayName: Copy Files to - $(build.artifactstagingdirectory)
           inputs:
             contents: |
               src/**/*.dacpac
-            targetFolder: ${{ parameters.ArtifactStagingDirectory }}/publish
+            targetFolder: $(build.artifactstagingdirectory)/publish
 
         - task: PublishPipelineArtifact@1
           displayName: Publish Artifact - LevyTransferMatchingApiDacpac
           inputs:
-            targetPath: ${{ parameters.ArtifactStagingDirectory }}/publish
+            targetPath: $(build.artifactstagingdirectory)/publish
             artifactName: LevyTransferMatchingApiDacpac
