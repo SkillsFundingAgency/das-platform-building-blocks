@@ -9,27 +9,24 @@ jobs:
     demands: Agent.OS -equals Windows_NT
   workspace:
     clean: all
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - task: VSBuild@1
-          displayName: Build DACPAC
-          inputs:
-            solution: src/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.sqlproj
-            platform: any cpu
-            configuration: ${{ parameters.BuildConfiguration }}
-            msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
+  steps:
+  - task: VSBuild@1
+    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
+    inputs:
+      solution: src/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.sqlproj
+      platform: any cpu
+      configuration: ${{ parameters.BuildConfiguration }}
+      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish
 
-        - task: CopyFiles@2
-          displayName: Copy Files to - $(build.artifactstagingdirectory)
-          inputs:
-            contents: |
-              src/**/*.dacpac
-            targetFolder: $(build.artifactstagingdirectory)/publish
+  - task: CopyFiles@2
+    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    inputs:
+      contents: |
+        src/**/*.dacpac
+      targetFolder: $(build.artifactstagingdirectory)/publish
 
-        - task: PublishPipelineArtifact@1
-          displayName: Publish Artifact - LevyTransferMatchingApiDacpac
-          inputs:
-            targetPath: $(build.artifactstagingdirectory)/publish
-            artifactName: LevyTransferMatchingApiDacpac
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Artifact - LevyTransferMatchingApiDacpac
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: LevyTransferMatchingApiDacpac
