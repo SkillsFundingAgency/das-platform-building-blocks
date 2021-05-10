@@ -2,6 +2,7 @@ parameters:
   ServiceConnection:
   ResourceName:
   Tenant:
+  IsMultiRepoCheckout: false
   DryRun: $false
 
 steps:
@@ -11,7 +12,10 @@ steps:
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
-    scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
+      scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
+      scriptPath: das-platform-automation/Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
     arguments:
       -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
       -ResourceName ${{ parameters.ResourceName }}
