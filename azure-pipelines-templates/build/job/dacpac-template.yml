@@ -16,7 +16,7 @@ jobs:
       solution: src/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.sqlproj
       platform: any cpu
       configuration: ${{ parameters.BuildConfiguration }}
-      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish
+      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
 
   - task: CopyFiles@2
     displayName: Copy Files to - $(build.artifactstagingdirectory)
