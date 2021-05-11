@@ -1,6 +1,6 @@
 parameters:
   SolutionBaseName:
-  BuildConfiguration:
+  SqlProjectPath:
 
 jobs:
 - job: DacpacBuild
@@ -13,9 +13,9 @@ jobs:
   - task: VSBuild@1
     displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
     inputs:
-      solution: src/${{ parameters.SolutionBaseName }}/${{ parameters.SolutionBaseName }}.sqlproj
+      solution: $(SqlProjectPath)
       platform: any cpu
-      configuration: ${{ parameters.BuildConfiguration }}
+      configuration: release
       msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
 
   - task: CopyFiles@2
