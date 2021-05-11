@@ -1,0 +1,32 @@
+parameters:
+  SolutionBaseName:
+  SqlProjectPath:
+
+jobs:
+- job: DacpacBuild
+  pool:
+    name: DAS - Continuous Integration
+    demands: Agent.OS -equals Windows_NT
+  workspace:
+    clean: all
+  steps:
+  - task: VSBuild@1
+    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
+    inputs:
+      solution: ${{ parameters.SqlProjectPath }}
+      platform: any cpu
+      configuration: release
+      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
+
+  - task: CopyFiles@2
+    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    inputs:
+      contents: |
+        src/**/*.dacpac
+      targetFolder: $(build.artifactstagingdirectory)/publish
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Artifact - ${{ parameters.SolutionBaseName }}
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: DacpacArtifact
