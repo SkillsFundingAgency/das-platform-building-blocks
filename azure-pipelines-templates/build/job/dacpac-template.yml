@@ -13,7 +13,7 @@ jobs:
   - task: VSBuild@1
     displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
     inputs:
-      solution: $(SqlProjectPath)
+      solution: ${{ parameters.SqlProjectPath }}
       platform: any cpu
       configuration: release
       msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
