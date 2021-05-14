@@ -40,7 +40,7 @@
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "Full Resource ID of the resource emitting the metric that will be used for the comparison. For example /subscriptions/00000000-0000-0000-0000-0000-00000000/resourceGroups/ResourceGroupName/providers/Microsoft.compute/virtualMachines/VM_xyz"
+        "description": "Full Resource ID of the resource emitting the metric that will be used for the comparison."
       }
     },
     "metricName": {
