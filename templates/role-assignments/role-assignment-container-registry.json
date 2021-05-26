@@ -28,7 +28,7 @@
             "name": "[concat(parameters('resourceName'), 'RoleAssignment')]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a",
+                "principalId": "71640e86-2963-4af2-b419-e01dec2c3cf8",
                 "scope": "[parameters('scope')]"
             }
         }
