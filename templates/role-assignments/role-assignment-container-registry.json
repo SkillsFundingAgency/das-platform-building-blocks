@@ -28,7 +28,7 @@
             "name": "[concat(parameters('resourceName'), 'RoleAssignment')]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "[parameters('principalId')]",
+                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a",
                 "scope": "[parameters('scope')]",
                 "principalType": "ServicePrincipal"
             }
