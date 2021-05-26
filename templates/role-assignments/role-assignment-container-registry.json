@@ -26,10 +26,10 @@
             "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
             "name": "[concat(parameters('resourceName'), 'RoleAssignment')]",
-            "scope": "[parameters('scope')]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a"
+                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a",
+                "scope": "[parameters('scope')]"
             }
         }
     ]
