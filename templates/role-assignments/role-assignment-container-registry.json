@@ -29,7 +29,8 @@
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
                 "principalId": "[parameters('principalId')]",
-                "scope": "[parameters('scope')]"
+                "scope": "[parameters('scope')]",
+                "principalType": "ServicePrincipal"
             }
         }
     ]
