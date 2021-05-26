@@ -13,6 +13,9 @@
         },
         "resourceName": {
             "type": "string"
+        },
+        "scope": {
+            "type": "string"
         }
     },
     "variables": {
@@ -25,7 +28,8 @@
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "[parameters('principalId')]"
+                "principalId": "[parameters('principalId')]",
+                "scope": "[parameters('scope')]"
             }
         }
     ]
