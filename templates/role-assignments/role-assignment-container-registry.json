@@ -23,13 +23,13 @@
     },
     "resources": [
         {
-            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+            "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2020-04-01-preview",
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId')),'container-registry'))]",
+            "scope": "[parameters('scope')]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "71640e86-2963-4af2-b419-e01dec2c3cf8",
-                "scope": "[parameters('scope')]",
+                "principalId": "[parameters('principalId')]",
                 "principalType": "ServicePrincipal"
             }
         }
