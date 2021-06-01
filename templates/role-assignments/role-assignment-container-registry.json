@@ -8,9 +8,6 @@
                 "AcrPull"
             ]
         },
-        "principalId": {
-            "type": "string"
-        },
         "resourceName": {
             "type": "string"
         },
@@ -29,7 +26,7 @@
             "scope": "[parameters('scope')]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "[parameters('principalId')]",
+                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a",
                 "principalType": "ServicePrincipal"
             }
         }
