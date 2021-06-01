@@ -21,7 +21,7 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/roleAssignments/providers/roleAssignments",
-            "apiVersion": "2018-09-01-preview",
+            "apiVersion": "2019-05-01",
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString('ee70552c-f7b5-480d-9800-e5bb529a004a')))]",
             "scope": "[parameters('scope')]",
             "properties": {
