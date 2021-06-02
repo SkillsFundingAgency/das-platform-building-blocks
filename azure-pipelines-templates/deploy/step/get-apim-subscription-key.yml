@@ -1,0 +1,25 @@
+parameters:
+  ServiceConnection:
+  ApimResourceGroup:
+  ApimName:
+  SubscriptionId:
+  PipelineVariableName:
+  IsMultiRepoCheckout: false
+
+steps:
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: Get-ApimSubscriptionKey - ${{ parameters.SubscriptionId }}
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
+      scriptPath: Infrastructure-Scripts/Get-ApimSubscriptionKey.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
+      scriptPath: das-platform-automation/Infrastructure-Scripts/Get-ApimSubscriptionKey.ps1
+    scriptArguments:
+      -ApimResourceGroup ${{ parameters.ApimResourceGroup }} `
+      -ApimName ${{ parameters.ApimName }} `
+      -SubscriptionId ${{ parameters.SubscriptionId }} `
+      -PipelineVariableName ${{ parameters.PipelineVariableName }}
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
