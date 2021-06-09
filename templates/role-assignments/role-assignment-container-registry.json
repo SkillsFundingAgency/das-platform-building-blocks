@@ -11,7 +11,7 @@
         "resourceName": {
             "type": "string"
         },
-        "scope": {
+        "principalId": {
             "type": "string"
         }
     },
@@ -20,13 +20,12 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Authorization/roleAssignments",
+            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
             "apiVersion": "2021-04-01-preview",
-            "name": "[guid(uniqueString('ee70552c-f7b5-480d-9800-e5bb529a004a'))]",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
             "properties": {
-                "scope": "[parameters('scope')]",
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "ee70552c-f7b5-480d-9800-e5bb529a004a",
+                "principalId": "[parameters('principalId')]",
                 "principalType": "ServicePrincipal"
             }
         }
