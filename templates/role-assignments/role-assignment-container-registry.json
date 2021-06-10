@@ -13,6 +13,9 @@
         },
         "principalId": {
             "type": "string"
+        },
+        "nathanTest": {
+            "type": "string"
         }
     },
     "variables": {
@@ -25,7 +28,7 @@
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "[parameters('principalId')]"
+                "principalId": "[parameters('nathanTest')]"
             }
         }
     ]
