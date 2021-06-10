@@ -22,7 +22,7 @@
         {
             "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
             "apiVersion": "2021-04-01-preview",
-            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('nathanTest'))))]",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString('9b86d1ae-f8f2-4122-b4d1-e5469ed4fda6')))]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
                 "principalId": "[parameters('nathanTest')]"
