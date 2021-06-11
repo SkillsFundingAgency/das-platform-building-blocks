@@ -25,7 +25,8 @@
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString('9b86d1ae-f8f2-4122-b4d1-e5469ed4fda6')))]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-                "principalId": "71640e86-2963-4af2-b419-e01dec2c3cf8"
+                "principalId": "71640e86-2963-4af2-b419-e01dec2c3cf8",
+                "principalType": "ServicePrincipal"
             }
         }
     ]
