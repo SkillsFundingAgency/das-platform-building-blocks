@@ -1,0 +1,83 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "registryName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Container Registry."
+      }
+    },
+    "registrySkuName": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "Classic",
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet resource ids."
+      }
+    },
+    "allowedIpAddressesList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of allowed IPs"
+      }
+    }
+  },
+  "variables": {
+    "virtualNetworkRules": {
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "input": {
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "ipRules": {
+      "copy": [
+        {
+          "name": "ipRules",
+          "count": "[if(greater(length(parameters('allowedIpAddressesList')), 0), length(parameters('allowedIpAddressesList')), 1)]",
+          "input": {
+            "value": "[if(greater(length(parameters('allowedIpAddressesList')), 0), parameters('allowedIpAddressesList')[copyIndex('ipRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "networkRuleSet": {
+      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
+      "defaultAction": "Deny"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-11-01-preview",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('registryName')]",
+      "sku": {
+        "name": "[parameters('registrySkuName')]"
+      },
+      "properties": {
+        "networkRuleSet": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkRuleSet'), json('null'))]"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

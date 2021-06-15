@@ -1,0 +1,13 @@
+parameters:
+  ContainerRegistryName:
+  ServiceConnection:
+  ImageName:
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Build Image'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    scriptType: pscore
+    scriptLocation: inlineScript
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) $(Build.SourcesDirectory)'

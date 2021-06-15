@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "AcrPull"
+            ]
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "principalId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "AcrPull": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ContainerRegistry/registries/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]"
+            }
+        }
+    ]
+}
