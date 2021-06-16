@@ -1,4 +1,22 @@
+parameters:
+  name: SonarCloud
+  type: boolean
+  default: false
+  SonarCloudExtraProperties:
+
 steps:
+
+- task: SonarCloudPrepare@1
+  displayName: Prepare SonarCloud analysis configuration
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+  inputs:
+    SonarCloud: ESFA - SonarCloud
+    organization: "$(SonarCloudOrganisationKey)"
+    scannerMode: MSBuild
+    projectName: "$(Build.DefinitionName)"
+    projectKey: "$(SonarCloudProjectKey)"
+    extraProperties: "${{ parameters.SonarCloudExtraProperties }}"
+
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
@@ -11,17 +29,27 @@ steps:
   inputs:
     projects: 'src/**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
-    
+
 - task: DotNetCoreCLI@2
   displayName: 'Unit Tests'
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
-    
+
 - task: DotNetCoreCLI@2
   displayName: 'Acceptance Tests'
   inputs:
     command: test
     projects: '**/*.AcceptanceTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
+
+- task: SonarCloudAnalyze@1
+  displayName: Run SonarCloud analysis
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+
+- task: SonarCloudPublish@1
+  displayName: Publish SonarCloud analysis results on build summary
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+  inputs:
+    pollingTimeoutSec: '300'
