@@ -1,7 +1,6 @@
 parameters:
   SonarCloud: false
   SonarCloudExtraProperties:
-  SonarCloudOrganisationKey:
   SonarCloudProjectKey:
 
 steps:
@@ -11,7 +10,7 @@ steps:
   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
-    organization: "${{ parameters.SonarCloudOrganisationKey }}"
+    organization: $(SonarCloudOrganisationKey)
     scannerMode: MSBuild
     projectName: "$(Build.DefinitionName)"
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
