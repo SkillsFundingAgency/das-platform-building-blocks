@@ -1,7 +1,5 @@
 parameters:
-  name: SonarCloud
-  type: boolean
-  default: false
+  SonarCloud: false
   SonarCloudExtraProperties:
   SonarCloudOrganisationKey:
   SonarCloudProjectKey:
@@ -10,7 +8,7 @@ steps:
 
 - task: SonarCloudPrepare@1
   displayName: Prepare SonarCloud analysis configuration
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
     organization: "${{ parameters.SonarCloudOrganisationKey }}"
@@ -48,10 +46,10 @@ steps:
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
 - task: SonarCloudPublish@1
   displayName: Publish SonarCloud analysis results on build summary
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), ${{ parameters.SonarCloud }})
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     pollingTimeoutSec: '300'
