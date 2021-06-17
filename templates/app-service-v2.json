@@ -106,6 +106,13 @@
       "metadata": {
         "description": "Resource ID of the subnet used for vNet integration"
       }
+    },
+    "healthCheckPath": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Health check path, e.g. /ping"
+      }
     }
   },
   "variables": {
@@ -120,6 +127,27 @@
       }
     ],
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+    "useHealthCheckPath": "[greater(length(parameters('healthCheckPath')), 0)]",
+    "productionSlotSiteConfig": "[if(variables('useHealthCheckPath'), variables('productionSlotSiteConfigWithHealthCheck'), variables('productionSlotSiteConfigWithoutHealthCheck'))]",
+    "productionSlotSiteConfigWithoutHealthCheck": {
+      "alwaysOn": true,
+      "appSettings": "[variables('appServiceProductionSlotAppSettingsCombined')]",
+      "connectionStrings": "[parameters('appServiceConnectionStrings').array]",
+      "virtualApplications": "[parameters('appServiceVirtualApplications')]",
+      "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+    },
+    "productionSlotSiteConfigWithHealthCheck": "[union(variables('productionSlotSiteConfigWithoutHealthCheck'), variables('healthCheckPathObject'))]",
+    "stagingSlotSiteConfig": "[if(variables('useHealthCheckPath'), variables('stagingSlotSiteConfigWithHealthCheck'), variables('stagingSlotSiteConfigWithoutHealthCheck'))]",
+    "stagingSlotSiteConfigWithoutHealthCheck": {
+      "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings').array, parameters('appServiceAppSettings').array)]",
+      "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings').array, parameters('appServiceConnectionStrings').array)]",
+      "virtualApplications": "[parameters('appServiceVirtualApplications')]",
+      "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+    },
+    "stagingSlotSiteConfigWithHealthCheck": "[union(variables('stagingSlotSiteConfigWithoutHealthCheck'), variables('healthCheckPathObject'))]",
+    "healthCheckPathObject": {
+      "healthCheckPath": "[parameters('healthCheckPath')]"
+    },
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings').array), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings').array), 0)]",
@@ -139,13 +167,7 @@
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
-        "siteConfig": {
-          "alwaysOn": true,
-          "appSettings": "[variables('appServiceProductionSlotAppSettingsCombined')]",
-          "connectionStrings": "[parameters('appServiceConnectionStrings').array]",
-          "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
-        },
+        "siteConfig": "[variables('productionSlotSiteConfig')]",
         "httpsOnly": true
       },
       "resources": [
@@ -161,12 +183,7 @@
           "properties": {
             "serverFarmId": "[variables('appServicePlanId')]",
             "clientAffinityEnabled": false,
-            "siteConfig": {
-              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings').array, parameters('appServiceAppSettings').array)]",
-              "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings').array, parameters('appServiceConnectionStrings').array)]",
-              "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-              "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
-            },
+            "siteConfig": "[variables('stagingSlotSiteConfig')]",
             "httpsOnly": true
           },
           "dependsOn": [
