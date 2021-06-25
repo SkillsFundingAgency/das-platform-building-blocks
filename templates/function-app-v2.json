@@ -47,6 +47,13 @@
       "metadata": {
         "description": "Resource ID of the subnet used for vNet integration"
       }
+    },
+    "runtimeScaleMonitoringEnabled": {
+      "type": "bool",
+      "defaultValue": "false",
+      "metadata": {
+        "description": "Bool used to determine whether Runtime Scale Monitoring will be enabled for the given function app"
+      }
     }
   },
   "variables": {
@@ -98,7 +105,8 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "subnetResourceId": "[parameters('subnetResourceId')]",
-        "swiftSupported": true
+        "swiftSupported": true,
+        "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
