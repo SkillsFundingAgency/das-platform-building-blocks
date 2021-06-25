@@ -50,7 +50,7 @@
     },
     "runtimeScaleMonitoringEnabled": {
       "type": "bool",
-      "defaultValue": "false",
+      "defaultValue": false,
       "metadata": {
         "description": "Bool used to determine whether Runtime Scale Monitoring will be enabled for the given function app"
       }
