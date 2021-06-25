@@ -106,7 +106,7 @@
       "properties": {
         "subnetResourceId": "[parameters('subnetResourceId')]",
         "swiftSupported": true,
-        "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]"
+        "functionsRuntimeScaleMonitoringEnabled": true
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
