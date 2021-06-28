@@ -83,6 +83,12 @@
                 "description": "Operator comparing the current value with the threshold value."
             }
         },
+        "metricThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The criteria threshold value that activates the alert."
+            }
+        },
         "timeAggregation": {
             "type": "string",
             "defaultValue": "Count",
@@ -154,7 +160,7 @@
                     "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
                     "allOf": [
                         {
-                            "threshold": 1,
+                            "threshold": "[parameters('metricThreshold')]",
                             "name": "Metric1",
                             "metricNamespace": "[parameters('metricNamepace')]",
                             "metricName": "[parameters('metricName')]",
