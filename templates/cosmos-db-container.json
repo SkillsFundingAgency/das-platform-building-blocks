@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "cosmosDatabase": {
@@ -18,6 +18,14 @@
     "partitionKey": {
       "type": "string",
       "defaultValue": ""
+    },
+    "throughtput": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "maxThroughput": {
+      "type": "string",
+      "defaultValue":""
     },
     "cosmosDBType": {
       "type": "string",
@@ -60,22 +68,41 @@
           "id": "[parameters('containerName')]"
         }
       }
-    }
+    },
+    "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
+    "throughtputSettings": {
+      "WithAutoscaling": {
+        "options":{
+          "autoscaleSettings":{
+            "maxThroughput": "[parameters('maxThroughput')]"
+          }
+        }
+      },
+      "WithoutAutoscaling": {
+        "options":{
+          "throughput": "[parameters('throughtput')]"
+        }
+      }
+
+    },
+    "partitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]",
+    "throughtputProperties": "[if(variables('useAutoscaleSettings'), variables('throughtputSettings').WithAutoscaling, variables('throughtputSettings').WithoutAutoscaling)]",
+    "mongoDBContainerProperties": "[union(variables('partitionKeyProperties'),variables('throughtputProperties'))]"
   },
   "resources": [
     {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
+      "apiVersion": "2021-04-15",
       "properties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').WithIndex, variables('globalDocumentDBContainerParameters').NoIndex)]"
     },
     {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/collections",
+      "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
-      "properties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]"
+      "apiVersion": "2021-04-15",
+      "properties": "[variables('mongoDBContainerProperties')]"
     }
   ]
 }
