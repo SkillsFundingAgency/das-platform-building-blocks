@@ -93,14 +93,14 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2021-04-15",
       "properties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').WithIndex, variables('globalDocumentDBContainerParameters').NoIndex)]"
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2021-04-15",
       "properties": "[variables('mongoDBContainerProperties')]"
     }
