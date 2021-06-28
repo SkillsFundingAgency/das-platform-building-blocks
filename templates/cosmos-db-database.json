@@ -22,7 +22,7 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sqlDatabases/', parameters('CosmosDatabase'))]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('CosmosDatabase'))]",
       "apiVersion": "2021-04-15",
       "properties": {
         "resource": {
@@ -33,7 +33,7 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodbDatabases/', parameters('CosmosDatabase'))]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('CosmosDatabase'))]",
       "apiVersion": "2021-04-15",
       "properties": {
         "resource": {
