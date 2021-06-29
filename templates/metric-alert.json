@@ -134,7 +134,7 @@
                 "description": "how often the metric alert is evaluated represented in ISO 8601 duration format."
             }
         },
-        "actionGroupId": {
+        "actionGroupResourceId": {
             "type": "string",
             "metadata": {
                 "description": "The id of the action group to send the alert to."
@@ -174,7 +174,7 @@
                 "targetResourceType": "[parameters('targetResourceType')]",
                 "actions": [
                     {
-                        "actionGroupId": "[parameters('actionGroupId')]"
+                        "actionGroupId": "[parameters('actionGroupResourceId')]"
                     }
                 ]
             }
