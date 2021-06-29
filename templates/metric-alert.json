@@ -68,7 +68,7 @@
                 "description": "Name of the metric, dependent on the metric namespace. E.g. 'dependencies/failed' for 'microsoft.insights/components' namespace."
             }
         },
-        "operator": {
+        "metricOperator": {
             "type": "string",
             "defaultValue": "GreaterThan",
             "allowedValues": [
@@ -164,7 +164,7 @@
                             "name": "Metric1",
                             "metricNamespace": "[parameters('metricNamepace')]",
                             "metricName": "[parameters('metricName')]",
-                            "operator": "[parameters('operator')]",
+                            "operator": "[parameters('metricOperator')]",
                             "timeAggregation": "[parameters('timeAggregation')]",
                             "criterionType": "StaticThresholdCriterion"
                         }
