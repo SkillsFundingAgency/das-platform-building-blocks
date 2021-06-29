@@ -19,7 +19,7 @@
       "type": "string",
       "defaultValue": ""
     },
-    "throughtput": {
+    "throughput": {
       "type": "string",
       "defaultValue": ""
     },
@@ -70,7 +70,7 @@
       }
     },
     "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
-    "throughtputSettings": {
+    "throughputSettings": {
       "WithAutoscaling": {
         "options":{
           "autoscaleSettings":{
@@ -80,13 +80,12 @@
       },
       "WithoutAutoscaling": {
         "options":{
-          "throughput": "[parameters('throughtput')]"
+          "throughput": "[parameters('throughput')]"
         }
       }
-
     },
     "partitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]",
-    "throughtputProperties": "[if(variables('useAutoscaleSettings'), variables('throughtputSettings').WithAutoscaling, variables('throughtputSettings').WithoutAutoscaling)]",
+    "throughtputProperties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]",
     "mongoDBContainerProperties": "[union(variables('partitionKeyProperties'),variables('throughtputProperties'))]"
   },
   "resources": [
