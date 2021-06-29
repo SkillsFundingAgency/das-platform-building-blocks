@@ -79,7 +79,7 @@
           "appSettings": "[parameters('functionAppAppSettings').array]",
           "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
-          "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]"
+          "functionsRuntimeScaleMonitoringEnabled": false //"[parameters('runtimeScaleMonitoringEnabled')]"
         },
         "httpsOnly": true
       }
