@@ -12,16 +12,12 @@
       "type": "string"
     },
     "throughput": {
-      "type": "int",
-      "minValue": 400,
-      "maxValue": 1000000,
-      "defaultValue": 0
+      "type": "string",
+      "defaultValue": ""
     },
     "maxThroughput": {
-      "type": "int",
-      "minValue": 400,
-      "maxValue": 1000000,
-      "defaultValue": 0
+      "type": "string",
+      "defaultValue": ""
     },
     "cosmosDBType": {
       "type": "string",
