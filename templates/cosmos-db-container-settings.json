@@ -28,7 +28,7 @@
     }
   },
   "variables": {
-    "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),parameters('throughput'))]",
+    "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
     "throughputSettings": {
       "WithAutoscaling": {
         "properties": {

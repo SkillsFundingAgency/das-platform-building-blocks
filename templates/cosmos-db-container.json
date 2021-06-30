@@ -101,7 +101,7 @@
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2021-04-15",
-      "properties": "[variables('mongoDBContainerProperties')]"
+      "properties": "[variables('partitionKeyProperties')]"
     }
   ]
 }
