@@ -15,17 +15,13 @@
       "type": "array",
       "defaultValue": []
     },
+    "partitionKeyArray": {
+      "type": "array",
+      "defaultValue": []
+    },
     "partitionKey": {
       "type": "string",
       "defaultValue": ""
-    },
-    "throughput": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "maxThroughput": {
-      "type": "string",
-      "defaultValue":""
     },
     "cosmosDBType": {
       "type": "string",
@@ -37,39 +33,42 @@
   },
   "variables": {
     "createIndexPaths": "[greater(length(parameters('pathArray')),0)]",
+    "createPartitionKeyArray": "[greater(length(parameters('partitionKeyArray')),0)]",
     "globalDocumentDBContainerParameters": {
-      "WithIndex": {
-        "resource": {
-          "id": "[parameters('containerName')]",
-          "indexingPolicy": {
-            "indexingMode": "consistent",
-            "includedPaths": "[parameters('pathArray')]"
-          }
+      "BaseProperties": {
+        "id": "[parameters('containerName')]"
+      },
+      "Index": {
+        "indexingPolicy": {
+          "indexingMode": "consistent",
+          "includedPaths": "[parameters('pathArray')]"
         }
       },
-      "NoIndex": {
-        "resource": {
-          "id": "[parameters('containerName')]"
+      "PartitionKeyArray": {
+        "partitionKey": {
+          "paths": "[parameters('partitionKeyArray')]",
+          "kind": "Hash"
         }
       }
     },
     "createPartitionKey": "[greater(length(parameters('partitionKey')),0)]",
-    "mongoContainerParameters": {
-      "WithPartitionKey": {
+    "mongoDBContainerParameters": {
+      "BaseProperties":{
+        "id": "[parameters('containerName')]"
+      },
+      "PartitionKey": {
         "resource": {
-          "id": "[parameters('containerName')]",
           "shardKey": {
             "[parameters('partitionKey')]": "Hash"
           }
         }
-      },
-      "WithoutPartitionKey": {
-        "resource": {
-          "id": "[parameters('containerName')]"
-        }
       }
     },
-    "partitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]",
+    "mongoDBPartitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoDBContainerParameters').PartitionKey, '')]",
+    "mongoDBProperties": "[union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBPartitionKeyProperties'))]",
+    "globalDocumentDBIndexProperties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').Index, '')]",
+    "globalDocumentDBPartitionKeyProperties": "[if(variables('createPartitionKeyArray'), variables('globalDocumentDBContainerParameters').PartitionKeyArray, '')]",
+    "globalDocumentDBProperties": "[union(variables('globalDocumentDBContainerParameters').BaseProperties,variables('globalDocumentDBIndexProperties'),variables('globalDocumentDBPartitionKeyProperties'))]"
   },
   "resources": [
     {
@@ -77,14 +76,18 @@
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2021-04-15",
-      "properties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').WithIndex, variables('globalDocumentDBContainerParameters').NoIndex)]"
+      "properties": {
+        "resource": "[variables('globalDocumentDBProperties')]"
+      }
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
       "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
       "apiVersion": "2021-04-15",
-      "properties": "[variables('partitionKeyProperties')]"
+      "properties": {
+        "resource": "[variables('mongoDBProperties')]"
+      }
     }
   ]
 }
