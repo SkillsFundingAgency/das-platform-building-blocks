@@ -69,24 +69,7 @@
         }
       }
     },
-    "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
-    "throughputSettings": {
-      "WithAutoscaling": {
-        "options":{
-          "autoscaleSettings":{
-            "maxThroughput": "[parameters('maxThroughput')]"
-          }
-        }
-      },
-      "WithoutAutoscaling": {
-        "options":{
-          "throughput": "[parameters('throughput')]"
-        }
-      }
-    },
     "partitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]",
-    "throughtputProperties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]",
-    "mongoDBContainerProperties": "[union(variables('partitionKeyProperties'),variables('throughtputProperties'))]"
   },
   "resources": [
     {

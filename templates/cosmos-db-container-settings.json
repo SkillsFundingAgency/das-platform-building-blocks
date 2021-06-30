@@ -46,15 +46,11 @@
   },
   "resources": [
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "apiVersion": "2016-03-31",
-      "properties": {
-        "resource": {
-          "throughput": "[parameters('throughput')]"
-        }
-      }
+      "apiVersion": "2021-05-15",
+      "properties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]"
     },
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections/throughputSettings",
