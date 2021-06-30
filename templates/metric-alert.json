@@ -86,7 +86,7 @@
         "metricThreshold": {
             "type": "int",
             "metadata": {
-                "description": "The criteria threshold value that activates the alert."
+                "description": "The threshold value that activates the alert."
             }
         },
         "timeAggregation": {
@@ -131,7 +131,7 @@
                 "PT1H"
             ],
             "metadata": {
-                "description": "how often the metric alert is evaluated represented in ISO 8601 duration format."
+                "description": "How often the metric alert is evaluated. ISO 8601 duration format."
             }
         },
         "actionGroupResourceId": {
