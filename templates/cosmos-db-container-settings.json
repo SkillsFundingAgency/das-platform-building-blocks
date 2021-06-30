@@ -31,19 +31,15 @@
     "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
     "throughputSettings": {
       "WithAutoscaling": {
-        "properties": {
-          "resource": {
-            "autoscaleSettings": {
-              "maxThroughput": "[parameters('maxThroughput')]"
-            }
+        "resource": {
+          "autoscaleSettings": {
+            "maxThroughput": "[parameters('maxThroughput')]"
           }
         }
       },
       "WithoutAutoscaling": {
-        "properties":{
-          "resource": {
-            "throughput": "[parameters('throughput')]"
-          }
+        "resource": {
+          "throughput": "[parameters('throughput')]"
         }
       }
     }
