@@ -1,0 +1,184 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of metric alert."
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Description of metric alert."
+            }
+        },
+        "alertSeverity": {
+            "type": "int",
+            "defaultValue": 3,
+            "allowedValues": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "metadata": {
+                "description": "Severity of alert {0,1,2,3,4}"
+            }
+        },
+        "isEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies whether the alert is enabled."
+            }
+        },
+        "targetResourceType": {
+            "type": "string",
+            "defaultValue": "microsoft.insights/components",
+            "allowedValues": [
+                "microsoft.insights/components"
+            ],
+            "metadata": {
+                "description": "Type of target resource."
+            }
+        },
+        "resourceIdScopeList": {
+            "type": "array",
+            "metadata": {
+                "description": "The list of resource id's that this metric alert is scoped to, e.g. list of Application Insights resources."
+            }
+        },
+        "metricNamepace": {
+            "type": "string",
+            "defaultValue": "microsoft.insights/components",
+            "allowedValues": [
+                "microsoft.insights/components"
+            ],
+            "metadata": {
+                "description": "Namespace of the metric."
+            }
+        },
+        "metricName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the metric, dependent on the metric namespace. E.g. 'dependencies/failed' for 'microsoft.insights/components' namespace."
+            }
+        },
+        "metricOperator": {
+            "type": "string",
+            "defaultValue": "GreaterThan",
+            "allowedValues": [
+                "Equals",
+                "NotEquals",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+            ],
+            "metadata": {
+                "description": "Operator comparing the current value with the threshold value."
+            }
+        },
+        "metricThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The threshold value that activates the alert."
+            }
+        },
+        "timeAggregation": {
+            "type": "string",
+            "defaultValue": "Count",
+            "allowedValues": [
+                "Average",
+                "Minimum",
+                "Maximum",
+                "Total",
+                "Count"
+            ],
+            "metadata": {
+                "description": "How the data that is collected should be combined over time."
+            }
+        },
+        "windowSize": {
+            "type": "string",
+            "defaultValue": "PT5M",
+            "allowedValues": [
+                "PT1M",
+                "PT5M",
+                "PT15M",
+                "PT30M",
+                "PT1H",
+                "PT6H",
+                "PT12H",
+                "P1D"
+            ],
+            "metadata": {
+                "description": "Period of time used to monitor alert activity based on the threshold. Must be between one minute and one day. ISO 8601 duration format."
+            }
+        },
+        "evaluationFrequency": {
+            "type": "string",
+            "defaultValue": "PT1M",
+            "allowedValues": [
+                "PT1M",
+                "PT5M",
+                "PT15M",
+                "PT30M",
+                "PT1H"
+            ],
+            "metadata": {
+                "description": "How often the metric alert is evaluated. ISO 8601 duration format."
+            }
+        },
+        "actionGroupResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the action group to send the alert to."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "microsoft.insights/metricAlerts",
+            "apiVersion": "2018-03-01",
+            "name": "[parameters('alertName')]",
+            "location": "global",
+            "tags": {},
+            "properties": {
+                "description": "[parameters('alertDescription')]",
+                "severity": "[parameters('alertSeverity')]",
+                "enabled": "[parameters('isEnabled')]",
+                "scopes": "[parameters('resourceIdScopeList')]",
+                "evaluationFrequency": "[parameters('evaluationFrequency')]",
+                "windowSize": "[parameters('windowSize')]",
+                "criteria": {
+                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                    "allOf": [
+                        {
+                            "threshold": "[parameters('metricThreshold')]",
+                            "name": "Metric1",
+                            "metricNamespace": "[parameters('metricNamepace')]",
+                            "metricName": "[parameters('metricName')]",
+                            "operator": "[parameters('metricOperator')]",
+                            "timeAggregation": "[parameters('timeAggregation')]",
+                            "criterionType": "StaticThresholdCriterion"
+                        }
+                    ]
+                },
+                "autoMitigate": true,
+                "targetResourceType": "[parameters('targetResourceType')]",
+                "actions": [
+                    {
+                        "actionGroupId": "[parameters('actionGroupResourceId')]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
