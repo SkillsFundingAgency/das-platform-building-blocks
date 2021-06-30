@@ -64,11 +64,9 @@
         }
       }
     },
-    "mongoDBPartitionKeyProperties": "[if(variables('createPartitionKey'), variables('mongoDBContainerParameters').PartitionKey, '')]",
-    "mongoDBProperties": "[union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBPartitionKeyProperties'))]",
-    "globalDocumentDBIndexProperties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').Index, '')]",
-    "globalDocumentDBPartitionKeyProperties": "[if(variables('createPartitionKeyArray'), variables('globalDocumentDBContainerParameters').PartitionKeyArray, '')]",
-    "globalDocumentDBProperties": "[union(variables('globalDocumentDBContainerParameters').BaseProperties,variables('globalDocumentDBIndexProperties'),variables('globalDocumentDBPartitionKeyProperties'))]"
+    "mongoDBProperties": "[if(variables('createPartitionKey'),union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBContainerParameters').PartitionKey),variables('mongoDBContainerParameters').BaseProperties)]",
+    "globalDocumentDBIndexProperties": "[if(variables('createIndexPaths'), union(variables('globalDocumentDBContainerParameters').BaseProperties,variables('globalDocumentDBContainerParameters').Index), variables('globalDocumentDBContainerParameters').BaseProperties)]",
+    "globalDocumentDBProperties": "[if(variables('createPartitionKeyArray'), union(variables('globalDocumentDBIndexProperties'),variables('globalDocumentDBContainerParameters').PartitionKeyArray), variables('globalDocumentDBIndexProperties'))]"
   },
   "resources": [
     {
