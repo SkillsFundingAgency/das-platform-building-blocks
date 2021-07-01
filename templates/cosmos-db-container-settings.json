@@ -47,7 +47,7 @@
   "resources": [
     {
       "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/default')]",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
       "apiVersion": "2021-05-15",
       "properties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]"
