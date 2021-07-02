@@ -57,10 +57,8 @@
         "id": "[parameters('containerName')]"
       },
       "PartitionKey": {
-        "resource": {
-          "shardKey": {
-            "[parameters('partitionKey')]": "Hash"
-          }
+        "shardKey": {
+          "[parameters('partitionKey')]": "Hash"
         }
       }
     },
