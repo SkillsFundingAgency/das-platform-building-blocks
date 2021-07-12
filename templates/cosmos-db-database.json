@@ -20,10 +20,10 @@
   },
   "resources": [
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('CosmosDatabase'))]",
-      "apiVersion": "2016-03-31",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('CosmosDatabase'))]",
+      "apiVersion": "2021-04-15",
       "properties": {
         "resource": {
           "id": "[parameters('cosmosDatabase')]"
@@ -31,10 +31,10 @@
       }
     },
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('CosmosDatabase'))]",
-      "apiVersion": "2016-03-31",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('CosmosDatabase'))]",
+      "apiVersion": "2021-04-15",
       "properties": {
         "resource": {
           "id": "[parameters('cosmosDatabase')]"

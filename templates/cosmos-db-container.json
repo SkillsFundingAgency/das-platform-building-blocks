@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "cosmosDatabase": {
@@ -12,6 +12,10 @@
       "type": "string"
     },
     "pathArray": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "partitionKeyArray": {
       "type": "array",
       "defaultValue": []
     },
@@ -29,53 +33,57 @@
   },
   "variables": {
     "createIndexPaths": "[greater(length(parameters('pathArray')),0)]",
+    "createPartitionKeyArray": "[greater(length(parameters('partitionKeyArray')),0)]",
     "globalDocumentDBContainerParameters": {
-      "WithIndex": {
-        "resource": {
-          "id": "[parameters('containerName')]",
-          "indexingPolicy": {
-            "indexingMode": "consistent",
-            "includedPaths": "[parameters('pathArray')]"
-          }
+      "BaseProperties": {
+        "id": "[parameters('containerName')]"
+      },
+      "Index": {
+        "indexingPolicy": {
+          "indexingMode": "consistent",
+          "includedPaths": "[parameters('pathArray')]"
         }
       },
-      "NoIndex": {
-        "resource": {
-          "id": "[parameters('containerName')]"
+      "PartitionKeyArray": {
+        "partitionKey": {
+          "paths": "[parameters('partitionKeyArray')]",
+          "kind": "Hash"
         }
       }
     },
     "createPartitionKey": "[greater(length(parameters('partitionKey')),0)]",
-    "mongoContainerParameters": {
-      "WithPartitionKey": {
-        "resource": {
-          "id": "[parameters('containerName')]",
-          "shardKey": {
-            "[parameters('partitionKey')]": "Hash"
-          }
-        }
+    "mongoDBContainerParameters": {
+      "BaseProperties":{
+        "id": "[parameters('containerName')]"
       },
-      "WithoutPartitionKey": {
-        "resource": {
-          "id": "[parameters('containerName')]"
+      "PartitionKey": {
+        "shardKey": {
+          "[parameters('partitionKey')]": "Hash"
         }
       }
-    }
+    },
+    "mongoDBProperties": "[if(variables('createPartitionKey'),union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBContainerParameters').PartitionKey),variables('mongoDBContainerParameters').BaseProperties)]",
+    "globalDocumentDBIndexProperties": "[if(variables('createIndexPaths'), union(variables('globalDocumentDBContainerParameters').BaseProperties,variables('globalDocumentDBContainerParameters').Index), variables('globalDocumentDBContainerParameters').BaseProperties)]",
+    "globalDocumentDBProperties": "[if(variables('createPartitionKeyArray'), union(variables('globalDocumentDBIndexProperties'),variables('globalDocumentDBContainerParameters').PartitionKeyArray), variables('globalDocumentDBIndexProperties'))]"
   },
   "resources": [
     {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
-      "properties": "[if(variables('createIndexPaths'), variables('globalDocumentDBContainerParameters').WithIndex, variables('globalDocumentDBContainerParameters').NoIndex)]"
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2021-04-15",
+      "properties": {
+        "resource": "[variables('globalDocumentDBProperties')]"
+      }
     },
     {
-      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/collections",
+      "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
-      "apiVersion": "2016-03-31",
-      "properties": "[if(variables('createPartitionKey'), variables('mongoContainerParameters').WithPartitionKey, variables('mongoContainerParameters').WithoutPartitionKey)]"
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'))]",
+      "apiVersion": "2021-04-15",
+      "properties": {
+        "resource": "[variables('mongoDBProperties')]"
+      }
     }
   ]
 }

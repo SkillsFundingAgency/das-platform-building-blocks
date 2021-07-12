@@ -12,9 +12,12 @@
       "type": "string"
     },
     "throughput": {
-      "type": "int",
-      "minValue": 400,
-      "maxValue": 1000000
+      "type": "string",
+      "defaultValue": ""
+    },
+    "maxThroughput": {
+      "type": "string",
+      "defaultValue": ""
     },
     "cosmosDBType": {
       "type": "string",
@@ -24,28 +27,37 @@
       ]
     }
   },
+  "variables": {
+    "useAutoscaleSettings": "[greater(length(parameters('maxThroughput')),0)]",
+    "throughputSettings": {
+      "WithAutoscaling": {
+        "resource": {
+          "autoscaleSettings": {
+            "maxThroughput": "[parameters('maxThroughput')]"
+          }
+        }
+      },
+      "WithoutAutoscaling": {
+        "resource": {
+          "throughput": "[parameters('throughput')]"
+        }
+      }
+    }
+  },
   "resources": [
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/containers/settings",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/sql/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/throughputSettings",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/default')]",
       "condition": "[equals(parameters('cosmosDBType'), 'GlobalDocumentDB')]",
-      "apiVersion": "2016-03-31",
-      "properties": {
-        "resource": {
-          "throughput": "[parameters('throughput')]"
-        }
-      }
+      "apiVersion": "2021-05-15",
+      "properties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]"
     },
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases/collections/settings",
+      "type": "Microsoft.DocumentDB/databaseAccounts/mongodbDatabases/collections/throughputSettings",
       "condition": "[equals(parameters('cosmosDBType'), 'MongoDB')]",
-      "name": "[concat(parameters('cosmosDbAccountName'), '/mongodb/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/throughput')]",
-      "apiVersion": "2016-03-31",
-      "properties": {
-        "resource": {
-          "throughput": "[parameters('throughput')]"
-        }
-      }
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', parameters('cosmosDatabase'), '/', parameters('containerName'), '/default')]",
+      "apiVersion": "2021-05-15",
+      "properties": "[if(variables('useAutoscaleSettings'), variables('throughputSettings').WithAutoscaling, variables('throughputSettings').WithoutAutoscaling)]"
     }
   ]
 }
