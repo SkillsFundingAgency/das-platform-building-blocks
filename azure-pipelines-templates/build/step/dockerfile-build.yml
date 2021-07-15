@@ -21,5 +21,5 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest .'
+    inlineScript: 'az acr build --no-format --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
