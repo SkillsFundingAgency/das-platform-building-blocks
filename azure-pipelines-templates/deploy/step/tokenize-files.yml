@@ -1,0 +1,19 @@
+parameters:
+  WorkingDirectory: $(Build.SourcesDirectory)
+  TargetFiles:
+  TokenPrefix:
+  TokenSuffix:
+
+steps:
+- task: replacetokens@3
+  displayName: Replace tokens in ${{parameters.WorkingDirectory}}
+  inputs:
+    rootDirectory: ${{parameters.WorkingDirectory}}
+    targetFiles: ${{parameters.TargetFiles}}
+    encoding: auto
+    writeBOM: true
+    actionOnMissing: fail
+    enableTelemetry: false
+    keepToken: false
+    tokenPrefix: ${{parameters.TokenPrefix}}
+    tokenSuffix: ${{parameters.TokenSuffix}}
