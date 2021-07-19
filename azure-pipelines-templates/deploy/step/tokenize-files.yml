@@ -1,5 +1,5 @@
 parameters:
-  WorkingDirectory:
+  WorkingDirectory: $(Build.SourcesDirectory)
   TargetFiles:
 
 steps:
