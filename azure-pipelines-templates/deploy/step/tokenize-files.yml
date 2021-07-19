@@ -1,13 +1,13 @@
 parameters:
-  sourcePath:
-  targetFiles:
+  WorkingDirectory:
+  TargetFiles:
 
 steps:
 - task: replacetokens@3
-  displayName: 'Replace tokens in ${{parameters.sourcePath}}'
+  displayName: 'Replace tokens in ${{parameters.WorkingDirectory}}'
   inputs:
-    rootDirectory: '${{parameters.sourcePath}}'
-    targetFiles: '${{parameters.targetFiles}}'
+    rootDirectory: '${{parameters.WorkingDirectory}}'
+    targetFiles: '${{parameters.TargetFiles}}'
     encoding: 'auto'
     writeBOM: true
     actionOnMissing: 'fail'
