@@ -1,0 +1,17 @@
+parameters:
+  sourcePath:
+  targetFiles:
+
+steps:
+- task: replacetokens@3
+  displayName: 'Replace tokens in ${{parameters.sourcePath}}'
+  inputs:
+    rootDirectory: '${{parameters.sourcePath}}'
+    targetFiles: '${{parameters.targetFiles}}'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'fail'
+    enableTelemetry: false
+    keepToken: false
+    tokenPrefix: '__'
+    tokenSuffix: '__'
