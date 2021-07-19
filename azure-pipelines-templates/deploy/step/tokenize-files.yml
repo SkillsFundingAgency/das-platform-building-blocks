@@ -4,14 +4,14 @@ parameters:
 
 steps:
 - task: replacetokens@3
-  displayName: 'Replace tokens in ${{parameters.WorkingDirectory}}'
+  displayName: Replace tokens in ${{parameters.WorkingDirectory}}
   inputs:
-    rootDirectory: '${{parameters.WorkingDirectory}}'
-    targetFiles: '${{parameters.TargetFiles}}'
-    encoding: 'auto'
+    rootDirectory: ${{parameters.WorkingDirectory}}
+    targetFiles: ${{parameters.TargetFiles}}
+    encoding: auto
     writeBOM: true
-    actionOnMissing: 'fail'
+    actionOnMissing: fail
     enableTelemetry: false
     keepToken: false
-    tokenPrefix: '__'
-    tokenSuffix: '__'
+    tokenPrefix: __
+    tokenSuffix: __
