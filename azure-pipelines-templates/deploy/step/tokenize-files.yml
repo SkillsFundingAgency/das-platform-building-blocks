@@ -1,6 +1,7 @@
 parameters:
   WorkingDirectory: $(Build.SourcesDirectory)
   TargetFiles:
+  TokenPrefixAndSuffix:
 
 steps:
 - task: replacetokens@3
@@ -13,5 +14,5 @@ steps:
     actionOnMissing: fail
     enableTelemetry: false
     keepToken: false
-    tokenPrefix: __
-    tokenSuffix: __
+    tokenPrefix: ${{parameters.TokenPrefixAndSuffix}}
+    tokenSuffix: ${{parameters.TokenPrefixAndSuffix}}
