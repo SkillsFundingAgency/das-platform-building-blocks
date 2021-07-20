@@ -7,7 +7,8 @@ parameters:
 
 steps:
 - task: AzureCLI@2
-  displayName: 'Build Image with build number tag'
+  displayName: 'Build Image with build number tag if branch does not match BranchToCreateLatestTag parameter'
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.BranchToCreateLatestTag }}'))
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
