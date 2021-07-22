@@ -15,13 +15,11 @@
       }
     },
     "agentNodeCount": {
-      "type": "int",
-      "defaultValue": 3,
+      "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "The number of nodes for the cluster."
-      },
-      "minValue": 1,
-      "maxValue": 50
+      }
     },
     "agentVMSize": {
       "type": "string",
@@ -79,10 +77,52 @@
       },
       "minValue": 30,
       "maxValue": 250
+    },
+    "enableNodeAutoScaling": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Bool to enable node pool autoscaling."
+      }
+    },
+    "minNodeAutoScalingCount": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The minimum amount of nodes to autoscale down to."
+      }
+    },
+    "maxNodeAutoScalingCount": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The maximum amount of nodes to autoscale up to."
+      }
     }
   },
   "variables": {
-    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]"
+    "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
+    "baseProperties": {
+      "count": "[parameters('agentNodeCount')]",
+      "vmSize": "[parameters('agentVmSize')]",
+      "osType": "[parameters('osType')]",
+      "storageProfile": "ManagedDisks",
+      "type": "VirtualMachineScaleSets",
+      "vnetSubnetID": "[variables('vnetSubnetId')]",
+      "orchestratorVersion": "[parameters('kubernetesVersion')]",
+      "nodeLabels": "[parameters('nodeLabels')]",
+      "nodeTaints": "[parameters('nodeTaints')]",
+      "maxPods": "[parameters('maxPods')]"
+    },
+    "withAutoscalingNodeProperties": {
+      "enableAutoScaling": true,
+      "minCount": "[parameters('minNodeAutoScalingCount')]",
+      "maxCount": "[parameters('maxNodeAutoScalingCount')]"
+    },
+    "withoutAutoscalingNodeProperties": {
+      "count": "[parameters('agentNodeCount')]"
+    },
+    "agentPoolsProperties": "[if(parameters('enableNodeAutoScaling'), union(variables('baseProperties'), variables('withAutoscalingNodeProperties')), union(variables('baseProperties'),variables('withoutAutoscalingNodeProperties')))]"
   },
   "resources": [
     {
@@ -90,18 +130,7 @@
       "type": "Microsoft.ContainerService/managedClusters/agentPools",
       "name": "[concat(parameters('clusterName'),'/', parameters('agentPoolName'))]",
       "location": "[resourceGroup().location]",
-      "properties": {
-        "count": "[parameters('agentNodeCount')]",
-        "vmSize": "[parameters('agentVmSize')]",
-        "osType": "[parameters('osType')]",
-        "storageProfile": "ManagedDisks",
-        "type": "VirtualMachineScaleSets",
-        "vnetSubnetID": "[variables('vnetSubnetId')]",
-        "orchestratorVersion": "[parameters('kubernetesVersion')]",
-        "nodeLabels": "[parameters('nodeLabels')]",
-        "nodeTaints": "[parameters('nodeTaints')]",
-        "maxPods": "[parameters('maxPods')]"
-      }
+      "properties": "[variables('agentPoolsProperties')]"
     }
   ]
 }
