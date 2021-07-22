@@ -2,6 +2,7 @@ parameters:
   SonarCloud: false
   SonarCloudExtraProperties:
   SonarCloudProjectKey:
+  AcceptanceTest: false
 
 steps:
 
@@ -38,6 +39,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: 'Acceptance Tests'
+  condition: and(succeeded(), eq(${{ parameters.AcceptanceTest }}, true))
   inputs:
     command: test
     projects: '**/*.AcceptanceTests.csproj'
