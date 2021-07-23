@@ -144,7 +144,8 @@
           "appSettings": "[variables('appServiceProductionSlotAppSettingsCombined')]",
           "connectionStrings": "[parameters('appServiceConnectionStrings').array]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+          "minTlsVersion": "1.2"
         },
         "httpsOnly": true
       },
@@ -165,7 +166,8 @@
               "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings').array, parameters('appServiceAppSettings').array)]",
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings').array, parameters('appServiceConnectionStrings').array)]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
-              "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]"
+              "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+              "minTlsVersion": "1.2"
             },
             "httpsOnly": true
           },
