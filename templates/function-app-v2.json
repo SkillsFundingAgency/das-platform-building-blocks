@@ -79,7 +79,8 @@
           "appSettings": "[parameters('functionAppAppSettings').array]",
           "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
-          "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]"
+          "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
+          "minTlsVersion": "1.2"
         },
         "httpsOnly": true
       }
