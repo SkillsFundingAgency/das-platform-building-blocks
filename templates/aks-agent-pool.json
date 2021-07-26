@@ -103,6 +103,7 @@
   "variables": {
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     "baseProperties": {
+      "count": "[parameters('agentNodeCount')]",
       "vmSize": "[parameters('agentVmSize')]",
       "osType": "[parameters('osType')]",
       "storageProfile": "ManagedDisks",
@@ -118,10 +119,7 @@
       "minCount": "[parameters('minNodeAutoScalingCount')]",
       "maxCount": "[parameters('maxNodeAutoScalingCount')]"
     },
-    "withoutAutoscalingNodeProperties": {
-      "count": "[parameters('agentNodeCount')]"
-    },
-    "agentPoolsProperties": "[if(parameters('enableNodeAutoScaling'), union(variables('baseProperties'), variables('withAutoscalingNodeProperties')), union(variables('baseProperties'),variables('withoutAutoscalingNodeProperties')))]"
+    "agentPoolsProperties": "[if(parameters('enableNodeAutoScaling'), union(variables('baseProperties'), variables('withAutoscalingNodeProperties')), variables('baseProperties'))]"
   },
   "resources": [
     {
