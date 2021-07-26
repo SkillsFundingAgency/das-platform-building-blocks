@@ -86,15 +86,15 @@
       }
     },
     "minNodeAutoScalingCount": {
-      "type": "string",
-      "defaultValue": "",
+      "type": "int",
+      "defaultValue": -1,
       "metadata": {
         "description": "The minimum amount of nodes to autoscale down to."
       }
     },
     "maxNodeAutoScalingCount": {
-      "type": "string",
-      "defaultValue": "",
+      "type": "int",
+      "defaultValue": -1,
       "metadata": {
         "description": "The maximum amount of nodes to autoscale up to."
       }
