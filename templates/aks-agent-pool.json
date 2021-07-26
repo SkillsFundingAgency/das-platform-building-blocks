@@ -16,9 +16,12 @@
     },
     "agentNodeCount": {
       "type": "int",
+      "defaultValue": 3,
       "metadata": {
         "description": "The number of nodes for the cluster."
-      }
+      },
+      "minValue": 1,
+      "maxValue": 50
     },
     "agentVMSize": {
       "type": "string",
