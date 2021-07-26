@@ -103,7 +103,6 @@
   "variables": {
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
     "baseProperties": {
-      "count": "[parameters('agentNodeCount')]",
       "vmSize": "[parameters('agentVmSize')]",
       "osType": "[parameters('osType')]",
       "storageProfile": "ManagedDisks",
