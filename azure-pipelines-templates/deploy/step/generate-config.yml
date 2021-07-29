@@ -5,7 +5,7 @@ parameters:
   TableName: ''
 
 steps:
-- task: esfadevops.GenerateEnvironmentConfiguration.custom-build-task.GenerateEnvironmentConfiguration@3
+- task: apprenticeship-service.GenerateEnvironmentConfiguration.custom-build-task.GenerateEnvironmentConfiguration@3
   displayName: 'Generate Configuration'
   inputs:
     ServiceConnectionName: ${{ parameters.ServiceConnection }}
