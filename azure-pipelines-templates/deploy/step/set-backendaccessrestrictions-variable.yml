@@ -1,0 +1,19 @@
+parameters:
+  ARMServiceConnection:
+
+steps:
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: Set BackEndAccessRestrictions variable
+  inputs:
+    azureSubscription: ${{ parameters.ARMServiceConnection }}
+    scriptPath: Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
+    scriptArguments:
+      -SharedEnvResourceGroup $(SharedEnvResourceGroup) `
+      -SharedEnvVirtualNetworkName  $(SharedEnvVirtualNetworkName) `
+      -BackEndAccessRestrictionsExcludedSubnets $(BackEndAccessRestrictionsExcludedSubnets) `
+      -ResourceEnvironmentName $(ResourceEnvironmentName) `
+      -UnrestrictedEnvironments $(UnrestrictedEnvironments) `
+      -UptimeMonitoringAccessRestrictions '$(UptimeMonitoringAccessRestrictions)'
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
