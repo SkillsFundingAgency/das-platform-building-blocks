@@ -10,7 +10,7 @@ steps:
     scriptPath: Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
     scriptArguments:
       -SharedEnvResourceGroup $(SharedEnvResourceGroup) `
-      -SharedEnvVirtualNetworkName  $(SharedEnvVirtualNetworkName) `
+      -SharedEnvVirtualNetworkName $(SharedEnvVirtualNetworkName) `
       -BackEndAccessRestrictionsExcludedSubnets $(BackEndAccessRestrictionsExcludedSubnets) `
       -ResourceEnvironmentName $(ResourceEnvironmentName) `
       -UnrestrictedEnvironments $(UnrestrictedEnvironments) `
