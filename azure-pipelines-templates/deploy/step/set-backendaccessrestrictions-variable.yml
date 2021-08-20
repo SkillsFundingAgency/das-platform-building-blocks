@@ -1,5 +1,11 @@
 parameters:
   ServiceConnection:
+  SharedEnvResourceGroup:
+  SharedEnvVirtualNetworkName:
+  BackEndAccessRestrictionsExcludedSubnets:
+  ResourceEnvironmentName:
+  UnrestrictedEnvironments:
+  UptimeMonitoringAccessRestrictions:
 
 steps:
 - checkout: das-platform-automation
@@ -9,11 +15,11 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
     scriptArguments:
-      -SharedEnvResourceGroup $(SharedEnvResourceGroup) `
-      -SharedEnvVirtualNetworkName $(SharedEnvVirtualNetworkName) `
-      -BackEndAccessRestrictionsExcludedSubnets $(BackEndAccessRestrictionsExcludedSubnets) `
-      -ResourceEnvironmentName $(ResourceEnvironmentName) `
-      -UnrestrictedEnvironments $(UnrestrictedEnvironments) `
-      -UptimeMonitoringAccessRestrictions '$(UptimeMonitoringAccessRestrictions)'
+      -SharedEnvResourceGroup ${{ parameters.SharedEnvResourceGroup }} `
+      -SharedEnvVirtualNetworkName ${{ parameters.SharedEnvVirtualNetworkName }} `
+      -BackEndAccessRestrictionsExcludedSubnets ${{ parameters.BackEndAccessRestrictionsExcludedSubnets }} `
+      -ResourceEnvironmentName ${{ parameters.ResourceEnvironmentName }} `
+      -UnrestrictedEnvironments ${{ parameters.UnrestrictedEnvironments }} `
+      -UptimeMonitoringAccessRestrictions '${{ parameters.UptimeMonitoringAccessRestrictions }}'
     azurePowerShellVersion: LatestVersion
     pwsh: true
