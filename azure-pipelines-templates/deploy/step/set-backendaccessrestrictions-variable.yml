@@ -7,7 +7,7 @@ steps:
   displayName: Set BackEndAccessRestrictions variable
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    scriptPath: Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
+    scriptPath: das-platform-automation/Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
     scriptArguments:
       -SharedEnvResourceGroup $(SharedEnvResourceGroup) `
       -SharedEnvVirtualNetworkName $(SharedEnvVirtualNetworkName) `
