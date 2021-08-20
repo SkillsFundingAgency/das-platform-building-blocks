@@ -1,12 +1,9 @@
-parameters:
-  ServiceConnection:
-
 steps:
 - checkout: das-platform-automation
 - task: AzurePowerShell@5
   displayName: Set BackEndAccessRestrictions variable
   inputs:
-    azureSubscription: ${{ parameters.ServiceConnection }}
+    azureSubscription: $(ARMServiceConnection)
     scriptPath: das-platform-automation/Infrastructure-Scripts/Set-BackEndAccessRestrictionsVariable.ps1
     scriptArguments:
       -SharedEnvResourceGroup $(SharedEnvResourceGroup) `
