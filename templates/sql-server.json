@@ -208,7 +208,7 @@
               "isEnabled": "[parameters('enableVulnerabilityAssessmentScan')]"
             },
             "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
-            "storageContainerPath": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName'))).primaryEndpoints.blob, 'vulnerability-assessment')]"
+            "storageContainerPath": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/', 'vulnerability-assessment')]"
           },
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
