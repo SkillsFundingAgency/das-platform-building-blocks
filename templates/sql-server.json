@@ -139,7 +139,7 @@
         {
           "apiVersion": "2017-03-01-preview",
           "type": "auditingSettings",
-          "name": "[variables('AuditPolicyName')]",
+          "name": "[variables('auditPolicyName')]",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
           ],
@@ -159,7 +159,7 @@
         {
           "apiVersion": "2017-03-01-preview",
           "type": "securityAlertPolicies",
-          "name": "[variables('SecurityAlertPolicyName')]",
+          "name": "[variables('securityAlertPolicyName')]",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]",
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/auditingSettings/', variables('AuditPolicyName'))]"
@@ -204,7 +204,8 @@
             "storageContainerPath": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/', 'vulnerability-assessment')]"
           },
           "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]",
+            "[concat('Microsoft.Sql/servers/', parameters('serverName'), '/securityAlertPolicies/', variables('securityAlertPolicyName'))]"
           ]
         }
       ]
