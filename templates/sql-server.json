@@ -63,13 +63,6 @@
         "description": "Name of the SQL logs storage account for the environment"
       }
     },
-    "enableVulnerabilityAssessmentScan": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "Enable vulnerability assessment scan"
-      }
-    },    
     "logAnalyticsWorkspaceName": {
       "type": "string",
       "defaultValue": "",
