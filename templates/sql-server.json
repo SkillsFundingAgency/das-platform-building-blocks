@@ -54,7 +54,7 @@
     "threatDetectionEmailAddress": {
       "type": "string",
       "metadata": {
-        "description": "The email address that threat alerts will be sent to"
+        "description": "The email address that threat alerts and vulnerability scans will be sent to"
       }
     },
     "sqlStorageAccountName": {
@@ -183,6 +183,25 @@
             "login": "[parameters('sqlServerActiveDirectoryAdminLogin')]",
             "sid": "[parameters('sqlServerActiveDirectoryAdminObjectId')]",
             "tenantId": "[subscription().tenantId]"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+          ]
+        },
+        {
+          "type": "vulnerabilityAssessments",
+          "apiVersion": "2021-02-01-preview",
+          "name": "vulnerabilityAssessments",
+          "properties": {
+            "recurringScans": {
+              "emails": [
+                "[parameters('threatDetectionEmailAddress')]"
+              ],
+              "emailSubscriptionAdmins": false,
+              "isEnabled": true
+            },
+            "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+            "storageContainerPath": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/', 'vulnerability-assessment')]"
           },
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
