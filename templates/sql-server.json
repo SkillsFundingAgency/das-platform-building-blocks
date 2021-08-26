@@ -205,7 +205,7 @@
                 "[parameters('threatDetectionEmailAddress')]"
               ],
               "emailSubscriptionAdmins": false,
-              "isEnabled": "[parameters('enableVulnerabilityAssessmentScan')]"
+              "isEnabled": true
             },
             "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
             "storageContainerPath": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/', 'vulnerability-assessment')]"
