@@ -205,7 +205,7 @@
           },
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]",
-            "[concat('Microsoft.Sql/servers/', parameters('serverName'), '/securityAlertPolicies/', variables('securityAlertPolicyName'))]"
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/securityAlertPolicies/', variables('securityAlertPolicyName'))]"
           ]
         }
       ]
