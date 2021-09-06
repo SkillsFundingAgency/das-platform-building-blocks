@@ -12,7 +12,7 @@ parameters:
 steps:
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(${{ parameters.EnableSqlAdditionalArguments }}, 'false'))
+  condition: eq('${{ parameters.EnableSqlAdditionalArguments }}', 'false'))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -23,7 +23,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(${{ parameters.EnableSqlAdditionalArguments }}, 'true'))
+  condition: eq('${{ parameters.EnableSqlAdditionalArguments }}', 'true'))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
