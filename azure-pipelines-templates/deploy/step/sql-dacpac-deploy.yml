@@ -6,16 +6,13 @@ parameters:
   SqlPassword:
   DacpacFile:
   AdditionalArguments:
-  EnableSqlAdditionalArguments:
 
 
 
 steps:
-- script: echo 'flag is, $(SqlAdditionalArgumentsFlag)'
-- script: echo 'argument is, ${{ parameters.AdditionalArguments }}'
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq('${{ parameters.EnableSqlAdditionalArguments }}', 'false')
+  condition: eq('${{ variables.EnableSqlAdditionalArguments, 'false')
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -26,7 +23,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.SqlAdditionalArgumentsFlag, 'test')
+  condition: eq(variables.EnableSqlAdditionalArguments, 'true')
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
