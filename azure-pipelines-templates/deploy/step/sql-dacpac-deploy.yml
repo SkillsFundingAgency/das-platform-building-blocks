@@ -14,6 +14,8 @@ parameters:
 
 
 steps:
+- script: echo 'flag is, ${{ parameters.EnableSqlAdditionalArguments }}'
+- script: echo 'argument is, ${{ parameters.AdditionalArguments }}'
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
   condition: eq(${{ parameters.EnableSqlAdditionalArguments }}, 'false')
