@@ -11,7 +11,7 @@ parameters:
 
 
 steps:
-- script: echo 'flag is, ${{ parameters.EnableSqlAdditionalArguments }}'
+- script: echo 'flag is, $(SqlAdditionalArgumentsFlag)'
 - script: echo 'argument is, ${{ parameters.AdditionalArguments }}'
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
@@ -26,7 +26,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq('${{ parameters.EnableSqlAdditionalArguments }}', 'test')
+  condition: eq(variables.SqlAdditionalArgumentsFlag, 'test')
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
