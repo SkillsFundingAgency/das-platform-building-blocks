@@ -9,8 +9,8 @@ parameters:
   EnableSqlAdditionalArguments:
 
 variables:
-- name: SqlAdditionalFlag
-  value: ${{ parameters.EnableSqlAdditionalArguments }}  
+  - name: SqlAdditionalFlag
+    value: ${{ parameters.EnableSqlAdditionalArguments }}  
 
 
 
