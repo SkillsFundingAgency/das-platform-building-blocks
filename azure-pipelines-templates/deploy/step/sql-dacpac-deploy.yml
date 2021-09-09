@@ -11,7 +11,7 @@ parameters:
 steps:
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: and(ne(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber)), ne(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber)))
+  condition: and(ne(variables.BuildToRunAdditionalArgumentsOn, variables['Build.Buildnumber']), ne(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber'])))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -22,7 +22,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber))
+  condition: eq(variables.BuildToRunAdditionalArgumentsOn, variables['Build.BuildNumber'])
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -34,7 +34,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber))
+  condition: eq(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber'])
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -46,7 +46,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: and(eq(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber)), eq(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber)))
+  condition: and(eq(variables.BuildToRunAdditionalArgumentsOn, variables['Build.BuildNumber']), eq(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber']))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
