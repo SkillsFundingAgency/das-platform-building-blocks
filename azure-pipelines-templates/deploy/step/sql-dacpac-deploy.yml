@@ -6,11 +6,12 @@ parameters:
   SqlPassword:
   DacpacFile:
   AdditionalArguments:
+  SqlAdditionalArguments:
 
 steps:
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.EnableSqlAdditionalArguments, 'false')
+  condition: and(ne(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber)), ne(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -21,7 +22,7 @@ steps:
 
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.EnableSqlAdditionalArguments, 'true')
+  condition: eq(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber))
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -30,3 +31,28 @@ steps:
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
+
+- task: SqlAzureDacpacDeployment@1
+  displayName: Execute Azure SQL DacpacTask
+  condition: eq(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber))
+  inputs:
+    AzureSubscription: ${{ parameters.AzureSubscription }}
+    ServerName: ${{ parameters.ServerName }}
+    DatabaseName: ${{ parameters.DatabaseName }}
+    SqlUsername: ${{ parameters.SqlUsername }}
+    SqlPassword: ${{ parameters.SqlPassword }}
+    DacpacFile: ${{ parameters.DacpacFile }}
+    SqlAdditionalArguments: ${{ parameters.SqlAdditionalArguments }}
+
+- task: SqlAzureDacpacDeployment@1
+  displayName: Execute Azure SQL DacpacTask
+  condition: and(eq(variables.BuildToRunAdditionalArgumentsOn, $(Build.BuildNumber)), eq(variables.BuildToRunSqlAdditionalArgumentsOn, $(Build.BuildNumber)))
+  inputs:
+    AzureSubscription: ${{ parameters.AzureSubscription }}
+    ServerName: ${{ parameters.ServerName }}
+    DatabaseName: ${{ parameters.DatabaseName }}
+    SqlUsername: ${{ parameters.SqlUsername }}
+    SqlPassword: ${{ parameters.SqlPassword }}
+    DacpacFile: ${{ parameters.DacpacFile }}
+    AdditionalArguments: ${{ parameters.AdditionalArguments }}
+    SqlAdditionalArguments: ${{ parameters.SqlAdditionalArguments }}
