@@ -19,7 +19,7 @@ steps:
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }} 
-
+- script: echo variables['Build.BuildNumber']
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
   condition: eq(variables.BuildToRunAdditionalArgumentsOn, variables['Build.BuildNumber'])
