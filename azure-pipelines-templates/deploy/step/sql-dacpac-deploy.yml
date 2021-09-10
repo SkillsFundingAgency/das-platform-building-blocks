@@ -6,12 +6,11 @@ parameters:
   SqlPassword:
   DacpacFile:
   AdditionalArguments:
-  SqlAdditionalArguments:
 
 steps:
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
-  condition: and(ne(variables.BuildToRunAdditionalArgumentsOn, variables['Build.Buildnumber']), ne(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber']))
+  condition: ne(variables.BuildToRunAdditionalArgumentsOn, variables['Build.Buildnumber'])
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
@@ -19,8 +18,7 @@ steps:
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }} 
-- script: echo ${{ variables.Build.BuildNumber }}
-- script: echo ${{ parameters.AdditionalArguments }}
+
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
   condition: eq(variables.BuildToRunAdditionalArgumentsOn, variables['Build.BuildNumber'])
@@ -33,27 +31,6 @@ steps:
     DacpacFile: ${{ parameters.DacpacFile }}
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
 
-- task: SqlAzureDacpacDeployment@1
-  displayName: Execute Azure SQL DacpacTask
-  condition: eq(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber'])
-  inputs:
-    AzureSubscription: ${{ parameters.AzureSubscription }}
-    ServerName: ${{ parameters.ServerName }}
-    DatabaseName: ${{ parameters.DatabaseName }}
-    SqlUsername: ${{ parameters.SqlUsername }}
-    SqlPassword: ${{ parameters.SqlPassword }}
-    DacpacFile: ${{ parameters.DacpacFile }}
-    SqlAdditionalArguments: ${{ parameters.SqlAdditionalArguments }}
 
-- task: SqlAzureDacpacDeployment@1
-  displayName: Execute Azure SQL DacpacTask
-  condition: and(eq(variables.BuildToRunAdditionalArgumentsOn, variables['Build.BuildNumber']), eq(variables.BuildToRunSqlAdditionalArgumentsOn, variables['Build.BuildNumber']))
-  inputs:
-    AzureSubscription: ${{ parameters.AzureSubscription }}
-    ServerName: ${{ parameters.ServerName }}
-    DatabaseName: ${{ parameters.DatabaseName }}
-    SqlUsername: ${{ parameters.SqlUsername }}
-    SqlPassword: ${{ parameters.SqlPassword }}
-    DacpacFile: ${{ parameters.DacpacFile }}
-    AdditionalArguments: ${{ parameters.AdditionalArguments }}
-    SqlAdditionalArguments: ${{ parameters.SqlAdditionalArguments }}
+
+
