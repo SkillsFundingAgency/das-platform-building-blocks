@@ -149,3 +149,26 @@ To ensure a consistent release versioning policy the following can be used as a 
 | Patch | Non-breaking changes to existing scripts | Automatically incremented for every merge if a major or minor is not defined. |
 
 [GitVersion](https://gitversion.readthedocs.io/en/latest/) is used to achieve release versioning. Read more about [Version Incrementing](https://gitversion.readthedocs.io/en/latest/more-info/version-increments/).
+
+### Running SQL DACPAC task
+
+There are two ways to run the SQL DACPAC task (**SqlAzureDacpacDeployment@1**) from building blocks templates.
+1. **sql-dacpac-deploy.yml** is one of the template that can be used. You can call this template as follows:
+
+```yaml
+
+        - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
+          parameters:
+            AzureSubscription: ${{ parameters.ServiceConnection }}
+            ServerName: $(SharedSQLServerFQDN)
+            DatabaseName: $(DatabaseName)
+            SqlUsername: $(SharedSQLServerUsername)
+            SqlPassword: $(SharedSQLServerPassword)
+            DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
+            AdditionalArguments: /p:BlockOnPossibleDataLoss=false
+```
+**/p:BlockOnPossibleDataLoss=false** is an example command you can pass into the template. It is recommended to create a hotfix branch when additional SQL commands needs to be run.
+
+2. **sql-dacpac-deploy-v2.yml** is the second method to use the DACPAC task. This template expects a variable **BuildToRunAdditionalArgumentsOn** from a variable group. Reference to this particular variable is only visibile in the template therefore its important that the parent yml calling the template has this variable group defined.
+
+**BuildToRunAdditionalArgumentsOn** should be set to the next build number you expect for the pipeline in the variable group. The idea is that the **AdditionalArguments** input will only run if this variable match current build in the pipeline. This prevents accidental running of extra SQL commands.
