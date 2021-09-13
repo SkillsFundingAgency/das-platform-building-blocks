@@ -19,4 +19,4 @@ steps:
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
     ${{ if eq(parameters.AdditionalArguments, true) }}:
-      AdditionalArguments: ${{ parameters.AdditionalArguments }}
+      AdditionalArguments: /p:BlockOnPossibleDataLoss=false
