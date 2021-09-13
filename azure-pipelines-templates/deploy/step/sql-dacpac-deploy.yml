@@ -7,8 +7,6 @@ parameters:
   SqlPassword:
   DacpacFile:
   AdditionalArguments:
-  EnableAdditionalArguments: false
-  EnableSqlAdditionalArguments: false
 
 steps:
 - task: SqlAzureDacpacDeployment@1
@@ -20,7 +18,5 @@ steps:
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
-    ${{ if eq(parameters.EnableAdditionalArguments, true) }}:
+    ${{ if parameters.AdditionalArguments }}:
       AdditionalArguments: ${{ parameters.AdditionalArguments }}
-    ${{if eq(parameters.EnableSqlAdditionalArguments, true) }}:
-      SqlAdditionalArguments: ${{ parameters.SqlAdditionalArguments }}
