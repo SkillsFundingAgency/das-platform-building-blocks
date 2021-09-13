@@ -167,8 +167,8 @@ There are two ways to run the SQL DACPAC task (**SqlAzureDacpacDeployment@1**) f
             DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
             AdditionalArguments: /p:BlockOnPossibleDataLoss=false
 ```
-    **/p:BlockOnPossibleDataLoss=false** is an example command you can pass into the template. It is recommended to create a hotfix branch when additional SQL commands needs to be run.
-    
+**/p:BlockOnPossibleDataLoss=false** is an example command you can pass into the template. It is recommended to create a hotfix branch when additional SQL commands needs to be run.
+
 
 2. **sql-dacpac-deploy-v2.yml** is the second method to use the DACPAC task. This template expects a variable **BuildToRunAdditionalArgumentsOn** from a variable group. Reference to this particular variable is only visible in the template therefore its important that the parent yml calling the template has this variable group defined.
 
