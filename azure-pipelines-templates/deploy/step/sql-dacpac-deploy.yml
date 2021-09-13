@@ -18,5 +18,5 @@ steps:
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
-    ${{ if and(parameters.AdditionalArguments, ne(parameters.AdditionalArguments,'')) }}:
+    ${{ if eq(parameters.AdditionalArguments, true) }}:
       AdditionalArguments: ${{ parameters.AdditionalArguments }}
