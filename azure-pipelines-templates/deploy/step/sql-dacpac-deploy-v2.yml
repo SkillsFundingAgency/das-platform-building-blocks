@@ -5,7 +5,7 @@ parameters:
   SqlUsername:
   SqlPassword:
   DacpacFile:
-  AdditionalArguments: ''
+  AdditionalArguments:
 
 steps:
 - task: SqlAzureDacpacDeployment@1
