@@ -9,6 +9,7 @@ parameters:
   - PP
   - PROD
   - MO
+  - DEMO
 - name: AzureSubscription
 - name: ServerName
 - name: DatabaseName
