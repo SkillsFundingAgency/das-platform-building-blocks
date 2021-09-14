@@ -18,7 +18,6 @@ parameters:
     - MO
 jobs:
 - job: waitForValidation
-    displayName: Wait for external validation
     pool: server
     timeoutInMinutes: 5 
     steps:
