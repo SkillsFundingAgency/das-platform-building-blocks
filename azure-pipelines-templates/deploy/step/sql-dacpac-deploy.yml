@@ -17,7 +17,6 @@ parameters:
     - PROD
     - MO
 
-jobs:
 - job: waitForValidation
     displayName: Wait for external validation
     pool: server
