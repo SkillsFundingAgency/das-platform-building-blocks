@@ -8,15 +8,15 @@ parameters:
   DacpacFile:
   pool:
   AdditionalArguments:
-  - name: Environment
-    type: string
-    values:
-    - AT
-    - TEST
-    - TEST2
-    - PP
-    - PROD
-    - MO
+- name: Environment
+  type: string
+  values:
+  - AT
+  - TEST
+  - TEST2
+  - PP
+  - PROD
+  - MO
 jobs:
 - job: waitForValidation
   pool: server
