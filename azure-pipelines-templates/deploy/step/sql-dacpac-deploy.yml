@@ -1,14 +1,6 @@
 
 parameters:
-  AzureSubscription:
-  ServerName:
-  DatabaseName:
-  SqlUsername:
-  SqlPassword:
-  DacpacFile:
-  pool:
-  AdditionalArguments:
-  Environment:
+- name: Environment
   type: string
   values:
   - AT
@@ -17,6 +9,15 @@ parameters:
   - PP
   - PROD
   - MO
+  AzureSubscription:
+  ServerName:
+  DatabaseName:
+  SqlUsername:
+  SqlPassword:
+  DacpacFile:
+  pool:
+  AdditionalArguments:
+
 jobs:
 - job: waitForValidation
   pool: server
