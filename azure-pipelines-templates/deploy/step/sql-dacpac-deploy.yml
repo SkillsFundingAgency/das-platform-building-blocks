@@ -9,14 +9,14 @@ parameters:
   - PP
   - PROD
   - MO
-  AzureSubscription:
-  ServerName:
-  DatabaseName:
-  SqlUsername:
-  SqlPassword:
-  DacpacFile:
-  pool:
-  AdditionalArguments:
+AzureSubscription:
+ServerName:
+DatabaseName:
+SqlUsername:
+SqlPassword:
+DacpacFile:
+pool:
+AdditionalArguments:
 
 jobs:
 - job: waitForValidation
