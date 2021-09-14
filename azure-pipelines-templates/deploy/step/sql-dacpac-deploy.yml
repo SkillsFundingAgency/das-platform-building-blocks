@@ -6,6 +6,7 @@ parameters:
   SqlUsername:
   SqlPassword:
   DacpacFile:
+  pool:
   AdditionalArguments:
   - name: Environment
     type: string
@@ -27,6 +28,10 @@ jobs:
     inputs:
       instructions: 'Please validate the build configuration and resume'
       onTimeout: 'reject'
+
+- job: run sql dacpac
+  pool: ${{ parameters.pool }}
+  steps:
   - task: SqlAzureDacpacDeployment@1
     displayName: Execute Azure SQL DacpacTask
     inputs:
