@@ -8,7 +8,7 @@ parameters:
   DacpacFile:
   pool:
   AdditionalArguments:
-- name: Environment
+  Environment:
   type: string
   values:
   - AT
