@@ -18,23 +18,23 @@ parameters:
     - MO
 jobs:
 - job: waitForValidation
-    pool: server
+  pool: server
+  timeoutInMinutes: 5 
+  steps:
+  - task: ManualValidation@0
+    condition: and(eq(${{ parameters.Environment }}, 'AT'), eq(${{ parameters.AdditionalArguments}}, true))
     timeoutInMinutes: 5 
-    steps:
-    - task: ManualValidation@0
-      condition: and(eq(${{ parameters.Environment }}, 'AT'), eq(${{ parameters.AdditionalArguments}}, true))
-      timeoutInMinutes: 5 
-      inputs:
-        instructions: 'Please validate the build configuration and resume'
-        onTimeout: 'reject'
-    - task: SqlAzureDacpacDeployment@1
-      displayName: Execute Azure SQL DacpacTask
-      inputs:
-        AzureSubscription: ${{ parameters.AzureSubscription }}
-        ServerName: ${{ parameters.ServerName }}
-        DatabaseName: ${{ parameters.DatabaseName }}
-        SqlUsername: ${{ parameters.SqlUsername }}
-        SqlPassword: ${{ parameters.SqlPassword }}
-        DacpacFile: ${{ parameters.DacpacFile }}
-        ${{ if eq(parameters.AdditionalArguments, true) }}:
-          AdditionalArguments: /p:BlockOnPossibleDataLoss=false
+    inputs:
+      instructions: 'Please validate the build configuration and resume'
+      onTimeout: 'reject'
+  - task: SqlAzureDacpacDeployment@1
+    displayName: Execute Azure SQL DacpacTask
+    inputs:
+      AzureSubscription: ${{ parameters.AzureSubscription }}
+      ServerName: ${{ parameters.ServerName }}
+      DatabaseName: ${{ parameters.DatabaseName }}
+      SqlUsername: ${{ parameters.SqlUsername }}
+      SqlPassword: ${{ parameters.SqlPassword }}
+      DacpacFile: ${{ parameters.DacpacFile }}
+      ${{ if eq(parameters.AdditionalArguments, true) }}:
+        AdditionalArguments: /p:BlockOnPossibleDataLoss=false
