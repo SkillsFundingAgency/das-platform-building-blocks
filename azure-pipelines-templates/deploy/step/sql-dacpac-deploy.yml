@@ -21,18 +21,18 @@ parameters:
   type: boolean
 
 jobs:
-# - job: waitForValidation
-#   pool: server
-#   timeoutInMinutes: 5 
-#   steps:
-#   - task: ManualValidation@0
-#     condition: and(eq(${{ parameters.Environment }}, AT), eq(${{ parameters.AdditionalArguments }}, true))
-#     timeoutInMinutes: 5 
-#     inputs:
-#       instructions: 'Please validate the build configuration and resume'
-#       onTimeout: 'reject'
+- job: waitForValidation
+  pool: server
+  timeoutInMinutes: 5 
+  steps:
+  - task: ManualValidation@0
+    condition: and(eq(${{ parameters.Environment }}, AT), eq(${{ parameters.AdditionalArguments }}, true))
+    timeoutInMinutes: 5 
+    inputs:
+      instructions: 'Please validate the build configuration and resume'
+      onTimeout: 'reject'
 
-- job: run sql dacpac
+- job: RunSqlDacpac
   pool: ${{ parameters.pool }}
   steps:
   - script: echo ${{ parameters.AdditionalArguments }}
