@@ -36,7 +36,8 @@ parameters:
 #   pool: ${{ parameters.pool }}
 #   dependsOn: waitForValidation
 #   condition: eq(dependencies.waitForValidation.result,'Succeeded')
-#   steps:
+
+steps:
 - script: echo ${{ parameters.AdditionalArguments }}
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
