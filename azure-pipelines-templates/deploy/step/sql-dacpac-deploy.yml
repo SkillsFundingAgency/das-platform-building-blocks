@@ -26,7 +26,7 @@ jobs:
   timeoutInMinutes: 5 
   steps:
   - task: ManualValidation@0
-    condition: and(eq(${{ parameters.Environment }}, AT), eq(${{ parameters.AdditionalArguments }}, true))
+    condition: and(eq('${{ parameters.Environment }}', 'AT'), eq(${{ parameters.AdditionalArguments }}, true))
     timeoutInMinutes: 5 
     inputs:
       instructions: 'Please validate the build configuration and resume'
