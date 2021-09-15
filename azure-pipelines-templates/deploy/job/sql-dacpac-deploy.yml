@@ -33,22 +33,32 @@ jobs:
       instructions: 'WARNING!. /p:BlockOnPossibleDataLoss=false command will run on SQL DACPAC deployment and might result in data loss. Are you sure you want to continue?'
       onTimeout: 'reject'
 
-- job: RunSqlDacpac
-  pool: ${{ parameters.pool }}
+# - job: RunSqlDacpac
+#   pool: ${{ parameters.pool }}
+#   dependsOn: waitForValidation
+#   condition: eq(dependencies.waitForValidation.result,'Succeeded')
+#   steps:
+#   - script: echo ${{ parameters.AdditionalArguments }}
+#   - task: DownloadPipelineArtifact@2
+
+- deployment: RunSqlDacpac
+  pool:
+    name: ${{ parameters.pool }}
+  environment: ${{ parameters.Environment }}
   dependsOn: waitForValidation
   condition: eq(dependencies.waitForValidation.result,'Succeeded')
-  steps:
-  - script: echo ${{ parameters.AdditionalArguments }}
-  - task: DownloadPipelineArtifact@2
-
-  - task: SqlAzureDacpacDeployment@1
-    displayName: Execute Azure SQL DacpacTask
-    inputs:
-      AzureSubscription: ${{ parameters.AzureSubscription }}
-      ServerName: ${{ parameters.ServerName }}
-      DatabaseName: ${{ parameters.DatabaseName }}
-      SqlUsername: ${{ parameters.SqlUsername }}
-      SqlPassword: ${{ parameters.SqlPassword }}
-      DacpacFile: ${{ parameters.DacpacFile }}
-      ${{ if eq(parameters.AdditionalArguments, true) }}:
-        AdditionalArguments: /p:BlockOnPossibleDataLoss=false
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: SqlAzureDacpacDeployment@1
+          displayName: Execute Azure SQL DacpacTask
+          inputs:
+            AzureSubscription: ${{ parameters.AzureSubscription }}
+            ServerName: ${{ parameters.ServerName }}
+            DatabaseName: ${{ parameters.DatabaseName }}
+            SqlUsername: ${{ parameters.SqlUsername }}
+            SqlPassword: ${{ parameters.SqlPassword }}
+            DacpacFile: ${{ parameters.DacpacFile }}
+            ${{ if eq(parameters.AdditionalArguments, true) }}:
+              AdditionalArguments: /p:BlockOnPossibleDataLoss=false
