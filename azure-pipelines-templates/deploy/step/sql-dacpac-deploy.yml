@@ -1,22 +1,22 @@
 
 parameters:
-- name: Environment
-  type: string
-  values:
-  - AT
-  - TEST
-  - TEST2
-  - PP
-  - PROD
-  - MO
-  - DEMO
+# - name: Environment
+#   type: string
+#   values:
+#   - AT
+#   - TEST
+#   - TEST2
+#   - PP
+#   - PROD
+#   - MO
+#   - DEMO
 - name: AzureSubscription
 - name: ServerName
 - name: DatabaseName
 - name: SqlUsername
 - name: SqlPassword
 - name: DacpacFile
-- name: pool
+# - name: pool
 - name: AdditionalArguments
   type: boolean
 
