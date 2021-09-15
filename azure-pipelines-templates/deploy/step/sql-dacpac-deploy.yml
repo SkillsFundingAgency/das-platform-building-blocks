@@ -1,52 +1,51 @@
 
 parameters:
-# - name: Environment
-#   type: string
-#   values:
-#   - AT
-#   - TEST
-#   - TEST2
-#   - PP
-#   - PROD
-#   - MO
-#   - DEMO
+- name: Environment
+  type: string
+  values:
+  - AT
+  - TEST
+  - TEST2
+  - PP
+  - PROD
+  - MO
+  - DEMO
 - name: AzureSubscription
 - name: ServerName
 - name: DatabaseName
 - name: SqlUsername
 - name: SqlPassword
 - name: DacpacFile
-# - name: pool
+- name: pool
 - name: AdditionalArguments
   type: boolean
 
-# jobs:
-# - job: waitForValidation
-#   pool: server
-#   timeoutInMinutes: 5 
-#   steps:
-#   - task: ManualValidation@0
-#     condition: and(eq('${{ parameters.Environment }}', 'AT'), eq(${{ parameters.AdditionalArguments }}, true))
-#     timeoutInMinutes: 5 
-#     inputs:
-#       instructions: 'Please validate the build configuration and resume'
-#       onTimeout: 'reject'
+jobs:
+- job: waitForValidation
+  pool: server
+  timeoutInMinutes: 5 
+  steps:
+  - task: ManualValidation@0
+    condition: and(eq('${{ parameters.Environment }}', 'AT'), eq(${{ parameters.AdditionalArguments }}, true))
+    timeoutInMinutes: 5 
+    inputs:
+      instructions: 'Please validate the build configuration and resume'
+      onTimeout: 'reject'
 
-# - job: RunSqlDacpac
-#   pool: ${{ parameters.pool }}
-#   dependsOn: waitForValidation
-#   condition: eq(dependencies.waitForValidation.result,'Succeeded')
-
-steps:
-- script: echo ${{ parameters.AdditionalArguments }}
-- task: SqlAzureDacpacDeployment@1
-  displayName: Execute Azure SQL DacpacTask
-  inputs:
-    AzureSubscription: ${{ parameters.AzureSubscription }}
-    ServerName: ${{ parameters.ServerName }}
-    DatabaseName: ${{ parameters.DatabaseName }}
-    SqlUsername: ${{ parameters.SqlUsername }}
-    SqlPassword: ${{ parameters.SqlPassword }}
-    DacpacFile: ${{ parameters.DacpacFile }}
-    ${{ if eq(parameters.AdditionalArguments, true) }}:
-      AdditionalArguments: /p:BlockOnPossibleDataLoss=false
+- job: RunSqlDacpac
+  pool: ${{ parameters.pool }}
+  dependsOn: waitForValidation
+  condition: eq(dependencies.waitForValidation.result,'Succeeded')
+  steps:
+  - script: echo ${{ parameters.AdditionalArguments }}
+  - task: SqlAzureDacpacDeployment@1
+    displayName: Execute Azure SQL DacpacTask
+    inputs:
+      AzureSubscription: ${{ parameters.AzureSubscription }}
+      ServerName: ${{ parameters.ServerName }}
+      DatabaseName: ${{ parameters.DatabaseName }}
+      SqlUsername: ${{ parameters.SqlUsername }}
+      SqlPassword: ${{ parameters.SqlPassword }}
+      DacpacFile: ${{ parameters.DacpacFile }}
+      ${{ if eq(parameters.AdditionalArguments, true) }}:
+        AdditionalArguments: /p:BlockOnPossibleDataLoss=false
