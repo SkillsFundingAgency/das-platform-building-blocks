@@ -38,6 +38,8 @@ jobs:
   condition: eq(dependencies.waitForValidation.result,'Succeeded')
   steps:
   - script: echo ${{ parameters.AdditionalArguments }}
+  - task: DownloadPipelineArtifact@2
+
   - task: SqlAzureDacpacDeployment@1
     displayName: Execute Azure SQL DacpacTask
     inputs:
