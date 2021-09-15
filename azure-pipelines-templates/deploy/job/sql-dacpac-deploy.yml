@@ -23,7 +23,8 @@ parameters:
 jobs:
 - job: waitForValidation
   pool: server
-  condition: succeeded()
+  dependsOn: DeployWebApp
+  condition: eq(dependencies.DeployWebApp.result,'Succeeded')
   timeoutInMinutes: 5 
   steps:
   - task: ManualValidation@0
@@ -32,14 +33,6 @@ jobs:
     inputs:
       instructions: 'WARNING!. /p:BlockOnPossibleDataLoss=false command will run on SQL DACPAC deployment and might result in data loss. Are you sure you want to continue?'
       onTimeout: 'reject'
-
-# - job: RunSqlDacpac
-#   pool: ${{ parameters.pool }}
-#   dependsOn: waitForValidation
-#   condition: eq(dependencies.waitForValidation.result,'Succeeded')
-#   steps:
-#   - script: echo ${{ parameters.AdditionalArguments }}
-#   - task: DownloadPipelineArtifact@2
 
 - deployment: RunSqlDacpac
   pool:
