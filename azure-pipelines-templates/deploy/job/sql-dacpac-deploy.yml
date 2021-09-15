@@ -23,13 +23,14 @@ parameters:
 jobs:
 - job: waitForValidation
   pool: server
+  condition: succeeded()
   timeoutInMinutes: 5 
   steps:
   - task: ManualValidation@0
     condition: and(eq('${{ parameters.Environment }}', 'AT'), eq(${{ parameters.AdditionalArguments }}, true))
     timeoutInMinutes: 5 
     inputs:
-      instructions: 'Please validate the build configuration and resume'
+      instructions: 'WARNING!. /p:BlockOnPossibleDataLoss=false command will run on SQL DACPAC deployment and might result in data loss. Are you sure you want to continue?'
       onTimeout: 'reject'
 
 - job: RunSqlDacpac
