@@ -35,6 +35,7 @@ jobs:
 - job: run sql dacpac
   pool: ${{ parameters.pool }}
   steps:
+  - script: echo ${{ parameters.AdditionalArguments }}
   - task: SqlAzureDacpacDeployment@1
     displayName: Execute Azure SQL DacpacTask
     inputs:
