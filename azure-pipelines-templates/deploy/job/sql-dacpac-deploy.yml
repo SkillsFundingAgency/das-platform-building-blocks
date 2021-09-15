@@ -19,11 +19,13 @@ parameters:
 - name: pool
 - name: AdditionalArguments
   type: boolean
+- name: dependsOn
+  type: object
 
 jobs:
 - job: waitForValidation
   pool: server
-  dependsOn: DeployWebApp
+  dependsOn: ${{ parameters.dependsOn[1] }}
   condition: eq(dependencies.DeployWebApp.result,'Succeeded')
   timeoutInMinutes: 5 
   steps:
