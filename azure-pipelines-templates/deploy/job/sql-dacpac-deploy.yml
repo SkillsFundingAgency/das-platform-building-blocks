@@ -26,8 +26,9 @@ parameters:
 jobs:
 - job: waitForValidation
   pool: server
-  dependsOn: ${{ parameters.dependsOn }}
-  condition: eq(dependencies.${{ parameters.dependsOn }}.result,'Succeeded')
+  # dependsOn: ${{ parameters.dependsOn }}
+  # condition: eq(dependencies.${{ parameters.dependsOn }}.result,'Succeeded')
+  condition: succeeded()
   timeoutInMinutes: 5 
   steps:
   - task: ManualValidation@0
