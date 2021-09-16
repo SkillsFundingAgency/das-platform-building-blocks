@@ -160,14 +160,14 @@ The SQL DACPAC task (**SqlAzureDacpacDeployment@1**) can be run from building bl
 - template: azure-pipelines-templates/deploy/job/sql-dacpac-deploy.yml@das-platform-building-blocks
   parameters:
     AzureSubscription: ${{ parameters.ServiceConnection }}
-    ServerName: $(SQLServerName)
+    ServerName: $(SharedSQLServerFQDN)
     DatabaseName: $(DatabaseName)
-    SqlUsername: $(SQLUsername)
-    SqlPassword: $(SQLPassword)
+    SqlUsername: $(SharedSQLServerUsername)
+    SqlPassword: $(SharedSQLServerPassword)
     DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
     AdditionalArguments: ${{ parameters.RunBlockOnPossibleDataLoss }}
     Environment: ${{ parameters.Environment }}
-    pool: Agent Pool
+    pool: DAS - Continuous Deployment Agents
     dependsOn: DeployWebApp
 ```
 When the parameter `RunBlockOnPossibleDataLoss` is set to be **true** from the pipeline calling the template, **/p:BlockOnPossibleDataLoss=false** additional command will be run on the **SqlAzureDacpacDeployment@1** task. `RunBlockOnPossibleDataLoss` parameter should be set to **false** by default at the pipeline level so that continous deployment will not run this additional argument.
