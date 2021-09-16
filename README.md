@@ -152,24 +152,33 @@ To ensure a consistent release versioning policy the following can be used as a 
 
 ### Running SQL DACPAC task
 
-There are two ways to run the SQL DACPAC task (**SqlAzureDacpacDeployment@1**) from building blocks templates.
-1. **sql-dacpac-deploy.yml** is one of the template that can be used. You can call this template as follows:
+The SQL DACPAC task (**SqlAzureDacpacDeployment@1**) can be run from building blocks template
+**sql-dacpac-deploy.yml**. You can call this template as follows:
 
 ```yaml
 
-        - template: azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml@das-platform-building-blocks
-          parameters:
-            AzureSubscription: ${{ parameters.ServiceConnection }}
-            ServerName: $(SharedSQLServerFQDN)
-            DatabaseName: $(DatabaseName)
-            SqlUsername: $(SharedSQLServerUsername)
-            SqlPassword: $(SharedSQLServerPassword)
-            DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
-            AdditionalArguments: /p:BlockOnPossibleDataLoss=false
+- template: azure-pipelines-templates/deploy/job/sql-dacpac-deploy.yml@das-platform-building-blocks
+  parameters:
+    AzureSubscription: ${{ parameters.ServiceConnection }}
+    ServerName: $(SQLServerName)
+    DatabaseName: $(DatabaseName)
+    SqlUsername: $(SQLUsername)
+    SqlPassword: $(SQLPassword)
+    DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
+    AdditionalArguments: ${{ parameters.RunBlockOnPossibleDataLoss }}
+    Environment: ${{ parameters.Environment }}
+    pool: Agent Pool
+    dependsOn: DeployWebApp
 ```
-**/p:BlockOnPossibleDataLoss=false** is an example command you can pass into the template. It is recommended to create a hotfix branch when additional SQL commands needs to be run.
+When the parameter `RunBlockOnPossibleDataLoss` is set to be **true** from the pipeline calling the template, **/p:BlockOnPossibleDataLoss=false** additional command will be run on the **SqlAzureDacpacDeployment@1** task. `RunBlockOnPossibleDataLoss` parameter should be set to **false** by default at the pipeline level so that continous deployment will not run this additional argument.
 
+```yaml
 
-2. **sql-dacpac-deploy-v2.yml** is the second method to use the DACPAC task. This template expects a variable **BuildToRunAdditionalArgumentsOn** from a variable group. Reference to this particular variable is only visible in the template therefore its important that the parent yml calling the template has this variable group defined.
+parameters:
+- name: RunBlockOnPossibleDataLoss
+  type: boolean
+  default: false
 
-**BuildToRunAdditionalArgumentsOn** should be set to the next build number you expect for the pipeline in the variable group. The idea is that the **AdditionalArguments** input will only run if this variable match current build in the pipeline. This prevents accidental running of extra SQL commands.
+```
+
+An additional manual validation task **ManualValidation@0** is included with **sql-dacpac-deploy.yml** template that prompts for a manual approval on `PROD` stage to prevent accidental data loss on DACPAC deployment.

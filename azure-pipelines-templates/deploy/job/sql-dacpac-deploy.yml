@@ -29,7 +29,7 @@ jobs:
   timeoutInMinutes: 5 
   steps:
   - task: ManualValidation@0
-    condition: and(eq('${{ parameters.Environment }}', 'AT'), eq(${{ parameters.AdditionalArguments }}, true))
+    condition: and(eq('${{ parameters.Environment }}', 'PROD'), eq(${{ parameters.AdditionalArguments }}, true))
     timeoutInMinutes: 5 
     inputs:
       instructions: 'WARNING!. /p:BlockOnPossibleDataLoss=false command will run on SQL DACPAC deployment and might result in data loss. Are you sure you want to continue?'
