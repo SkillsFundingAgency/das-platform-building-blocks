@@ -149,3 +149,36 @@ To ensure a consistent release versioning policy the following can be used as a 
 | Patch | Non-breaking changes to existing scripts | Automatically incremented for every merge if a major or minor is not defined. |
 
 [GitVersion](https://gitversion.readthedocs.io/en/latest/) is used to achieve release versioning. Read more about [Version Incrementing](https://gitversion.readthedocs.io/en/latest/more-info/version-increments/).
+
+### Running SQL DACPAC task
+
+The SQL DACPAC task (**SqlAzureDacpacDeployment@1**) can be run from building blocks template
+**sql-dacpac-deploy.yml**. You can call this template as follows:
+
+```yaml
+
+- template: azure-pipelines-templates/deploy/job/sql-dacpac-deploy.yml@das-platform-building-blocks
+  parameters:
+    AzureSubscription: ${{ parameters.ServiceConnection }}
+    ServerName: $(SharedSQLServerFQDN)
+    DatabaseName: $(DatabaseName)
+    SqlUsername: $(SharedSQLServerUsername)
+    SqlPassword: $(SharedSQLServerPassword)
+    DacpacFile: $(Pipeline.Workspace)/path/to/dacpac
+    AdditionalArguments: ${{ parameters.RunBlockOnPossibleDataLoss }}
+    Environment: ${{ parameters.Environment }}
+    pool: DAS - Continuous Deployment Agents
+    dependsOn: DeployWebApp
+```
+When the parameter `RunBlockOnPossibleDataLoss` is set to be **true** from the pipeline calling the template, **/p:BlockOnPossibleDataLoss=false** additional command will be run on the **SqlAzureDacpacDeployment@1** task. `RunBlockOnPossibleDataLoss` parameter should be set to **false** by default at the pipeline level so that continous deployment will not run this additional argument.
+
+```yaml
+
+parameters:
+- name: RunBlockOnPossibleDataLoss
+  type: boolean
+  default: false
+
+```
+
+An additional manual validation task **ManualValidation@0** is included with **sql-dacpac-deploy.yml** template that prompts for a manual approval on `PROD` stage to prevent accidental data loss on DACPAC deployment.

@@ -1,0 +1,60 @@
+
+parameters:
+- name: Environment
+  type: string
+  values:
+  - AT
+  - TEST
+  - TEST2
+  - PP
+  - PROD
+  - MO
+  - DEMO
+- name: AzureSubscription
+- name: ServerName
+- name: DatabaseName
+- name: SqlUsername
+- name: SqlPassword
+- name: DacpacFile
+- name: pool
+  type: string
+  default: DAS - Continuous Deployment Agents
+- name: RunBlockOnPossibleDataLoss
+  type: boolean
+- name: dependsOn
+
+jobs:
+- job: waitForValidation
+  pool: server
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: succeeded()
+  timeoutInMinutes: 5 
+  steps:
+  - task: ManualValidation@0
+    condition: and(eq('${{ parameters.Environment }}', 'PROD'), eq(${{ parameters.RunBlockOnPossibleDataLoss }}, true))
+    timeoutInMinutes: 5 
+    inputs:
+      instructions: 'WARNING!. /p:BlockOnPossibleDataLoss=false command will run on SQL DACPAC deployment and might result in data loss. Are you sure you want to continue?'
+      onTimeout: 'reject'
+
+- deployment: RunSqlDacpac
+  pool:
+    name: ${{ parameters.pool }}
+  environment: ${{ parameters.Environment }}
+  dependsOn: waitForValidation
+  condition: succeeded()
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: SqlAzureDacpacDeployment@1
+          displayName: Execute Azure SQL DacpacTask
+          inputs:
+            AzureSubscription: ${{ parameters.AzureSubscription }}
+            ServerName: ${{ parameters.ServerName }}
+            DatabaseName: ${{ parameters.DatabaseName }}
+            SqlUsername: ${{ parameters.SqlUsername }}
+            SqlPassword: ${{ parameters.SqlPassword }}
+            DacpacFile: ${{ parameters.DacpacFile }}
+            ${{ if eq(parameters.RunBlockOnPossibleDataLoss, true) }}:
+              AdditionalArguments: /p:BlockOnPossibleDataLoss=false
