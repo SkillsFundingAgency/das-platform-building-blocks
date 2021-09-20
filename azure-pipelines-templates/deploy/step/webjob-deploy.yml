@@ -1,0 +1,31 @@
+parameters:
+  ServiceConnection: ''
+  AppServiceName: ''
+  DeploymentPackagePath: ''
+  VirtualApplication: ''
+
+steps:
+
+- task: AzureAppServiceManage@0
+  displayName: 'Stop all continuous webjobs - ${{ parameters.AppServiceName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    Action: 'Stop all continuous webjobs'
+    WebAppName: ${{ parameters.AppServiceName }}
+
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Azure App Service Deploy: $(AppServiceName)'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    WebAppName: ${{ parameters.AppServiceName }}
+    VirtualApplication: ${{ parameters.VirtualApplication }}
+    Package: ${{ parameters.DeploymentPackagePath }}
+
+
+- task: AzureAppServiceManage@0
+  displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    Action: 'Start all continuous webjobs'
+    WebAppName: ${{ parameters.AppServiceName }}
+
