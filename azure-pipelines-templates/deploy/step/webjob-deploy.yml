@@ -18,9 +18,9 @@ steps:
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     WebAppName: ${{ parameters.AppServiceName }}
-    VirtualApplication: ${{ parameters.VirtualApplication }}
     Package: ${{ parameters.DeploymentPackagePath }}
-
+    ${{ if ne(parameters.VirtualApplication, '') }}:
+      VirtualApplication: ${{ parameters.VirtualApplication }}
 
 - task: AzureAppServiceManage@0
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
