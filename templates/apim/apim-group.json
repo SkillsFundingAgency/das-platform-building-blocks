@@ -5,7 +5,7 @@
     "apimName": {
       "type": "string"
     },
-    "tenantPrimaryDomain": {
+    "tenantId": {
       "type": "string"
     },
     "aadGroupObjectId": {
@@ -28,7 +28,7 @@
         "displayName": "[parameters('groupDisplayName')]",
         "description": "[parameters('groupDescription')]",
         "type": "external",
-        "externalId": "[concat('aad://', parameters('tenantPrimaryDomain'), '/groups/', parameters('aadGroupObjectId'))]"
+        "externalId": "[concat('aad://', parameters('tenantId'), '/groups/', parameters('aadGroupObjectId'))]"
       }
     }
   ],

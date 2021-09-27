@@ -81,7 +81,7 @@
       "type": "string",
       "defaultValue": ""
     },
-    "tenantPrimaryDomain": {
+    "tenantId": {
       "type": "string"
     },
     "apimAppRegistrationClientId": {
@@ -143,8 +143,9 @@
       "apiVersion": "2019-12-01",
       "properties": {
         "type": "aad",
+        "signinTenant": "[parameters('tenantId')]",
         "allowedTenants": [
-          "[parameters('tenantPrimaryDomain')]"
+          "[parameters('tenantId')]"
         ],
         "authority": "login.windows.net",
         "clientId": "[parameters('apimAppRegistrationClientId')]",

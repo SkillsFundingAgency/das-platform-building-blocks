@@ -100,7 +100,7 @@
       "type": "string",
       "defaultValue": ""
     },
-    "tenantPrimaryDomain": {
+    "tenantId": {
       "type": "string"
     },
     "apimAppRegistrationClientId": {
@@ -191,8 +191,8 @@
           "subnetResourceId": {
             "value": "[variables('subnetResourceId')]"
           },
-          "tenantPrimaryDomain": {
-            "value": "[parameters('tenantPrimaryDomain')]"
+          "tenantId": {
+            "value": "[parameters('tenantId')]"
           },
           "apimAppRegistrationClientId": {
             "value": "[parameters('apimAppRegistrationClientId')]"
