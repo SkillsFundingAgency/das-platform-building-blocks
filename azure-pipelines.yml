@@ -27,7 +27,7 @@ stages:
     - deployment: GitHubRelease
       displayName: Create Release in GitHub
       pool:
-        name: DAS - Continuous Deployment
+        name: DAS - Continuous Deployment Agents
       environment: GitHub
       strategy:
         runOnce:
