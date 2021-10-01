@@ -46,6 +46,10 @@
         "BlobStorage"
       ]
     },
+    "allowSharedKeyAccess": {
+      "type": "bool",
+      "defaultValue": true
+    },
     "subnetResourceIdList": {
       "type": "array",
       "defaultValue": [],
@@ -154,6 +158,7 @@
         },
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
         "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       },
