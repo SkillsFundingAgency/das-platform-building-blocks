@@ -153,6 +153,7 @@
           "keySource": "Microsoft.Storage"
         },
         "accessTier": "[if(empty(parameters('accessTier')), json('null'), parameters('accessTier'))]",
+        "allowBlobPublicAccess": false,
         "supportsHttpsTrafficOnly": true,
         "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       },
