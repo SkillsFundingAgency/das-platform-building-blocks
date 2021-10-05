@@ -42,10 +42,10 @@ jobs:
   environment: ${{ parameters.Environment }}
   dependsOn: 
   - waitForValidation
-  - DeployResources
+  - ${{ parameters.dependsOn }}
   condition: succeeded()
   variables:
-    DatabaseNameVariable: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
+    DatabaseNameVariable: $[ dependencies.${{ parameters.dependsOn }}.outputs['${{ parameters.dependsOn }}.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
   strategy:
     runOnce:
       deploy:
