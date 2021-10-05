@@ -44,7 +44,7 @@ jobs:
   condition: succeeded()
   variables:
     ##TO DO: remove AT hardcoding
-    DatabaseName: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputsAT.DatabaseName'] ]
+    DatabaseNameVariable: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputsAT.DatabaseName'] ]
   strategy:
     runOnce:
       deploy:
@@ -54,7 +54,7 @@ jobs:
           inputs:
             AzureSubscription: ${{ parameters.AzureSubscription }}
             ServerName: ${{ parameters.ServerName }}
-            DatabaseName: ${{ variables.DatabaseName }}
+            DatabaseName: ${{ variables.DatabaseNameVariable }}
             SqlUsername: ${{ parameters.SqlUsername }}
             SqlPassword: ${{ parameters.SqlPassword }}
             DacpacFile: ${{ parameters.DacpacFile }}
