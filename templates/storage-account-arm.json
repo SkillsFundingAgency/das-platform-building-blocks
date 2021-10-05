@@ -48,7 +48,10 @@
     },
     "allowBlobPublicAccess": {
       "type": "bool",
-      "defaultValue": false
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow or disallow public access to all blobs or containers in the storage account. Individual containers' access levels must also be set to Blob/Container to be accessible anonymously."
+      }
     },
     "allowSharedKeyAccess": {
       "type": "bool",
