@@ -59,7 +59,7 @@ jobs:
           inputs:
             AzureSubscription: ${{ parameters.AzureSubscription }}
             ServerName: ${{ parameters.ServerName }}
-            DatabaseName: ${{ variables.DatabaseNameVariable }}
+            DatabaseName: $[ variables.DatabaseNameVariable ]
             SqlUsername: ${{ parameters.SqlUsername }}
             SqlPassword: ${{ parameters.SqlPassword }}
             DacpacFile: ${{ parameters.DacpacFile }}
