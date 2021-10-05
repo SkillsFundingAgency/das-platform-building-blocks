@@ -46,8 +46,7 @@ jobs:
   - DeployResources
   condition: succeeded()
   variables:
-    ##TO DO: remove AT hardcoding
-    DatabaseNameVariable: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputsAT.DatabaseName'] ]
+    DatabaseNameVariable: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
   strategy:
     runOnce:
       deploy:
