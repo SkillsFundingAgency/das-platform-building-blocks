@@ -12,7 +12,6 @@ parameters:
   - DEMO
 - name: AzureSubscription
 - name: ServerName
-- name: DatabaseName
 - name: SqlUsername
 - name: SqlPassword
 - name: DacpacFile
