@@ -42,7 +42,6 @@ jobs:
   environment: ${{ parameters.Environment }}
   dependsOn: 
   - waitForValidation
-  ##TO DO: decide whether it's acceptable to hardcode an external dependency
   - DeployResources
   condition: succeeded()
   variables:
@@ -51,8 +50,6 @@ jobs:
     runOnce:
       deploy:
         steps:
-        ##TO DO: remove this task
-        - pwsh: Get-ChildItem ENV:* | Sort-Object Name | Format-Table -AutoSize
         - task: SqlAzureDacpacDeployment@1
           displayName: Execute Azure SQL DacpacTask
           inputs:
