@@ -40,7 +40,10 @@ jobs:
   pool:
     name: ${{ parameters.pool }}
   environment: ${{ parameters.Environment }}
-  dependsOn: waitForValidation
+  dependsOn: 
+  - waitForValidation
+  ##TO DO: decide whether it's acceptable to hardcode an external dependency
+  - DeployResources
   condition: succeeded()
   variables:
     ##TO DO: remove AT hardcoding
