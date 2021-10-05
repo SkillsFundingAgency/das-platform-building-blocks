@@ -1,5 +1,8 @@
 
 parameters:
+- name: AzureSubscription
+- name: DacpacFile
+- name: DependsOn
 - name: Environment
   type: string
   values:
@@ -10,22 +13,19 @@ parameters:
   - PROD
   - MO
   - DEMO
-- name: AzureSubscription
-- name: ServerName
-- name: SqlUsername
-- name: SqlPassword
-- name: DacpacFile
-- name: pool
+- name: Pool
   type: string
   default: DAS - Continuous Deployment Agents
 - name: RunBlockOnPossibleDataLoss
   type: boolean
-- name: dependsOn
+- name: ServerName
+- name: SqlUsername
+- name: SqlPassword
 
 jobs:
-- job: waitForValidation
+- job: WaitForValidation
   pool: server
-  dependsOn: ${{ parameters.dependsOn }}
+  dependsOn: ${{ parameters.DependsOn }}
   condition: succeeded()
   timeoutInMinutes: 5 
   steps:
@@ -38,14 +38,14 @@ jobs:
 
 - deployment: RunSqlDacpac
   pool:
-    name: ${{ parameters.pool }}
+    name: ${{ parameters.Pool }}
   environment: ${{ parameters.Environment }}
   dependsOn: 
-  - waitForValidation
-  - ${{ parameters.dependsOn }}
+  - WaitForValidation
+  - ${{ parameters.DependsOn }}
   condition: succeeded()
   variables:
-    DatabaseNameVariable: $[ dependencies.${{ parameters.dependsOn }}.outputs['${{ parameters.dependsOn }}.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
+    DatabaseNameVariable: $[ dependencies.${{ parameters.DependsOn }}.outputs['${{ parameters.DependsOn }}.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
   strategy:
     runOnce:
       deploy:
