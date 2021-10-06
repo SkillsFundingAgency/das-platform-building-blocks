@@ -2,7 +2,10 @@
 parameters:
 - name: AzureSubscription
 - name: DacpacFile
+- name: DatabaseNameArmOutput
+  default: DatabaseName
 - name: DependsOn
+  default: DeployResources
 - name: Environment
   type: string
   values:
@@ -45,7 +48,7 @@ jobs:
   - ${{ parameters.DependsOn }}
   condition: succeeded()
   variables:
-    DatabaseNameVariable: $[ dependencies.${{ parameters.DependsOn }}.outputs['${{ parameters.DependsOn }}.ArmOutputs${{ parameters.Environment }}.DatabaseName'] ]
+    DatabaseNameVariable: $[ dependencies.${{ parameters.DependsOn }}.outputs['${{ parameters.DependsOn }}.ArmOutputs${{ parameters.Environment }}.${{ parameters.DatabaseNameArmOutput }}'] ]
   strategy:
     runOnce:
       deploy:
