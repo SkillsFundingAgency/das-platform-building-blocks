@@ -20,7 +20,7 @@
   },
   "resources": [
     {
-      "type": "Microsoft.ApiManagement/namespaces/providers/roleAssignments",
+      "type": "Microsoft.ApiManagement/service/providers/roleAssignments",
       "apiVersion": "2018-09-01-preview",
       "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
       "properties": {
