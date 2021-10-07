@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "principalId": {
+      "type": "string"
+    },
+    "assignmentType": {
+      "type": "string",
+      "allowedValues": [
+        "DeveloperPortal"
+      ]
+    },
+    "resourceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "DeveloperPortal": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b68e4721-7391-4853-911c-34855e9c2cec')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ApiManagement/namespaces/providers/roleAssignments",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
+      "properties": {
+        "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+        "principalId": "[parameters('principalId')]"
+      }
+    }
+  ]
+}
