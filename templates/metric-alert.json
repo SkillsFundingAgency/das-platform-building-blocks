@@ -139,6 +139,13 @@
             "metadata": {
                 "description": "The id of the action group to send the alert to."
             }
+        },
+        "dimensions": {
+            "type": "array",
+            "metadata": {
+                "description": "//TO DO"
+            },
+            "defaultValue": []
         }
     },
     "variables": {},
@@ -164,6 +171,7 @@
                             "name": "Metric1",
                             "metricNamespace": "[parameters('metricNamepace')]",
                             "metricName": "[parameters('metricName')]",
+                            "dimensions": "[parameters('dimensions')]",
                             "operator": "[parameters('metricOperator')]",
                             "timeAggregation": "[parameters('timeAggregation')]",
                             "criterionType": "StaticThresholdCriterion"
