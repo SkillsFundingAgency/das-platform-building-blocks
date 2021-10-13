@@ -35,6 +35,7 @@
         }
     },
     "variables": {
+        "emptyArray": [],
         "webHookReceiverArray": [
             {
                 "name": "[parameters('webhookReceiverName')]",
@@ -42,7 +43,7 @@
                 "useCommonAlertSchema": true
             }
         ],
-        "webHookReceiverProperty": "[if(empty(parameters('webhookServiceUri')), array(''), variables('webHookReceiverArray'))]"
+        "webHookReceiverProperty": "[if(empty(parameters('webhookServiceUri')), variables('emptyArray'), variables('webHookReceiverArray'))]"
     },
     "resources": [
         {
