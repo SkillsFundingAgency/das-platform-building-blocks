@@ -40,7 +40,8 @@
             "type": "string",
             "defaultValue": "microsoft.insights/components",
             "allowedValues": [
-                "microsoft.insights/components"
+                "microsoft.insights/components",
+                "Microsoft.DataFactory/factories"
             ],
             "metadata": {
                 "description": "Type of target resource."
