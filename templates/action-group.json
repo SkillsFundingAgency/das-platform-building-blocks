@@ -57,7 +57,7 @@
                 ],
                 "emailReceivers": [
                 ],
-                "webhookReceivers": "[variables('webHookReceiverProperty')]"
+                "webhookReceivers": []
             }
         }
     ],
