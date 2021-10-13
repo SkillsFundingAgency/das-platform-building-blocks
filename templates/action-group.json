@@ -15,6 +15,13 @@
                 "description": "Short name (maximum 12 characters) for the Action group."
             }
         },
+        "emailAddresses": {
+            "type": "array",
+            "metadata": {
+                "description": "An array of email addresses that alerts will be sent to"
+            },
+            "defaultValue": []
+        },
         "webhookReceiverName": {
             "type": "string",
             "metadata": {
@@ -35,6 +42,7 @@
         }
     },
     "variables": {
+        "emailRecieversProperty": "[if(empty(parameters('emailAddresses')), variables('emptyArray'), variables('emailRecieversArray'))]",
         "emptyArray": [],
         "webHookReceiverArray": [
             {
@@ -43,7 +51,18 @@
                 "useCommonAlertSchema": true
             }
         ],
-        "webHookReceiverProperty": "[if(empty(parameters('webhookServiceUri')), variables('emptyArray'), variables('webHookReceiverArray'))]"
+        "webHookReceiverProperty": "[if(empty(parameters('webhookServiceUri')), variables('emptyArray'), variables('webHookReceiverArray'))]",
+        "copy": [
+            {
+                "name": "emailRecieversArray",
+                "count": "[length(parameters('emailAddresses'))]",
+                "input": {
+                    "name": "[concat('Email-', parameters('actionGroupName'), '-', copyIndex('emailRecieversArray'))]",
+                    "emailAddress": "[parameters('emailAddresses')[copyIndex('emailRecieversArray')]]",
+                    "useCommonAlertSchema": false
+                }
+            }
+        ]
     },
     "resources": [
         {
@@ -56,8 +75,7 @@
                 "enabled": "[parameters('enableActionGroup')]",
                 "smsReceivers": [
                 ],
-                "emailReceivers": [
-                ],
+                "emailReceivers": "[variables('emailRecieversProperty')]",
                 "webhookReceivers": "[variables('webHookReceiverProperty')]"
             }
         }
