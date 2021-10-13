@@ -40,7 +40,8 @@
             "type": "string",
             "defaultValue": "microsoft.insights/components",
             "allowedValues": [
-                "microsoft.insights/components"
+                "microsoft.insights/components",
+                "Microsoft.DataFactory/factories"
             ],
             "metadata": {
                 "description": "Type of target resource."
@@ -56,7 +57,8 @@
             "type": "string",
             "defaultValue": "microsoft.insights/components",
             "allowedValues": [
-                "microsoft.insights/components"
+                "microsoft.insights/components",
+                "Microsoft.DataFactory/factories"
             ],
             "metadata": {
                 "description": "Namespace of the metric."
@@ -139,6 +141,14 @@
             "metadata": {
                 "description": "The id of the action group to send the alert to."
             }
+        },
+        "dimensions": {
+            "type": "array",
+            "metadata": {
+                "description": "An optional array of metric dimensions used to filter the metric being alerted on",
+                "documentation": "https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/metricalerts?tabs=json#metricdimension"
+            },
+            "defaultValue": []
         }
     },
     "variables": {},
@@ -164,6 +174,7 @@
                             "name": "Metric1",
                             "metricNamespace": "[parameters('metricNamepace')]",
                             "metricName": "[parameters('metricName')]",
+                            "dimensions": "[parameters('dimensions')]",
                             "operator": "[parameters('metricOperator')]",
                             "timeAggregation": "[parameters('timeAggregation')]",
                             "criterionType": "StaticThresholdCriterion"
