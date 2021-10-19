@@ -2,7 +2,7 @@ parameters:
   ContainerRegistryName:
   ImageName:
   ServiceConnection:
-  DockerfileFullname: Dockerfile  
+  AdditionalArgs: ''  
   BranchToCreateLatestTag: main
   WorkingDirectory: $(Build.SourcesDirectory)
 
@@ -14,7 +14,7 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --file ${{ parameters.DockerfileFullname }} --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) .'
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) ${{ parameters.AdditionalArgs }} .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
 - task: AzureCLI@2
   displayName: 'Build Image with latest tag if branch matches BranchToCreateLatestTag parameter'
@@ -23,5 +23,5 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --file ${{ parameters.DockerfileFullname }} --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest .'
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest ${{ parameters.AdditionalArgs }} .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
