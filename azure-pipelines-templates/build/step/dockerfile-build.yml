@@ -9,7 +9,7 @@ parameters:
 - name: Platform
   type: string
   default: linux
-  value:
+  values:
   - linux
   - windows
 - name: WorkingDirectory
