@@ -1,10 +1,19 @@
 parameters:
-  ContainerRegistryName:
-  ImageName:
-  ServiceConnection:
-  AdditionalArgs: ''  
-  BranchToCreateLatestTag: main
-  WorkingDirectory: $(Build.SourcesDirectory)
+- name: ContainerRegistryName
+- name: ImageName
+- name: ServiceConnection
+- name: AdditionalArgs
+  default: ''  
+- name: BranchToCreateLatestTag
+  default: main
+- name: Platform
+  type: string
+  default: linux
+  values:
+  - linux
+  - windows
+- name: WorkingDirectory
+  default: $(Build.SourcesDirectory)
 
 steps:
 - task: AzureCLI@2
@@ -14,7 +23,7 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) ${{ parameters.AdditionalArgs }} .'
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) --platform ${{ parameters.Platform }} ${{ parameters.AdditionalArgs }} .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
 - task: AzureCLI@2
   displayName: 'Build Image with latest tag if branch matches BranchToCreateLatestTag parameter'
@@ -23,5 +32,5 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest ${{ parameters.AdditionalArgs }} .'
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:latest --platform ${{ parameters.Platform }} ${{ parameters.AdditionalArgs }} .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
