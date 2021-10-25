@@ -9,7 +9,7 @@ steps:
 - checkout: das-platform-automation
 - task: AzureCLI@2
   displayName: Azure CLI - app role assignments
-  condition: and(succeeded(), in(variables['Resources.Pipelines.das-employer-config.SourceBranch'], 'refs/heads/master', 'refs/heads/main'))
+  condition: and(succeeded(), in(variables['Resources.Pipeline.das-employer-config.SourceBranch'], 'master', 'main'))
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
