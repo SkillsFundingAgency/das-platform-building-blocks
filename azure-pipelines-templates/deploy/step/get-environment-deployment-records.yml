@@ -22,4 +22,4 @@ steps:
     azurePowerShellVersion: LatestVersion
     pwsh: true
   env:
-            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
