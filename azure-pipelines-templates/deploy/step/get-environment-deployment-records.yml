@@ -5,7 +5,6 @@ parameters:
   EnvironmentId:
   PipelineName:
   RunId:
-  AccessToken:
 
 steps:
 - checkout: das-platform-automation
