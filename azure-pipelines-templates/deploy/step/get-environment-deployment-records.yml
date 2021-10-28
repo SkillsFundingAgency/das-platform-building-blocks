@@ -20,6 +20,7 @@ steps:
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
       -RunId ${{ parameters.RunId }} `
-      -AccessToken '${{ parameters.AccessToken }}'
     azurePowerShellVersion: LatestVersion
     pwsh: true
+  env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
