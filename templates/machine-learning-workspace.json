@@ -19,7 +19,7 @@
       "defaultValue": ""
     },
     "confidentialData": {
-      "type": "bool"
+      "type": "string"
     }
   },
   "variables": {},
