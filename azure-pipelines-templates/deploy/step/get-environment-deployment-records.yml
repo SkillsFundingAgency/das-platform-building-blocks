@@ -18,7 +18,7 @@ steps:
       -Project ${{ parameters.Project }} `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
-      -RunId ${{ parameters.RunId }} `
+      -RunId ${{ parameters.RunId }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
   env:
