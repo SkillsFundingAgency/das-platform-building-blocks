@@ -19,7 +19,6 @@ steps:
       -Project ${{ parameters.Project }} `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
-      -PipelineName ${{ parameters.PipelineName }} `
       -RunId ${{ parameters.RunId }} `
       -AccessToken '${{ parameters.AccessToken }}'
     azurePowerShellVersion: LatestVersion
