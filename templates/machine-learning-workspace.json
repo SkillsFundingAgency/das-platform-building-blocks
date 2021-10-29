@@ -15,8 +15,7 @@
       "type": "string"
     },
     "containerRegistryResourceId": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "confidentialData": {
       "type": "string"
@@ -37,7 +36,7 @@
         "storageAccount": "[parameters('storageAccountResourceId')]",
         "keyVault": "[parameters('keyVaultResourceId')]",
         "applicationInsights": "[parameters('appInsightsResourceId')]",
-        "containerRegistry": "[if(greater(length(parameters('containerRegistryResourceId')), 0), parameters('containerRegistryResourceId'), json('null'))]",
+        "containerRegistry": "[parameters('containerRegistryResourceId')]",
         "hbiWorkspace": "[parameters('confidentialData')]",
         "systemDatastoresAuthMode": "identity"
       }
