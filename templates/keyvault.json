@@ -65,7 +65,7 @@
       ]
     },
     "networkAclObject": {
-      "bypass": "Logging, Metrics",
+      "bypass": "AzureServices",
       "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
       "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
       "defaultAction": "Deny"
