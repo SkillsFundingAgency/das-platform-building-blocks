@@ -28,7 +28,6 @@
       "name": "[concat(parameters('workspaceName'), '/', parameters('datastoreName'))]",
       "type": "Microsoft.MachineLearningServices/workspaces/datastores",
       "apiVersion": "2021-03-01-preview",
-      "location": "[resourceGroup().location]",
       "properties": {
         "contents": {
           "contentsType": "AzureBlob",
