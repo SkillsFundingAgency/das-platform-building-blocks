@@ -38,6 +38,9 @@
           "credentials": {
             "credentialsType": "None"
           }
+        },
+        "properties": {
+          "ServiceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
         }
       }
     }
