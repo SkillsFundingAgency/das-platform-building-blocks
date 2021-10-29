@@ -6,10 +6,12 @@
       "type": "string"
     },
     "tenantId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "aadGroupObjectId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "groupDisplayName": {
       "type": "string"
@@ -18,7 +20,9 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "isExternal": "[and(greater(length(parameters('tenantId')) ,0), greater(length(parameters('aadGroupObjectId')), 0))]"
+  },
   "resources": [
     {
       "name": "[concat(parameters('apimName'), '/', parameters('aadGroupObjectId'))]",
@@ -27,8 +31,8 @@
       "properties": {
         "displayName": "[parameters('groupDisplayName')]",
         "description": "[parameters('groupDescription')]",
-        "type": "external",
-        "externalId": "[concat('aad://', parameters('tenantId'), '/groups/', parameters('aadGroupObjectId'))]"
+        "type": "[if(variables('isExternal'), 'external', 'system')]",
+        "externalId": "[if(variables('isExternal'), concat('aad://', parameters('tenantId'), '/groups/', parameters('aadGroupObjectId')), json('null'))]"
       }
     }
   ],
