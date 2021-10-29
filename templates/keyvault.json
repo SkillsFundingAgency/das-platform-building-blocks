@@ -23,9 +23,54 @@
     "enableSoftDelete": {
       "type": "bool",
       "defaultValue": false
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet resource ids."
+      }
+    },
+    "allowedIpAddressesList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of allowed IPs"
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "virtualNetworkRules": {
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "input": {
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "ipRules": {
+      "copy": [
+        {
+          "name": "ipRules",
+          "count": "[if(greater(length(parameters('allowedIpAddressesList')), 0), length(parameters('allowedIpAddressesList')), 1)]",
+          "input": {
+            "value": "[if(greater(length(parameters('allowedIpAddressesList')), 0), parameters('allowedIpAddressesList')[copyIndex('ipRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "networkAclObject": {
+      "bypass": "Logging, Metrics",
+      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
+      "defaultAction": "Deny"
+    }
+  },
   "resources": [
     {
       "type": "Microsoft.KeyVault/vaults",
@@ -41,7 +86,8 @@
         "sku": {
           "name": "Standard",
           "family": "A"
-        }
+        },
+        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       }
     }
   ],
