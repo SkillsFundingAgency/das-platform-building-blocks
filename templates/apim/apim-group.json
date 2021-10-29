@@ -25,7 +25,7 @@
   },
   "resources": [
     {
-      "name": "[concat(parameters('apimName'), '/', parameters('aadGroupObjectId'))]",
+      "name": "[concat(parameters('apimName'), '/', if(variables('isExternal'), parameters('aadGroupObjectId'), parameters('groupDisplayName')))]",
       "type": "Microsoft.ApiManagement/service/groups",
       "apiVersion": "2019-12-01",
       "properties": {
