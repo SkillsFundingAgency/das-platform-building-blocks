@@ -17,6 +17,7 @@ steps:
       -RunId ${{ parameters.RunId }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
+  continueOnError: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     SYSTEM_PROJECTNAME: $(System.TeamProject)
