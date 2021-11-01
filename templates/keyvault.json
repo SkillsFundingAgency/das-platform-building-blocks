@@ -23,9 +23,61 @@
     "enableSoftDelete": {
       "type": "bool",
       "defaultValue": false
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of subnet resource ids to whitelist on the KeyVault."
+      }
+    },
+    "allowedIpAddressesList": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "A list of allowed IPs"
+      }
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Azure Services access to the KeyVault"
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "virtualNetworkRules": {
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[length(parameters('subnetResourceIdList'))]",
+          "input": {
+            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "ipRules": {
+      "copy": [
+        {
+          "name": "ipRules",
+          "count": "[length(parameters('allowedIpAddressesList'))]",
+          "input": {
+            "value": "[parameters('allowedIpAddressesList')[copyIndex('ipRules')]]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "networkAclObject": {
+      "bypass": "[if(parameters('allowAzureServices'), 'AzureServices', 'None')]",
+      "virtualNetworkRules": "[variables('virtualNetworkRules').virtualNetworkRules]",
+      "ipRules": "[variables('ipRules').ipRules]",
+      "defaultAction": "Deny"
+    }
+  },
   "resources": [
     {
       "type": "Microsoft.KeyVault/vaults",
@@ -41,7 +93,8 @@
         "sku": {
           "name": "Standard",
           "family": "A"
-        }
+        },
+        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       }
     }
   ],

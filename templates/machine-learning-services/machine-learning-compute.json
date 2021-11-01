@@ -1,0 +1,79 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "computeName": {
+      "type": "string"
+    },
+    "workspaceName": {
+      "type": "string"
+    },
+    "computeType": {
+      "type": "string",
+      "allowedValues": [
+        "AmlCompute"
+      ]
+    },
+    "amlComputeSettings": {
+      "type": "object",
+      "defaultValue": {
+        "maxNodeCount": 1,
+        "minNodeCount": 0,
+        "nodeIdleTimeBeforeScaleDown": "PT300S",
+        "vmPriority": "LowPriority",
+        "vmSize": "Standard_D1_v2"
+      }
+    },
+    "vnetResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resource group which holds the VNET to which you want to inject your compute in."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the vnet which you want to inject your compute in."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet inside the VNET which you want to inject your compute in."
+      }
+    }
+  },
+  "variables": {
+    "subnet": {
+      "id": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+    }
+  },
+  "resources": [
+    {
+      "condition": "[equals(parameters('computeType'), 'AmlCompute')]",
+      "type": "Microsoft.MachineLearningServices/workspaces/computes",
+      "apiVersion": "2021-07-01",
+      "name": "[concat(parameters('workspaceName'), '/', parameters('computeName'))]",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "systemAssigned"
+      },
+      "properties": {
+        "computeType": "AmlCompute",
+        "disableLocalAuth": true,
+        "properties": {
+          "remoteLoginPortPublicAccess": "NotSpecified",
+          "scaleSettings": {
+            "maxNodeCount": "[parameters('amlComputeSettings').maxNodeCount]",
+            "minNodeCount": "[parameters('amlComputeSettings').minNodeCount]",
+            "nodeIdleTimeBeforeScaleDown": "[parameters('amlComputeSettings').nodeIdleTimeBeforeScaleDown]"
+          },
+          "vmPriority": "[parameters('amlComputeSettings').vmPriority]",
+          "vmSize": "[parameters('amlComputeSettings').vmSize]",
+          "subnet": "[variables('subnet')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

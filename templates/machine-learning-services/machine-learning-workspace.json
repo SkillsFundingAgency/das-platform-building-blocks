@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string"
+    },
+    "storageAccountResourceId": {
+      "type": "string"
+    },
+    "keyVaultResourceId": {
+      "type": "string"
+    },
+    "appInsightsResourceId": {
+      "type": "string"
+    },
+    "containerRegistryResourceId": {
+      "type": "string"
+    },
+    "confidentialData": {
+      "type": "bool",
+      "defaultValue": true
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.MachineLearningServices/workspaces",
+      "apiVersion": "2021-07-01",
+      "name": "[parameters('workspaceName')]",
+      "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "systemAssigned"
+      },
+      "properties": {
+        "friendlyName": "[parameters('workspaceName')]",
+        "storageAccount": "[parameters('storageAccountResourceId')]",
+        "keyVault": "[parameters('keyVaultResourceId')]",
+        "applicationInsights": "[parameters('appInsightsResourceId')]",
+        "containerRegistry": "[parameters('containerRegistryResourceId')]",
+        "hbiWorkspace": "[parameters('confidentialData')]",
+        "systemDatastoresAuthMode": "identity"
+      }
+    }
+  ],
+  "outputs": {}
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "storageAccountName": {
@@ -97,7 +97,7 @@
     },
     "allowedMethods": {
       "type": "array",
-        "defaultValue": [
+      "defaultValue": [
         "GET"
       ]
     },
@@ -106,6 +106,13 @@
       "defaultValue": [
         "*"
       ]
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Azure Services access to the KeyVault"
+      }
     }
   },
   "variables": {
@@ -133,8 +140,9 @@
         }
       ]
     },
+    "defaultNetworkAclBypass": "Logging, Metrics",
     "networkAclObject": {
-      "bypass": "Logging, Metrics",
+      "bypass": "[if(parameters('allowAzureServices'), concat(variables('defaultNetworkAclBypass'), ', AzureServices'), variables('defaultNetworkAclBypass'))]",
       "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
       "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
       "defaultAction": "Deny"
@@ -170,30 +178,30 @@
         "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
       },
       "resources": [
-          {
-            "name": "default",
-            "type": "blobServices",
-            "condition": "[equals(parameters('enableCors'), 'True')]",
-            "apiVersion": "2018-11-01",
-            "dependsOn": [
-              "[parameters('storageAccountName')]"
-            ],
-            "properties": {
-              "cors": {
-                "corsRules": [
-                  {
-                    "allowedOrigins": "[parameters('allowedOrigins')]",
-                    "allowedMethods": "[parameters('allowedMethods')]",
-                    "maxAgeInSeconds": "[parameters('maxAgeInSeconds')]",
-                    "exposedHeaders": "[parameters('exposedHeaders')]",
-                    "allowedHeaders": "[parameters('allowedHeaders')]"
-                  }
-                ]
-              }
-            },
-            "resources": []
-          }
-        ]
+        {
+          "name": "default",
+          "type": "blobServices",
+          "condition": "[equals(parameters('enableCors'), 'True')]",
+          "apiVersion": "2018-11-01",
+          "dependsOn": [
+            "[parameters('storageAccountName')]"
+          ],
+          "properties": {
+            "cors": {
+              "corsRules": [
+                {
+                  "allowedOrigins": "[parameters('allowedOrigins')]",
+                  "allowedMethods": "[parameters('allowedMethods')]",
+                  "maxAgeInSeconds": "[parameters('maxAgeInSeconds')]",
+                  "exposedHeaders": "[parameters('exposedHeaders')]",
+                  "allowedHeaders": "[parameters('allowedHeaders')]"
+                }
+              ]
+            }
+          },
+          "resources": []
+        }
+      ]
     }
   ],
   "outputs": {
@@ -208,6 +216,10 @@
     "storagePrimaryEndpointsBlob": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), '2019-04-01').primaryEndpoints.blob]"
+    },
+    "storageResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
     }
   }
 }

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "datastoreName": {
+      "type": "string"
+    },
+    "blobContainerName": {
+      "type": "string"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "workspaceName": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('workspaceName'), '/', parameters('datastoreName'))]",
+      "type": "Microsoft.MachineLearningServices/workspaces/datastores",
+      "apiVersion": "2021-03-01-preview",
+      "properties": {
+        "contents": {
+          "contentsType": "AzureBlob",
+          "accountName": "[parameters('storageAccountName')]",
+          "containerName": "[parameters('blobContainerName')]",
+          "endpoint": "core.windows.net",
+          "protocol": "https",
+          "credentials": {
+            "credentialsType": "None"
+          }
+        },
+        "properties": {
+          "ServiceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

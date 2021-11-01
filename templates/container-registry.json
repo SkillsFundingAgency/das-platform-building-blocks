@@ -31,6 +31,10 @@
       "metadata": {
         "description": "A list of allowed IPs"
       }
+    },
+    "adminUserEnabled": {
+      "type": "bool",
+      "defaultValue": false
     }
   },
   "variables": {
@@ -74,10 +78,15 @@
         "name": "[parameters('registrySkuName')]"
       },
       "properties": {
-        "networkRuleSet": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkRuleSet'), json('null'))]"
+        "networkRuleSet": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkRuleSet'), json('null'))]",
+        "adminUserEnabled": "[parameters('adminUserEnabled')]"
       }
     }
   ],
   "outputs": {
+    "acrResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('registryName'))]"
+    }
   }
 }
