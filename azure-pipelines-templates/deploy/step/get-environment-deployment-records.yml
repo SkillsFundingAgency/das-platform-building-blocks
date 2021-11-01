@@ -15,7 +15,6 @@ steps:
     scriptPath: das-platform-automation/Infrastructure-Scripts/Get-EnvironmentDeploymentRecords.ps1
     scriptArguments:
       -Organisation ${{ parameters.Organisation }} `
-      -Project ${{ parameters.Project }} `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
       -RunId ${{ parameters.RunId }}
@@ -23,3 +22,4 @@ steps:
     pwsh: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    SYSTEM_PROJECTNAME: $(System.TeamProject)
