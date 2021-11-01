@@ -1,7 +1,6 @@
 parameters:
   ServiceConnection:
   Organisation:
-  Project:
   EnvironmentId:
   PipelineName:
   RunId:
