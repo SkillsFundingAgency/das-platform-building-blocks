@@ -18,7 +18,8 @@
       "type": "string"
     },
     "confidentialData": {
-      "type": "string"
+      "type": "bool",
+      "defaultValue": true
     }
   },
   "variables": {},

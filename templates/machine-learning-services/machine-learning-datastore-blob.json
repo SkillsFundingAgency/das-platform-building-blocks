@@ -6,25 +6,17 @@
       "type": "string"
     },
     "blobContainerName": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "storageAccountName": {
       "type": "string"
     },
     "workspaceName": {
       "type": "string"
-    },
-    "datastoreType": {
-      "type": "string",
-      "allowedValues": [
-        "AzureBlob"
-      ]
     }
   },
   "resources": [
     {
-      "condition": "[equals(parameters('datastoreType'), 'AzureBlob')]",
       "name": "[concat(parameters('workspaceName'), '/', parameters('datastoreName'))]",
       "type": "Microsoft.MachineLearningServices/workspaces/datastores",
       "apiVersion": "2021-03-01-preview",

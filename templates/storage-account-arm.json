@@ -106,6 +106,13 @@
       "defaultValue": [
         "*"
       ]
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Azure Services access to the KeyVault"
+      }
     }
   },
   "variables": {
@@ -133,8 +140,9 @@
         }
       ]
     },
+    "defaultNetworkAclBypass": "Logging, Metrics",
     "networkAclObject": {
-      "bypass": "Logging, Metrics, AzureServices",
+      "bypass": "[if(parameters('allowAzureServices'), concat(variables('defaultNetworkAclBypass'), ', AzureServices'), variables('defaultNetworkAclBypass'))]",
       "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
       "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
       "defaultAction": "Deny"

@@ -28,7 +28,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "A list of subnet resource ids."
+        "description": "A list of subnet resource ids to whitelist on the KeyVault."
       }
     },
     "allowedIpAddressesList": {
@@ -37,6 +37,13 @@
       "metadata": {
         "description": "A list of allowed IPs"
       }
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Allow Azure Services access to the KeyVault"
+      }
     }
   },
   "variables": {
@@ -44,9 +51,9 @@
       "copy": [
         {
           "name": "virtualNetworkRules",
-          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "count": "[length(parameters('subnetResourceIdList'))]",
           "input": {
-            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
+            "id": "[parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')]]",
             "action": "Allow"
           }
         }
@@ -56,18 +63,18 @@
       "copy": [
         {
           "name": "ipRules",
-          "count": "[if(greater(length(parameters('allowedIpAddressesList')), 0), length(parameters('allowedIpAddressesList')), 1)]",
+          "count": "[length(parameters('allowedIpAddressesList'))]",
           "input": {
-            "value": "[if(greater(length(parameters('allowedIpAddressesList')), 0), parameters('allowedIpAddressesList')[copyIndex('ipRules')], json('null'))]",
+            "value": "[parameters('allowedIpAddressesList')[copyIndex('ipRules')]]",
             "action": "Allow"
           }
         }
       ]
     },
     "networkAclObject": {
-      "bypass": "AzureServices",
-      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
-      "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
+      "bypass": "[if(parameters('allowAzureServices'), 'AzureServices', 'None')]",
+      "virtualNetworkRules": "[variables('virtualNetworkRules').virtualNetworkRules]",
+      "ipRules": "[variables('ipRules').ipRules]",
       "defaultAction": "Deny"
     }
   },
