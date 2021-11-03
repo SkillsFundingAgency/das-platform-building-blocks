@@ -25,7 +25,10 @@
           "contentsType": "AzureSqlDatabase",
           "databaseName": "[parameters('databaseName')]",
           "endpoint": "database.windows.net",
-          "serverName": "[parameters('serverName')]"
+          "serverName": "[parameters('serverName')]",
+          "credentials": {
+            "credentialsType": "None"
+          }
         },
         "properties": {
           "ServiceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
