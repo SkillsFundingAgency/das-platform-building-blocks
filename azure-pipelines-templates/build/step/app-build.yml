@@ -3,9 +3,9 @@ parameters:
   SonarCloud: false
   SonarCloudExtraProperties:
   SonarCloudProjectKey:
+  RunAcceptanceTests: false
 
 steps:
-
 - task: SonarCloudPrepare@1
   displayName: Prepare SonarCloud analysis configuration
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
@@ -31,14 +31,15 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Unit Tests'
+  displayName: Unit Tests
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Acceptance Tests'
+  displayName: Acceptance Tests
+  condition: ${{ parameters.RunAcceptanceTests }}
   inputs:
     command: test
     projects: '**/*.AcceptanceTests.csproj'
