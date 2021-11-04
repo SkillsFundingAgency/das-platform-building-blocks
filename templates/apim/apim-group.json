@@ -6,10 +6,12 @@
       "type": "string"
     },
     "tenantId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "aadGroupObjectId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "groupDisplayName": {
       "type": "string"
@@ -18,17 +20,19 @@
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "isExternal": "[and(greater(length(parameters('tenantId')) ,0), greater(length(parameters('aadGroupObjectId')), 0))]"
+  },
   "resources": [
     {
-      "name": "[concat(parameters('apimName'), '/', parameters('aadGroupObjectId'))]",
+      "name": "[concat(parameters('apimName'), '/', if(variables('isExternal'), parameters('aadGroupObjectId'), parameters('groupDisplayName')))]",
       "type": "Microsoft.ApiManagement/service/groups",
       "apiVersion": "2019-12-01",
       "properties": {
         "displayName": "[parameters('groupDisplayName')]",
         "description": "[parameters('groupDescription')]",
-        "type": "external",
-        "externalId": "[concat('aad://', parameters('tenantId'), '/groups/', parameters('aadGroupObjectId'))]"
+        "type": "[if(variables('isExternal'), 'external', 'custom')]",
+        "externalId": "[if(variables('isExternal'), concat('aad://', parameters('tenantId'), '/groups/', parameters('aadGroupObjectId')), json('null'))]"
       }
     }
   ],
