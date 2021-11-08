@@ -1,6 +1,7 @@
 parameters:
 - name: AzureSubscription
 - name: DacpacFile
+- name: DatabaseName
 ##TO DO: remove?
 - name: Environment
   type: string
@@ -32,7 +33,7 @@ steps:
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
     ServerName: ${{ parameters.ServerName }}
-    DatabaseName: $(DatabaseNameVariable)
+    DatabaseName: ${{ parameters.DatabaseName }}
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
