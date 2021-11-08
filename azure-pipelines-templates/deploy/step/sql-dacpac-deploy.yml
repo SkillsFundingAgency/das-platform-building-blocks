@@ -21,8 +21,9 @@ parameters:
 steps:
 - task: PowerShell@2
   displayName: Check for BlockOnPossibleDataLoss override
-  filePath: das-platform-automation/Infrastructure-Scripts/Test-SqlDacpacDeployment.ps1
-  arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss ${{ parameters.OverrideBlockOnPossibleDataLoss }}
+  inputs:
+    filePath: das-platform-automation/Infrastructure-Scripts/Test-SqlDacpacDeployment.ps1
+    arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss ${{ parameters.OverrideBlockOnPossibleDataLoss }}
 - task: SqlAzureDacpacDeployment@1
   displayName: Execute Azure SQL DacpacTask
   inputs:
