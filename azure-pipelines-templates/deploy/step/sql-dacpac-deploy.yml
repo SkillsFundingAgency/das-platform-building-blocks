@@ -19,6 +19,8 @@ parameters:
 - name: SqlPassword
 
 steps:
+##TO DO: remove this task
+- pwsh: Get-ChildItem ENV:* | Sort-Object Name | Format-Table -Autosize
 - task: PowerShell@2
   displayName: Check for BlockOnPossibleDataLoss override
   inputs:
