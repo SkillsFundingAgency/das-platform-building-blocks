@@ -36,5 +36,5 @@ steps:
     SqlUsername: ${{ parameters.SqlUsername }}
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
-    ${{ if eq(parameters.OverrideBlockOnPossibleDataLoss, true) }}:
+    $[ if eq(variables.SetBlockOnPossibleDataLossArgument, true) ]:
       AdditionalArguments: /p:BlockOnPossibleDataLoss=false
