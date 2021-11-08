@@ -10,7 +10,7 @@ steps:
   displayName: Get Environment Deployment Records
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    scriptPath: das-platform-automation/Infrastructure-Scripts/Get-EnvironmentDeploymentRecords.ps1
+    scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeploymentps1
     scriptArguments:
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
