@@ -4,7 +4,7 @@ stages:
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   displayName: Publish NuGet Package
   pool:
-    name: 'DAS - Continuous Deployment'
+    name: DAS - Continuous Deployment Agents
   jobs:
   - job: CleanArtifacts
     displayName: Clean artifacts directory
