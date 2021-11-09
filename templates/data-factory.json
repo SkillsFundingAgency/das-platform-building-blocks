@@ -5,6 +5,24 @@
     "dataFactoryName": {
       "type": "string"
     },
+    "gitHubAccountName": {
+      "type": "string"
+    },
+    "gitHubCollaborationBranch": {
+      "type": "string"
+    },
+    "gitHubRepositoryName": {
+      "type": "string"
+    },
+    "gitHubClientId": {
+      "type": "string"
+    },
+    "gitHubClientSecret": {
+      "type": "securestring"
+    },
+    "gitHubHostName": {
+      "type": "string"
+    },
     "location": {
       "type": "string"
     }
@@ -17,6 +35,18 @@
       "location": "[parameters('location')]",
       "identity": {
         "type": "SystemAssigned"
+      },
+      "properties": {
+        "repoConfiguration": {
+          "accountName": "[parameters('gitHubAccountName')]",
+          "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
+          "repositoryName": "[parameters('gitHubRepositoryName')]",
+          "rootFolder": "/",
+          "type": "FactoryGitHubConfiguration",
+          "clientId": "[parameters('gitHubClientId')]",
+          "clientSecret": "[parameters('gitHubClientSecret')]",
+          "hostName": "[parameters('gitHubHostName')]"
+        }
       }
     }
   ],
