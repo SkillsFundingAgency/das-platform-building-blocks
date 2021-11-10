@@ -35,7 +35,7 @@
   },
   "variables": {
     "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecret'), '')))]",
-    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), json('null'))]",
+    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), null())]",
     "repoConfiguration": {
       "repoConfiguration": {
           "accountName": "[parameters('gitHubAccountName')]",
@@ -58,7 +58,7 @@
       "identity": {
         "type": "SystemAssigned"
       },
-      "properties": {}
+      "properties": "[variables('dataFactoryProperties')]"
     }
   ],
   "outputs": {
