@@ -7,7 +7,10 @@
     },
     "gitHubAccountName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the GitHub account or organisation, eg SkillsFundingAgency"
+      }
     },
     "gitHubCollaborationBranch": {
       "type": "string",
@@ -19,22 +22,37 @@
     },
     "gitHubClientId": {
       "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "A GitHub App with the permissions documented below on the repository specified in gitHubRepositoryName",
+        "notes": "Ensure that the GitHub App is Installed and Authorised",
+        "permissions": [
+          "Read access to metadata",
+          "Read and write access to code and pull requests"
+        ]
+      }
+    },
+    "gitHubClientSecretKeyVaultName": {
+      "type": "string",
       "defaultValue": ""
     },
-    "gitHubClientSecret": {
-      "type": "securestring",
+    "gitHubClientSecretKeyVaultUrl": {
+      "type": "string",
       "defaultValue": ""
     },
     "gitHubHostName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "todo": "may not be required, remove and-or hardcode in resource to empty string"
+      }
     },
     "location": {
       "type": "string"
     }
   },
   "variables": {
-    "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecret'), '')))]",
+    "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecretKeyVaultName'), '')))]",
     "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), variables('emptyObject'))]",
     "emptyObject": {},
     "repoConfiguration": {
@@ -45,7 +63,10 @@
           "rootFolder": "/",
           "type": "FactoryGitHubConfiguration",
           "clientId": "[parameters('gitHubClientId')]",
-          "clientSecret": "[parameters('gitHubClientSecret')]",
+          "clientSecret": {
+            "byoaSecretAkvUrl": "[parameters('gitHubClientSecretKeyVaultUrl')]",
+            "byoaSecretName": "[parameters('gitHubClientSecretKeyVaultName')]"
+          },
           "hostName": "[parameters('gitHubHostName')]"
         }
     }
