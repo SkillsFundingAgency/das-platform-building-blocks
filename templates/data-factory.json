@@ -6,25 +6,47 @@
       "type": "string"
     },
     "gitHubAccountName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "gitHubCollaborationBranch": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "gitHubRepositoryName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "gitHubClientId": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "gitHubClientSecret": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": ""
     },
     "gitHubHostName": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "location": {
       "type": "string"
+    }
+  },
+  "variables": {
+    "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecret'), '')))]",
+    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), json('null'))]",
+    "repoConfiguration": {
+      "repoConfiguration": {
+          "accountName": "[parameters('gitHubAccountName')]",
+          "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
+          "repositoryName": "[parameters('gitHubRepositoryName')]",
+          "rootFolder": "/",
+          "type": "FactoryGitHubConfiguration",
+          "clientId": "[parameters('gitHubClientId')]",
+          "clientSecret": "[parameters('gitHubClientSecret')]",
+          "hostName": "[parameters('gitHubHostName')]"
+        }
     }
   },
   "resources": [
@@ -36,18 +58,7 @@
       "identity": {
         "type": "SystemAssigned"
       },
-      "properties": {
-        "repoConfiguration": {
-          "accountName": "[parameters('gitHubAccountName')]",
-          "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
-          "repositoryName": "[parameters('gitHubRepositoryName')]",
-          "rootFolder": "/",
-          "type": "FactoryGitHubConfiguration",
-          "clientId": "[parameters('gitHubClientId')]",
-          "clientSecret": "[parameters('gitHubClientSecret')]",
-          "hostName": "[parameters('gitHubHostName')]"
-        }
-      }
+      "properties": "[variables('dataFactoryProperties')]"
     }
   ],
   "outputs": {
