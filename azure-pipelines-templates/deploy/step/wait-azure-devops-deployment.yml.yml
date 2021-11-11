@@ -1,0 +1,24 @@
+parameters:
+  ServiceConnection:
+  EnvironmentId:
+  PipelineName:
+  RunId:
+
+steps:
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: Get Environment Deployment Records
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
+    scriptArguments:
+      -EnvironmentId ${{ parameters.EnvironmentId }} `
+      -PipelineName ${{ parameters.PipelineName }} `
+      -RunId ${{ parameters.RunId }}
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
+  continueOnError: true
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    SYSTEM_PROJECTNAME: $(System.TeamProject)
+    SYSTEM_ORGANISATIONNAME: $(System.CollectionUri)
