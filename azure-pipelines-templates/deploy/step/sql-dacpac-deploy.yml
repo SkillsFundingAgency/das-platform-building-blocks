@@ -2,7 +2,6 @@ parameters:
 - name: AzureSubscription
 - name: DacpacFile
 - name: DatabaseName
-##TO DO: remove?
 - name: Environment
   type: string
   values:
@@ -20,8 +19,6 @@ parameters:
 - name: SqlPassword
 
 steps:
-##TO DO: remove this task
-- pwsh: Get-ChildItem ENV:* | Sort-Object Name | Format-Table -Autosize
 - task: PowerShell@2
   displayName: Check for BlockOnPossibleDataLoss override
   inputs:
