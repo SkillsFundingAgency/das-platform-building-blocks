@@ -1,0 +1,48 @@
+parameters:
+- name: AzureSubscription
+- name: DacpacFile
+- name: DatabaseName
+- name: Environment
+  type: string
+  values:
+  - AT
+  - TEST
+  - TEST2
+  - PP
+  - PROD
+  - MO
+  - DEMO
+- name: OverrideBlockOnPossibleDataLoss
+  type: boolean
+- name: ServerName
+- name: SqlUsername
+- name: SqlPassword
+
+steps:
+- task: PowerShell@2
+  displayName: Check for BlockOnPossibleDataLoss override
+  inputs:
+    filePath: das-platform-automation/Infrastructure-Scripts/Approve-SqlDacpacDeploymentDataLoss.ps1
+    # note: double dollar sign ($$) converts Azure DevOps boolean to PowerShell boolean by prefixing the True\False string with a dollar sign
+    arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss $${{ parameters.OverrideBlockOnPossibleDataLoss }} -Verbose
+- task: SqlAzureDacpacDeployment@1
+  condition: ne(variables.SetBlockOnPossibleDataLossArgument, true)
+  displayName: Execute Azure SQL DacpacTask without AdditionalArguments
+  inputs:
+    AzureSubscription: ${{ parameters.AzureSubscription }}
+    ServerName: ${{ parameters.ServerName }}
+    DatabaseName: ${{ parameters.DatabaseName }}
+    SqlUsername: ${{ parameters.SqlUsername }}
+    SqlPassword: ${{ parameters.SqlPassword }}
+    DacpacFile: ${{ parameters.DacpacFile }}
+- task: SqlAzureDacpacDeployment@1
+  condition: eq(variables.SetBlockOnPossibleDataLossArgument, true)
+  displayName: Execute Azure SQL DacpacTask with /p:BlockOnPossibleDataLoss=false
+  inputs:
+    AzureSubscription: ${{ parameters.AzureSubscription }}
+    ServerName: ${{ parameters.ServerName }}
+    DatabaseName: ${{ parameters.DatabaseName }}
+    SqlUsername: ${{ parameters.SqlUsername }}
+    SqlPassword: ${{ parameters.SqlPassword }}
+    DacpacFile: ${{ parameters.DacpacFile }}
+    AdditionalArguments: /p:BlockOnPossibleDataLoss=false
