@@ -26,7 +26,7 @@ steps:
     # note: double dollar sign ($$) converts Azure DevOps boolean to PowerShell boolean by prefixing the True\False string with a dollar sign
     arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss $${{ parameters.OverrideBlockOnPossibleDataLoss }} -Verbose
 - task: SqlAzureDacpacDeployment@1
-  condition: ne(variables.SetBlockOnPossibleDataLossArgument, true)
+  condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
   displayName: Execute Azure SQL DacpacTask without AdditionalArguments
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
@@ -36,7 +36,7 @@ steps:
     SqlPassword: ${{ parameters.SqlPassword }}
     DacpacFile: ${{ parameters.DacpacFile }}
 - task: SqlAzureDacpacDeployment@1
-  condition: eq(variables.SetBlockOnPossibleDataLossArgument, true)
+  condition: and(succeeded(), eq(variables.SetBlockOnPossibleDataLossArgument, true))
   displayName: Execute Azure SQL DacpacTask with /p:BlockOnPossibleDataLoss=false
   inputs:
     AzureSubscription: ${{ parameters.AzureSubscription }}
