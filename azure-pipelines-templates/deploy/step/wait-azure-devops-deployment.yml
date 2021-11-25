@@ -3,6 +3,8 @@ parameters:
   EnvironmentId:
   PipelineName:
   RunId:
+  SleepTime: 20
+  RetryLimit: 30
 
 steps:
 - checkout: das-platform-automation
@@ -14,7 +16,9 @@ steps:
     scriptArguments:
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
-      -RunId ${{ parameters.RunId }}
+      -RunId ${{ parameters.RunId }} `
+      -SleepTime ${{ parameters.SleepTime }} `
+      -RetryLimit ${{ parameters.RetryLimit }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
   continueOnError: true
