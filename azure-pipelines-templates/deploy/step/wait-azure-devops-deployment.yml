@@ -9,7 +9,7 @@ parameters:
 steps:
 - checkout: das-platform-automation
 - task: AzurePowerShell@5
-  displayName: Get Environment Deployment Records
+  displayName: Wait for running deployments
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
