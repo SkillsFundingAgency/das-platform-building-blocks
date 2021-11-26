@@ -18,7 +18,8 @@
             "type": "bool"
         },
         "productSubscriptionsLimit": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 20
         },
         "productApprovalRequired": {
             "type": "bool"
@@ -27,20 +28,25 @@
             "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "productBaseProperties": {
+            "displayName": "[parameters('productDisplayName')]",
+            "description": "[parameters('productDescription')]",
+            "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
+            "approvalRequired": "[parameters('productApprovalRequired')]",
+            "state": "[parameters('productState')]"
+        },
+        "productProperties": "[if(greaterOrEquals(parameters('productSubscriptionsLimit'), 0), union(variables('productBaseProperties'), variables('subscriptionsLimit')), variables('productBaseProperties'))]",
+        "subscriptionsLimit": {
+            "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]"
+        }
+    },
     "resources": [
         {
             "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
             "type": "Microsoft.ApiManagement/service/products",
             "apiVersion": "2021-08-01",
-            "properties": {
-                "displayName": "[parameters('productDisplayName')]",
-                "description": "[parameters('productDescription')]",
-                "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
-                "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]",
-                "approvalRequired": "[parameters('productApprovalRequired')]",
-                "state": "[parameters('productState')]"
-            }
+            "properties": "[variables('productProperties')]"
         }
     ],
     "outputs": {}
