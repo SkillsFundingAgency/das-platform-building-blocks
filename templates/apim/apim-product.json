@@ -1,47 +1,47 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "apimName": {
-      "type": "string"
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apimName": {
+            "type": "string"
+        },
+        "productResourceName": {
+            "type": "string"
+        },
+        "productDisplayName": {
+            "type": "string"
+        },
+        "productDescription": {
+            "type": "string"
+        },
+        "productSubscriptionRequired": {
+            "type": "bool"
+        },
+        "productSubscriptionsLimit": {
+            "type": "int"
+        },
+        "productApprovalRequired": {
+            "type": "bool"
+        },
+        "productState": {
+            "type": "string"
+        }
     },
-    "productResourceName": {
-      "type": "string"
-    },
-    "productDisplayName": {
-      "type": "string"
-    },
-    "productDescription": {
-      "type": "string"
-    },
-    "productSubscriptionRequired": {
-      "type": "bool"
-    },
-    "productSubscriptionsLimit": {
-      "type": "int"
-    },
-    "productApprovalRequired": {
-      "type": "bool"
-    },
-    "productState": {
-      "type": "string"
-    }
-  },
-  "variables": {},
-  "resources": [
-    {
-      "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
-      "type": "Microsoft.ApiManagement/service/products",
-      "apiVersion": "2019-12-01",
-      "properties": {
-        "displayName": "[parameters('productDisplayName')]",
-        "description": "[parameters('productDescription')]",
-        "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
-        "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]",
-        "approvalRequired": "[parameters('productApprovalRequired')]",
-        "state": "[parameters('productState')]"
-      }
-    }
-  ],
-  "outputs": {}
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
+            "type": "Microsoft.ApiManagement/service/products",
+            "apiVersion": "2019-12-01",
+            "properties": {
+                "displayName": "[parameters('productDisplayName')]",
+                "description": "[parameters('productDescription')]",
+                "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
+                "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]",
+                "approvalRequired": "[parameters('productApprovalRequired')]",
+                "state": "[parameters('productState')]"
+            }
+        }
+    ],
+    "outputs": {}
 }
