@@ -35,10 +35,6 @@
             "subscriptionRequired": "[parameters('productSubscriptionRequired')]",
             "approvalRequired": "[parameters('productApprovalRequired')]",
             "state": "[parameters('productState')]"
-        },
-        "productProperties": "[if(empty(parameters('productSubscriptionsLimit')), variables('productBaseProperties'), union(variables('productBaseProperties'), variables('subscriptionsLimit')))]",
-        "subscriptionsLimit": {
-            "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]"
         }
     },
     "resources": [
@@ -46,7 +42,7 @@
             "name": "[concat(parameters('apimName'), '/', parameters('productResourceName'))]",
             "type": "Microsoft.ApiManagement/service/products",
             "apiVersion": "2021-08-01",
-            "properties": "[variables('productProperties')]"
+            "properties": "[if(empty(parameters('productSubscriptionsLimit')), variables('productBaseProperties'), union(variables('productBaseProperties'), createObject('subscriptionsLimit', int(parameters('productSubscriptionsLimit')))))]"
         }
     ],
     "outputs": {}
