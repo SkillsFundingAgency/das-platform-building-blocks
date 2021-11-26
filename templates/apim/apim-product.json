@@ -18,8 +18,8 @@
             "type": "bool"
         },
         "productSubscriptionsLimit": {
-            "type": "int",
-            "defaultValue": null
+            "type": "string",
+            "defaultValue": ""
         },
         "productApprovalRequired": {
             "type": "bool"
@@ -36,9 +36,9 @@
             "approvalRequired": "[parameters('productApprovalRequired')]",
             "state": "[parameters('productState')]"
         },
-        "productProperties": "[if(greaterOrEquals(parameters('productSubscriptionsLimit'), 0), union(variables('productBaseProperties'), variables('subscriptionsLimit')), variables('productBaseProperties'))]",
+        "productProperties": "[if(empty(parameters('productSubscriptionsLimit')), variables('productBaseProperties'), union(variables('productBaseProperties'), variables('subscriptionsLimit')))]",
         "subscriptionsLimit": {
-            "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]"
+            "subscriptionsLimit": "[int(parameters('productSubscriptionsLimit'))]"
         }
     },
     "resources": [
