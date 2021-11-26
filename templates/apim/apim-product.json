@@ -19,7 +19,7 @@
         },
         "productSubscriptionsLimit": {
             "type": "int",
-            "defaultValue": 20
+            "defaultValue": null
         },
         "productApprovalRequired": {
             "type": "bool"
