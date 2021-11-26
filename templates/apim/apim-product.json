@@ -38,7 +38,7 @@
         },
         "productProperties": "[if(empty(parameters('productSubscriptionsLimit')), variables('productBaseProperties'), union(variables('productBaseProperties'), variables('subscriptionsLimit')))]",
         "subscriptionsLimit": {
-            "subscriptionsLimit": "[int(parameters('productSubscriptionsLimit'))]"
+            "subscriptionsLimit": "[parameters('productSubscriptionsLimit')]"
         }
     },
     "resources": [
