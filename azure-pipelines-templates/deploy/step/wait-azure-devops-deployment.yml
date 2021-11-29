@@ -21,7 +21,6 @@ steps:
       -RetryLimit ${{ parameters.RetryLimit }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
-  continueOnError: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     SYSTEM_PROJECTNAME: $(System.TeamProject)
