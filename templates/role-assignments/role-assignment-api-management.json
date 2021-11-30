@@ -16,7 +16,7 @@
     }
   },
   "variables": {
-    "DeveloperPortal": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b68e4721-7391-4853-911c-34855e9c2cec')]"
+    "DeveloperPortal": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', guid(subscription().id, 'b68e4721-7391-4853-911c-34855e9c2cec'))]"
   },
   "resources": [
     {
