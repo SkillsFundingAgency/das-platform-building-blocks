@@ -14,6 +14,8 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
     scriptArguments:
+      -AzureDevOpsOrganisationUri $(System.CollectionUri) `
+      -AzureDevOpsProjectName $(System.TeamProject) `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
       -RunId ${{ parameters.RunId }} `
@@ -23,5 +25,4 @@ steps:
     pwsh: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    SYSTEM_PROJECTNAME: $(System.TeamProject)
-    SYSTEM_ORGANISATIONNAME: $(System.CollectionUri)
+    
