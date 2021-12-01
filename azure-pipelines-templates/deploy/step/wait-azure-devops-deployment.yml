@@ -3,22 +3,25 @@ parameters:
   EnvironmentId:
   PipelineName:
   RunId:
+  SleepTime: 20
+  RetryLimit: 30
 
 steps:
 - checkout: das-platform-automation
 - task: AzurePowerShell@5
-  displayName: Get Environment Deployment Records
+  displayName: Wait for running deployments
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
     scriptArguments:
+      -AzureDevOpsOrganisationUri $(System.CollectionUri) `
+      -AzureDevOpsProjectName $(System.TeamProjectId) `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
       -PipelineName ${{ parameters.PipelineName }} `
-      -RunId ${{ parameters.RunId }}
+      -RunId ${{ parameters.RunId }} `
+      -SleepTime ${{ parameters.SleepTime }} `
+      -RetryLimit ${{ parameters.RetryLimit }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
-  continueOnError: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    SYSTEM_PROJECTNAME: $(System.TeamProject)
-    SYSTEM_ORGANISATIONNAME: $(System.CollectionUri)
