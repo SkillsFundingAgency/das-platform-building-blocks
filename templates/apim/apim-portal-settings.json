@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "apimName": {
-      "type": "bool"
+      "type": "string"
     },
     "enabled": {
-      "type": "bool"
+      "type": "string"
     }
   },
   "variables": {},
