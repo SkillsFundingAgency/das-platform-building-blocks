@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "CosmosReader",
+                "CosmosContributor"
+            ],
+        },
+        "resourceName": {
+            "type": "string"
+        },
+        "principalId": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "CosmosReader": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', parameters('resourceName'), '00000000-0000-0000-0000-000000000001')]",
+        "CosmosContributor": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', parameters('resourceName'), '00000000-0000-0000-0000-000000000002')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments",
+            "apiVersion": "2021-10-15",
+            "name": "[concat(parameters('resourceName'), '/', guid(uniqueString(parameters('principalId'))))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('resourceName'))]"
+            }
+        }
+    ]
+}
