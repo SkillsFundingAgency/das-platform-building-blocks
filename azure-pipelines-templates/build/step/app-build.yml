@@ -16,10 +16,10 @@ steps:
     projectName: "$(Build.DefinitionName)"
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
     extraProperties: |
-    sonar.exclusions=**/obj/**,**/*.dll
-    sonar.cs.xunit.reportsPaths=$(Agent.TempDirectory)/**/XUnit.TestResults.xml 
-    sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/opencoverCoverage.xml
-    sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+      sonar.exclusions=**/obj/**,**/*.dll
+      sonar.cs.xunit.reportsPaths=$(Agent.TempDirectory)/**/XUnit.TestResults.xml
+      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/opencoverCoverage.xml
+      sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
 - task: DotNetCoreCLI@2
   displayName: Restore
