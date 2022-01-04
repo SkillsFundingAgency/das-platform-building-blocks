@@ -15,7 +15,10 @@ steps:
     scannerMode: MSBuild
     projectName: "$(Build.DefinitionName)"
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
-    extraProperties: "${{ parameters.SonarCloudExtraProperties }}"
+    extraProperties: |
+      sonar.exclusions=**/obj/**,**/*.dll
+      sonar.cs.xunit.reportsPaths=$(Agent.TempDirectory)/**/XUnit.TestResults.xml 
+      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/opencoverCoverage.xml
 
 - task: DotNetCoreCLI@2
   displayName: Restore
@@ -35,7 +38,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:CoverletOutputFormat=opencover --collect "Code coverage"'
+    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Agent.TempDirectory)/coverage/ /p:MergeWith=$(Agent.TempDirectory)/coverage/ --collect "Code coverage"'
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
