@@ -48,6 +48,9 @@ steps:
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
   condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
+  inputs:
+    command: sonarscanner
+    arguments: ' /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml /d:sonar.coverage.exclusions="**/*Tests*/*.cs"'
 
 - task: SonarCloudPublish@1
   displayName: Publish SonarCloud analysis results on build summary
