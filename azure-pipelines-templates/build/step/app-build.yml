@@ -35,7 +35,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/ /p:CoverletOutputFormat=opencover'
+    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/coverage /p:CoverletOutputFormat=opencover --collect "Code coverage"'
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
@@ -45,12 +45,17 @@ steps:
     projects: '**/*.AcceptanceTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
 
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: "$(Agent.TempDirectory)/**.*trx"
+    mergeTestResults: true
+    condition: succeededOrFailed()
+
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
   condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
-  inputs:
-    command: sonarscanner
-    arguments: ' /d:sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml /d:sonar.coverage.exclusions="**/*Tests*/*.cs"'
 
 - task: SonarCloudPublish@1
   displayName: Publish SonarCloud analysis results on build summary
