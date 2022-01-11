@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServiceName": {
+            "type": "string"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "appServicePlanResourceGroup": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "kind": "app",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[variables('appServicePlanId')]",
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": [],
+                    "phpVersion": "off",
+                    "minTlsVersion": "1.2"
+                },
+                "httpsOnly": true
+            }
+        }
+    ]
+}
