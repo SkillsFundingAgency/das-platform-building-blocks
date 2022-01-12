@@ -89,7 +89,7 @@
       "name": "[parameters('appServicePlanName')]",
       "location": "[parameters('aspLocation')]",
       "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]",
-      "kind": "linux",
+      "kind": "[parameters('kind')]",
       "properties": {
           "perSiteScaling": false,
           "elasticScaleEnabled": false,
