@@ -61,7 +61,8 @@
         }
       },
       "WithoutASE": {
-        "name": "[parameters('appServicePlanName')]"
+        "name": "[parameters('appServicePlanName')]",
+        "reserved": "[equals(parameters('kind'), 'linux')]"
       }
     },
     "aspSkuName": "[concat(take(parameters('nonASETier'), 1), parameters('aspSize'), if(equals(parameters('nonASETier'), 'PremiumV2'), 'v2', ''))]",
@@ -90,9 +91,7 @@
       "location": "[parameters('aspLocation')]",
       "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]",
       "kind": "[parameters('kind')]",
-      "properties": {
-          "reserved": true
-      }
+      "properties": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]"
     }
   ],
   "outputs": {
