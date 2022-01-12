@@ -91,16 +91,7 @@
       "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]",
       "kind": "[parameters('kind')]",
       "properties": {
-          "perSiteScaling": false,
-          "elasticScaleEnabled": false,
-          "maximumElasticWorkerCount": 1,
-          "isSpot": false,
-          "reserved": true,
-          "isXenon": false,
-          "hyperV": false,
-          "targetWorkerCount": 0,
-          "targetWorkerSizeId": 0,
-          "zoneRedundant": false
+          "reserved": true
       }
     }
   ],
