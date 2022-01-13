@@ -10,6 +10,21 @@
         },
         "appServicePlanResourceGroup": {
             "type": "string"
+        },
+        "appServiceAppSettings": {
+            "type": "secureObject",
+            "defaultValue": {
+                "array": []
+            },
+            "metadata": {
+                "example": {
+                    "array": [
+                        {
+                            "myAppSetting": "mySettingValue"
+                        }
+                    ]
+                }
+            }
         }
     },
     "variables": {
@@ -26,7 +41,7 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "siteConfig": {
                     "alwaysOn": true,
-                    "appSettings": [],
+                    "appSettings": "[parameters('appServiceAppSettings')]",
                     "phpVersion": "off",
                     "minTlsVersion": "1.2"
                 },
