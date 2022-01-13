@@ -42,7 +42,7 @@
                 "serverFarmId": "[variables('appServicePlanId')]",
                 "siteConfig": {
                     "alwaysOn": true,
-                    "appSettings": "[parameters('appServiceAppSettings')]",
+                    "appSettings": "[parameters('appServiceAppSettings').array]",
                     "phpVersion": "off",
                     "minTlsVersion": "1.2"
                 },
