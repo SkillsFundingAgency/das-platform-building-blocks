@@ -20,7 +20,8 @@
                 "example": {
                     "array": [
                         {
-                            "myAppSetting": "mySettingValue"
+                            "name": "myAppSetting",
+                            "value": "mySettingValue"
                         }
                     ]
                 }
