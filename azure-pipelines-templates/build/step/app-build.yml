@@ -39,7 +39,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover,json"'
+    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
