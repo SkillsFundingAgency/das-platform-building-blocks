@@ -18,7 +18,7 @@ steps:
     extraProperties: |
       sonar.exclusions=**/obj/**,**/*.dll,**/*Tests/**
       sonar.cs.xunit.reportsPaths=$(Agent.TempDirectory)/**/XUnit.TestResults.xml
-      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
+      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.json
       sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
 - task: DotNetCoreCLI@2
@@ -39,7 +39,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=$(Agent.TempDirectory)/coverage/ /p:MergeWith=$(Agent.TempDirectory)/coverage/ --collect "Code coverage"'
+    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json'
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
