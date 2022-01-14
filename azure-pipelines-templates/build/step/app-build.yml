@@ -16,7 +16,7 @@ steps:
     projectName: "$(Build.DefinitionName)"
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
     extraProperties: |
-      sonar.exclusions=**/obj/**,**/*.dll
+      sonar.exclusions=**/obj/**,**/*.dll,**/*Tests/**
       sonar.cs.xunit.reportsPaths=$(Agent.TempDirectory)/**/XUnit.TestResults.xml
       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
       sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
