@@ -15,7 +15,8 @@ steps:
     scannerMode: MSBuild
     projectName: "$(Build.DefinitionName)"
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
-    extraProperties: "${{ parameters.SonarCloudExtraProperties }}"
+    extraProperties: |
+      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.opencover.xml
 
 - task: DotNetCoreCLI@2
   displayName: Restore
@@ -35,7 +36,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build'
+    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
@@ -44,6 +45,14 @@ steps:
     command: test
     projects: '**/*.AcceptanceTests.csproj'
     arguments: '--configuration $(buildConfiguration) --no-build'
+
+- task: PublishTestResults@2
+  displayName: "Publish Test Results"
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: "$(Agent.TempDirectory)/**.*trx"
+    mergeTestResults: true
+    condition: succeededOrFailed()
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
