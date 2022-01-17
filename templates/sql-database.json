@@ -177,7 +177,9 @@
           "properties": {
             "status": "Enabled"
           },
-          "dependsOn": ["[parameters('databaseName')]"]
+          "dependsOn": [
+            "[parameters('databaseName')]"
+            ]
         }
       ]
     },
@@ -212,7 +214,9 @@
           }
         ]
       },
-      "dependsOn": ["[parameters('databaseName')]"]
+      "dependsOn": [
+        "[parameters('databaseName')]"
+        ]
     },
     {
       "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Default')]",
