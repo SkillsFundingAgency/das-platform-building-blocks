@@ -96,12 +96,10 @@
       "defaultValue": ""
     },
     "retentionDays": {
-      "type": "int",
-      "defaultValue": 0,
-      "minValue": 0,
-      "maxValue": 365,
+      "type": "string",
+      "defaultValue": "365",
       "metadata": {
-        "description": "The number of days that the SQL audit logs will be stored for. Max is 1 year"
+        "description": "The SQL audit logs will be stored for maximum of 1 year"
       }
     },
     "storageAccountKey": {
