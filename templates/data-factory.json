@@ -5,8 +5,70 @@
     "dataFactoryName": {
       "type": "string"
     },
+    "gitHubAccountName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the GitHub account or organisation, eg SkillsFundingAgency"
+      }
+    },
+    "gitHubCollaborationBranch": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The branch users will merge feature branches into, e.g Master"
+      }
+    },
+    "gitHubRepositoryName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the GitHub repository, e.g das-data-factory"
+      }
+    },
+    "gitHubClientId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "A GitHub App with the permissions documented below on the repository specified in gitHubRepositoryName",
+        "notes": "Ensure that the GitHub App is Installed and Authorised",
+        "permissions": [
+          "Read access to metadata",
+          "Read and write access to code and pull requests (contents)"
+        ]
+      }
+    },
+    "gitHubClientSecretKeyVaultName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the KeyVault Secret"
+      }
+    },
+    "gitHubClientSecretKeyVaultUrl": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "location": {
       "type": "string"
+    }
+  },
+  "variables": {
+    "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecretKeyVaultName'), '')))]",
+    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), json('{}'))]",
+    "repoConfiguration": {
+      "repoConfiguration": {
+        "accountName": "[parameters('gitHubAccountName')]",
+        "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
+        "repositoryName": "[parameters('gitHubRepositoryName')]",
+        "rootFolder": "/",
+        "type": "FactoryGitHubConfiguration",
+        "clientId": "[parameters('gitHubClientId')]",
+        "clientSecret": {
+          "byoaSecretAkvUrl": "[parameters('gitHubClientSecretKeyVaultUrl')]",
+          "byoaSecretName": "[parameters('gitHubClientSecretKeyVaultName')]"
+        }
+      }
     }
   },
   "resources": [
