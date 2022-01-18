@@ -7,14 +7,14 @@
     },
     "gitHubAccountName": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "OutKa5t",
       "metadata": {
         "description": "The name of the GitHub account or organisation, eg SkillsFundingAgency"
       }
     },
     "gitHubCollaborationBranch": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "portal"
     },
     "gitHubRepositoryName": {
       "type": "string",
