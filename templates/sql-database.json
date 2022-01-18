@@ -87,10 +87,6 @@
       "type": "string",
       "defaultValue": ""
     },
-    "eventTypesToAudit": {
-      "type": "string",
-      "defaultValue": ""
-    },
     "fullAuditLogsTableName": {
       "type": "string",
       "defaultValue": ""
@@ -118,9 +114,6 @@
       "type": "string"
     },
     "storageTableEndpoint": {
-      "type": "string"
-    },
-    "useServerDefault":{
       "type": "string"
     }
   },
@@ -244,7 +237,7 @@
       "properties": {
         "auditingState": "Enabled",
         "auditLogsTableName": "[parameters('auditLogsTableName')]",
-        "eventTypesToAudit": "[parameters('eventTypesToAudit')]",
+        "eventTypesToAudit": "All",
         "fullAuditLogsTableName": "[parameters('fullAuditLogsTableName')]",
         "retentionDays": "[parameters('retentionDays')]",
         "storageAccountKey": "[parameters('storageAccountKey')]",
@@ -253,7 +246,7 @@
         "storageAccountSecondaryKey": "[parameters('storageAccountSecondaryKey')]",
         "storageAccountSubscriptionId": "[parameters('storageAccountSubscriptionId')]",
         "storageTableEndpoint": "[parameters('storageTableEndpoint')]",
-        "useServerDefault": "[parameters('useServerDefault')]"
+        "useServerDefault": "Enabled"
       }
     }
   ],
