@@ -26,13 +26,13 @@ steps:
     projects: 'src/**/*.csproj'
     noCache: true
 
-- task: DotNetCoreCLI@2
-  displayName: Vulnerability Check
-  inputs:
-    command: custom
-    custom: list
-    projects: 'src/**/*.csproj'
-    arguments: 'package --vulnerable --include-transitive'
+# - task: DotNetCoreCLI@2
+#   displayName: Vulnerability Check
+#   inputs:
+#     command: custom
+#     custom: list
+#     projects: 'src/**/*.csproj'
+#     arguments: 'package --vulnerable --include-transitive'
 
 - task: DotNetCoreCLI@2
   displayName: Deprecation Check
