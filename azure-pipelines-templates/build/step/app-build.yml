@@ -29,20 +29,23 @@ steps:
 - pwsh: |
     $Projects = Get-ChildItem -Filter *.csproj -Recurse
     $ErrorFound = $false
-    foreach ($Project in $Projects)
-    {
+    foreach ($Project in $Projects) {
       $Output = dotnet list $Project package --deprecated
       #TODO: Add --vulnerable when supported on build agents
       $Output
       $Errors = $Output | Select-String '>'
 
-      if ($Errors.Count -gt 0)
-      {
-        Write-Host "##vso[task.logissue type=error]Package issues discovered, review output above"
-        $ErrorFound = $true
+      if ($Errors.Count -gt 0) {
+          Write-Host "##vso[task.logissue type=error]Package issues discovered, review output above"
+          $ErrorFound = $true
       }
     }
-    $ErrorFound ? exit 1 : exit 0
+    if ($ErrorFound) {
+      exit 1
+    }
+    else {
+      exit 0
+    }
   workingDirectory:  $(Agent.BuildDirectory)/s/
   displayName: Package Scanning
   continueOnError: true
