@@ -33,15 +33,16 @@ steps:
       $Output = dotnet list $Project package --deprecated
       #TODO: Add --vulnerable when supported on build agents
       $Output
-      $Warnings = $output | Select-String '>'
+      $Errors = $Output | Select-String '>'
 
-      if ($Warnings.Count -gt 0)
+      if ($Errors.Count -gt 0)
       {
-        Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+        Write-Host "##vso[task.logissue type=error]Package issues discovered, review output above"
       }
     }
   workingDirectory:  $(Agent.BuildDirectory)/s/
   displayName: Package Scanning
+  continueOnError: true
 
 - task: DotNetCoreCLI@2
   displayName: Build
