@@ -233,7 +233,7 @@
     {
       "type": "Microsoft.Sql/servers/databases/auditingPolicies",
       "apiVersion": "2014-04-01",
-      "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'),'auditing-policies')]",
+      "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'),'/auditing-policies')]",
       "properties": {
         "auditingState": "Enabled",
         "auditLogsTableName": "[parameters('auditLogsTableName')]",
