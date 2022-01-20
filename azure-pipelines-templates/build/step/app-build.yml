@@ -26,21 +26,25 @@ steps:
     projects: 'src/**/*.csproj'
     noCache: true
 
-# - task: DotNetCoreCLI@2
-#   displayName: Vulnerability Check
-#   inputs:
-#     command: custom
-#     custom: list
-#     projects: 'src/**/*.csproj'
-#     arguments: 'package --vulnerable --include-transitive'
+- pwsh: |
+    $Projects = Get-ChildItem -Filter *.csproj -Recurse
+    foreach ($Project in $Projects)
+    {
+      $Output = dotnet list $Project package --deprecated
+      #TODO: Add --vulnerable when supported on build agents
+      $Output
+      $Warnings = $output | Select-String '>'
 
-- task: DotNetCoreCLI@2
-  displayName: Deprecation Check
-  inputs:
-    command: custom
-    custom: list
-    projects: 'src/**/*.csproj'
-    arguments: 'package --deprecated --include-transitive'
+      if ($Warnings.Count -gt 0)
+      {
+        foreach ($W in $Warnings)
+        {
+          Write-Host "##vso[task.logissue type=warning]Reference to deprecated NuGet-package $W"
+        }
+      }
+    }
+  workingDirectory:  $(Agent.BuildDirectory)/s/
+  displayName: Package Scanning
 
 - task: DotNetCoreCLI@2
   displayName: Build
