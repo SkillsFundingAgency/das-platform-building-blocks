@@ -37,10 +37,7 @@ steps:
 
       if ($Warnings.Count -gt 0)
       {
-        foreach ($W in $Warnings)
-        {
-          Write-Host "##vso[task.logissue type=warning]Reference to deprecated NuGet-package $W"
-        }
+        Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
       }
     }
   workingDirectory:  $(Agent.BuildDirectory)/s/
