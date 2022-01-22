@@ -83,37 +83,16 @@
         "description": "The name of the Log Analytics Workspace."
       }
     },
-    "auditLogsTableName": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "fullAuditLogsTableName": {
-      "type": "string",
-      "defaultValue": ""
-    },
     "retentionDays": {
-      "type": "string",
-      "defaultValue": "365",
-      "metadata": {
-        "description": "The SQL audit logs will be stored for maximum of 1 year"
-      }
+      "type": "int"
     },
-    "storageAccountKey": {
-      "type": "securestring"
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
-    "storageAccountResourceGroupName": {
-      "type": "string"
-    },
-    "storageAccountSecondaryKey": {
+    "storageAccountAccessKey": {
       "type": "securestring"
     },
     "storageAccountSubscriptionId": {
       "type": "string"
     },
-    "storageTableEndpoint": {
+    "storageEndpoint": {
       "type": "string"
     }
   },
@@ -231,22 +210,15 @@
       }
     },
     {
-      "type": "Microsoft.Sql/servers/databases/auditingPolicies",
-      "apiVersion": "2014-04-01",
-      "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'),'/auditing-policies')]",
+      "type": "Microsoft.Sql/servers/databases/auditingSettings",
+      "apiVersion": "2017-03-01-preview",
+      "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'),'/auditing-settings')]",
       "properties": {
-        "auditingState": "Enabled",
-        "auditLogsTableName": "[parameters('auditLogsTableName')]",
-        "eventTypesToAudit": "All",
-        "fullAuditLogsTableName": "[parameters('fullAuditLogsTableName')]",
         "retentionDays": "[parameters('retentionDays')]",
-        "storageAccountKey": "[parameters('storageAccountKey')]",
-        "storageAccountName": "[parameters('storageAccountName')]",
-        "storageAccountResourceGroupName": "[parameters('storageAccountResourceGroupName')]",
-        "storageAccountSecondaryKey": "[parameters('storageAccountSecondaryKey')]",
+        "state": "Enabled",
+        "storageAccountAccessKey": "[parameters('storageAccountAccessKey')]",
         "storageAccountSubscriptionId": "[parameters('storageAccountSubscriptionId')]",
-        "storageTableEndpoint": "[parameters('storageTableEndpoint')]",
-        "useServerDefault": "Enabled"
+        "storageEndpoint": "[parameters('storageEndpoint')]"
       }
     }
   ],
