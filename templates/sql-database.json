@@ -84,10 +84,8 @@
       }
     },
     "retentionDays": {
-      "type": "int"
-    },
-    "storageAccountAccessKey": {
-      "type": "securestring"
+      "type": "int",
+      "defaultValue": 365
     },
     "storageAccountSubscriptionId": {
       "type": "string"
@@ -216,7 +214,6 @@
       "properties": {
         "retentionDays": "[parameters('retentionDays')]",
         "state": "Enabled",
-        "storageAccountAccessKey": "[parameters('storageAccountAccessKey')]",
         "storageAccountSubscriptionId": "[parameters('storageAccountSubscriptionId')]",
         "storageEndpoint": "[parameters('storageEndpoint')]"
       }
