@@ -14,7 +14,7 @@
     },
     "gitHubCollaborationBranch": {
       "type": "string",
-      "defaultValue": "portal"
+      "defaultValue": ""
     },
     "gitHubRepositoryName": {
       "type": "string",
