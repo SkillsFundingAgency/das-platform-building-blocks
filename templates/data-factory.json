@@ -28,7 +28,7 @@
         "notes": "Ensure that the GitHub App is Installed and Authorised",
         "permissions": [
           "Read access to metadata",
-          "Read and write access to code and pull requests"
+          "Read and write access to code and pull requests (contents)"
         ]
       }
     },
@@ -40,13 +40,6 @@
       "type": "string",
       "defaultValue": ""
     },
-    "gitHubHostName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "todo": "may not be required, remove and-or hardcode in resource to empty string"
-      }
-    },
     "location": {
       "type": "string"
     }
@@ -57,18 +50,17 @@
     "emptyObject": {},
     "repoConfiguration": {
       "repoConfiguration": {
-          "accountName": "[parameters('gitHubAccountName')]",
-          "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
-          "repositoryName": "[parameters('gitHubRepositoryName')]",
-          "rootFolder": "/",
-          "type": "FactoryGitHubConfiguration",
-          "clientId": "[parameters('gitHubClientId')]",
-          "clientSecret": {
-            "byoaSecretAkvUrl": "[parameters('gitHubClientSecretKeyVaultUrl')]",
-            "byoaSecretName": "[parameters('gitHubClientSecretKeyVaultName')]"
-          },
-          "hostName": "[parameters('gitHubHostName')]"
+        "accountName": "[parameters('gitHubAccountName')]",
+        "collaborationBranch": "[parameters('gitHubCollaborationBranch')]",
+        "repositoryName": "[parameters('gitHubRepositoryName')]",
+        "rootFolder": "/",
+        "type": "FactoryGitHubConfiguration",
+        "clientId": "[parameters('gitHubClientId')]",
+        "clientSecret": {
+          "byoaSecretAkvUrl": "[parameters('gitHubClientSecretKeyVaultUrl')]",
+          "byoaSecretName": "[parameters('gitHubClientSecretKeyVaultName')]"
         }
+      }
     }
   },
   "resources": [
