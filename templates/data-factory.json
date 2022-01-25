@@ -7,7 +7,7 @@
     },
     "gitHubAccountName": {
       "type": "string",
-      "defaultValue": "OutKa5t",
+      "defaultValue": "",
       "metadata": {
         "description": "The name of the GitHub account or organisation, eg SkillsFundingAgency"
       }
