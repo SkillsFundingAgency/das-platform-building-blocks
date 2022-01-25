@@ -14,11 +14,17 @@
     },
     "gitHubCollaborationBranch": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "The branch users will merge feature branches into, e.g Master"
+      }
     },
     "gitHubRepositoryName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the GitHub repository, e.g das-data-factory"
+      }
     },
     "gitHubClientId": {
       "type": "string",
@@ -34,7 +40,10 @@
     },
     "gitHubClientSecretKeyVaultName": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the KeyVault Secret"
+      }
     },
     "gitHubClientSecretKeyVaultUrl": {
       "type": "string",
