@@ -55,8 +55,8 @@
   },
   "variables": {
     "configureRepo": "[and(not(equals(parameters('gitHubClientId'), '')), not(equals(parameters('gitHubClientSecretKeyVaultName'), '')))]",
-    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), '{}')]",
-    //"emptyObject": {},
+    "dataFactoryProperties": "[if(variables('configureRepo'), variables('repoConfiguration'), variables('emptyObject'))]",
+    "emptyObject": {},
     "repoConfiguration": {
       "repoConfiguration": {
         "accountName": "[parameters('gitHubAccountName')]",
