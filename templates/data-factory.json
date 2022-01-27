@@ -79,7 +79,8 @@
       "location": "[parameters('location')]",
       "identity": {
         "type": "SystemAssigned"
-      }
+      },
+      "properties": "[variables('dataFactoryProperties')]"
     }
   ],
   "outputs": {
