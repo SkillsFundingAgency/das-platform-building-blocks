@@ -195,7 +195,13 @@
           "dnsServiceIP": "[parameters('dnsServiceIp')]",
           "podCidr": "[parameters('podCidr')]",
           "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
-        }
+        },
+        "securityProfile": { 
+          "azureDefender": { 
+              "enabled": true, 
+              "logAnalyticsWorkspaceResourceId": "[variables('logAnalyticsId')]"
+          }
+      }
     },
     "aadProfile": {
       "configured": {
