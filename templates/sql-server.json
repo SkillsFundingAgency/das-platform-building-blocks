@@ -147,7 +147,7 @@
             "state": "Enabled",
             "storageEndpoint": "[concat('https://', parameters('sqlStorageAccountName'), '.blob.core.windows.net/')]",
             "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('sqlStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
-            "retentionDays": 90,
+            "retentionDays": 365,
             "auditActionsAndGroups": [
               "BATCH_COMPLETED_GROUP",
               "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
