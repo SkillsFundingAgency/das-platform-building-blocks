@@ -31,7 +31,7 @@
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
-            "apiVersion": "2021-10-15",
+            "apiVersion": "2021-04-01-preview",
             "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
             "properties": {
                 "roleDefinitionId": "[variables(parameters('assignmentType'))]",
