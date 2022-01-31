@@ -233,7 +233,7 @@
   },
   "resources": [
     {
-      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', '2021-07-01')]",
+      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', '2021-10-01')]",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
