@@ -1,42 +1,43 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "principalId": {
-      "type": "string"
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "principalId": {
+            "type": "string"
+        },
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "StorageBlobDataContributor",
+                "StorageBlobDataReader",
+                "StorageTableDataContributor",
+                "StorageTableDataReader",
+                "StorageQueueDataMessageProcessor",
+                "StorageQueueDataMessageSender"
+            ]
+        },
+        "resourceName": {
+            "type": "string"
+        }
     },
-    "assignmentType": {
-      "type": "string",
-      "allowedValues": [
-        "StorageBlobDataContributor",
-        "StorageBlobDataReader",
-        "StorageTableDataContributor",
-        "StorageTableDataReader",
-        "StorageQueueDataMessageProcessor",
-        "StorageQueueDataMessageSender"
-      ]
+    "variables": {
+        "StorageBlobDataContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+        "StorageBlobDataReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+        "StorageTableDataContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')]",
+        "StorageTableDataReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '76199698-9eea-4c19-bc75-cec21354c6b6')]",
+        "StorageQueueDataMessageProcessor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8a0f0c08-91a1-4084-bc3d-661d67233fed')]",
+        "StorageQueueDataMessageSender": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a')]"
     },
-    "resourceName": {
-      "type": "string"
-    }
-  },
-  "variables": {
-    "StorageBlobDataContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-    "StorageBlobDataReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
-    "StorageTableDataContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')]",
-    "StorageTableDataReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '76199698-9eea-4c19-bc75-cec21354c6b6')]",
-    "StorageQueueDataMessageProcessor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8a0f0c08-91a1-4084-bc3d-661d67233fed')]",
-    "StorageQueueDataMessageSender": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a')]"
-  },
-  "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'))))]",
-      "properties": {
-        "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-        "principalId": "[parameters('principalId')]"
-      }
-    }
-  ]
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+            "apiVersion": "2021-10-15",
+            "name": "[concat(parameters('resourceName'), '/', guid(uniqueString(parameters('principalId'))))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[resourceId('Microsoft.Storage/storageAccounts', parameters('resourceName'))]"
+            }
+        }
+    ]
 }
