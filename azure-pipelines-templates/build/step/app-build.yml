@@ -17,6 +17,7 @@ steps:
     projectKey: "${{ parameters.SonarCloudProjectKey }}"
     extraProperties: |
       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.opencover.xml
+      ${{ parameters.SonarCloudExtraProperties }}
 
 - task: DotNetCoreCLI@2
   displayName: Restore
