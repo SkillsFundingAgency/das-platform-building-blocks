@@ -22,10 +22,6 @@
         "ConsistentPrefix"
       ]
     },
-    "enableVirtualNetworkFilter": {
-      "type": "bool",
-      "defaultValue": false
-    },
     "serverVersion": {
       "type": "string",
       "allowedValues": [
@@ -45,6 +41,17 @@
       "metadata": {
         "description": "A comma separated list of single IP addresses and/or CIDR ranges"
       }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Log analytics workspace to send logs to (leave blank to disable)"
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -80,13 +87,15 @@
         }
       },
       {
-            "name": "ipRulesCopy",
-            "count": "[length(variables('ipRangeFilterArray'))]",
-            "input": {
-                "ipAddressOrRange": "[variables('ipRangeFilterArray')[copyIndex('ipRulesCopy')]]"
-            }
+        "name": "ipRulesCopy",
+        "count": "[length(variables('ipRangeFilterArray'))]",
+        "input": {
+          "ipAddressOrRange": "[variables('ipRangeFilterArray')[copyIndex('ipRulesCopy')]]"
         }
-    ]
+      }
+    ],
+    "logDiagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
     {
@@ -95,7 +104,49 @@
       "apiVersion": "2021-01-15",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
-      "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]"
+      "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]",
+      "resources": [
+        {
+          "apiVersion": "2021-05-01-preview",
+          "type": "providers/diagnosticSettings",
+          "name": "Microsoft.Insights/service",
+          "condition": "[variables('logDiagnosticSettingsEnabled')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbName'))]"
+          ],
+          "properties": {
+            "logAnalyticsDestinationType": "Dedicated",
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "category": "DataPlaneRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              },
+              {
+                "category": "MongoRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              },
+              {
+                "category": "ControlPlaneRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "outputs": {}
