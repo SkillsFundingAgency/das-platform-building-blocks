@@ -30,10 +30,9 @@ steps:
     $Projects = Get-ChildItem -Filter *.csproj -Recurse
     $ErrorFound = $false
     foreach ($Project in $Projects) {
-      $Output = dotnet list $Project package --deprecated
-      $Output += dotnet list $Project package --vulnerable
-      $Output
-      $Errors = $Output | Select-String '>'
+      dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
+      dotnet list $Project package --vulnerable  | Tee-Object -Variable Vulnerable
+      $Errors = $Deprecated + $Vulnerable | Select-String '>'
 
       if ($Errors.Count -gt 0) {
           Write-Host "##vso[task.logissue type=error]Package issues discovered, review output above"
