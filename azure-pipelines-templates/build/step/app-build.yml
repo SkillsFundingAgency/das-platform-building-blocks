@@ -31,7 +31,7 @@ steps:
     $ErrorFound = $false
     foreach ($Project in $Projects) {
       $Output = dotnet list $Project package --deprecated
-      #TODO: Add --vulnerable when supported on build agents
+      $Output += dotnet list $Project package --vulnerable
       $Output
       $Errors = $Output | Select-String '>'
 
