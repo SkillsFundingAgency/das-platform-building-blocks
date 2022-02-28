@@ -123,7 +123,15 @@
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
             "logs": [
               {
-                "category": "allLogs",
+                "category": "AuditEvent",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              },
+              {
+                "category": "AzurePolicyEvaluationDetails",
                 "enabled": true,
                 "retentionPolicy": {
                   "enabled": true,

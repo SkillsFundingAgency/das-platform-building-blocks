@@ -96,7 +96,15 @@
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
             "logs": [
               {
-                "category": "allLogs",
+                "category": "OperationalLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              },
+              {
+                "category": "VNetAndIPFilteringLogs",
                 "enabled": true,
                 "retentionPolicy": {
                   "enabled": true,
