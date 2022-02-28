@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "serviceBusNamespaceName": {
@@ -26,10 +26,23 @@
       "metadata": {
         "description": "Names of service bus queues to create within the namespace"
       }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Log analytics workspace to send logs to (leave blank to disable)"
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
-    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]"
+    "deployQueues": "[greater(length(parameters('serviceBusQueues')), 0)]",
+    "logDiagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
     {
@@ -69,6 +82,29 @@
             "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]",
             "[resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('serviceBusNamespaceName'), 'ReadWrite')]"
           ]
+        },
+        {
+          "apiVersion": "2021-05-01-preview",
+          "type": "providers/diagnosticSettings",
+          "name": "Microsoft.Insights/service",
+          "condition": "[variables('logDiagnosticSettingsEnabled')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "category": "allLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              }
+            ]
+          }
         }
       ]
     },
