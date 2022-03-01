@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "keyVaultName": {
@@ -44,6 +44,17 @@
       "metadata": {
         "description": "Allow Azure Services access to the KeyVault"
       }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Log analytics workspace to send logs to (leave blank to disable)"
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "defaultValue": ""
     }
   },
   "variables": {
@@ -76,7 +87,9 @@
       "virtualNetworkRules": "[variables('virtualNetworkRules').virtualNetworkRules]",
       "ipRules": "[variables('ipRules').ipRules]",
       "defaultAction": "Deny"
-    }
+    },
+    "logDiagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
   },
   "resources": [
     {
@@ -95,7 +108,40 @@
           "family": "A"
         },
         "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
-      }
+      },
+      "resources": [
+        {
+          "apiVersion": "2021-05-01-preview",
+          "type": "providers/diagnosticSettings",
+          "name": "Microsoft.Insights/service",
+          "condition": "[variables('logDiagnosticSettingsEnabled')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+          ],
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "category": "AuditEvent",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              },
+              {
+                "category": "AzurePolicyEvaluationDetails",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "outputs": {
