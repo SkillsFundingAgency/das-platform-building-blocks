@@ -37,6 +37,7 @@ steps:
   inputs:
     command: test
     projects: '**/*.UnitTests.csproj'
+    publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: DotNetCoreCLI@2
@@ -45,15 +46,8 @@ steps:
   inputs:
     command: test
     projects: '**/*.AcceptanceTests.csproj'
+    publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
-
-- task: PublishTestResults@2
-  displayName: "Publish Test Results"
-  inputs:
-    testResultsFormat: VSTest
-    testResultsFiles: "$(Agent.TempDirectory)/**.*trx"
-    mergeTestResults: true
-    condition: succeededOrFailed()
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
