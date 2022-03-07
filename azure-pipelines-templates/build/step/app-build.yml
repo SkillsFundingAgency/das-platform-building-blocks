@@ -36,7 +36,7 @@ steps:
   displayName: Unit Tests
   inputs:
     command: test
-    projects: '**/*.UnitTests.csproj'
+    projects: '**/*UnitTests.csproj'
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
