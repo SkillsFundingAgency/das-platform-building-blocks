@@ -19,6 +19,10 @@
       "type": "array",
       "defaultValue": []
     },
+    "containerIndexesArray": {
+      "type": "array",
+      "defaultValue": []
+    },
     "partitionKey": {
       "type": "string",
       "defaultValue": ""
@@ -34,6 +38,7 @@
   "variables": {
     "createIndexPaths": "[greater(length(parameters('pathArray')),0)]",
     "createPartitionKeyArray": "[greater(length(parameters('partitionKeyArray')),0)]",
+    "createIndexes": "[greater(length(parameters('containerIndexesArray')),0)]",
     "globalDocumentDBContainerParameters": {
       "BaseProperties": {
         "id": "[parameters('containerName')]"
@@ -60,9 +65,13 @@
         "shardKey": {
           "[parameters('partitionKey')]": "Hash"
         }
+      },
+      "Indexes": {
+        "indexes": "[parameters('containerIndexesArray')]"
       }
     },
-    "mongoDBProperties": "[if(variables('createPartitionKey'),union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBContainerParameters').PartitionKey),variables('mongoDBContainerParameters').BaseProperties)]",
+    "mongoDBIndexProperties" :"[if(variables('createIndexes'),union(variables('mongoDBContainerParameters').BaseProperties,variables('mongoDBContainerParameters').Indexes), variables('mongoDBContainerParameters').BaseProperties)]",
+    "mongoDBProperties": "[if(variables('createPartitionKey'),union(variables('mongoDBIndexProperties'),variables('mongoDBContainerParameters').PartitionKey),variables('mongoDBIndexProperties'))]",
     "globalDocumentDBIndexProperties": "[if(variables('createIndexPaths'), union(variables('globalDocumentDBContainerParameters').BaseProperties,variables('globalDocumentDBContainerParameters').Index), variables('globalDocumentDBContainerParameters').BaseProperties)]",
     "globalDocumentDBProperties": "[if(variables('createPartitionKeyArray'), union(variables('globalDocumentDBIndexProperties'),variables('globalDocumentDBContainerParameters').PartitionKeyArray), variables('globalDocumentDBIndexProperties'))]"
   },
