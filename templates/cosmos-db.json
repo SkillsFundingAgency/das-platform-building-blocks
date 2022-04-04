@@ -128,14 +128,6 @@
                 }
               },
               {
-                "category": "MongoRequests",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
-              },
-              {
                 "category": "ControlPlaneRequests",
                 "enabled": true,
                 "retentionPolicy": {
