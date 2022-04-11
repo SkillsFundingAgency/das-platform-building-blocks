@@ -22,7 +22,7 @@
     },
     "enableSoftDelete": {
       "type": "bool",
-      "defaultValue": false
+      "defaultValue": true
     },
     "enableFirewall": {
       "type": "bool",
@@ -104,7 +104,8 @@
       "properties": {
         "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
         "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-        "enableSoftDelete": "[parameters('enableSoftDelete')]",
+        "enableSoftDelete": true,
+        "enablePurgeProtection": true,
         "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
         "tenantId": "[subscription().tenantId]",
         "sku": {
