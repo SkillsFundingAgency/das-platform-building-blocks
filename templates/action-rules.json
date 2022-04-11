@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "actionRuleName": {
+      "type": "string"
+    },
+    "actionRuleScopes": {
+      "type": "array",
+      "metadata": {
+        "example1": [
+          "/subscriptions/111a1aa11-1111-111a-a11a-11a111aaa1/resourceGroups/my-rg"
+        ]
+      }
+    },
+    "actionRuleEffectiveFrom": {
+      "type": "string",
+      "defaultValue": "1900-01-01T00:00:00"
+    },
+    "actionRuleTimeZone": {
+      "type": "string",
+      "defaultValue": "GMT Standard Time"
+    },
+    "actionRuleRecurrence": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "schema": "https://docs.microsoft.com/en-us/azure/templates/microsoft.alertsmanagement/actionrules?tabs=json#recurrence"
+      }
+    },
+    "actionRuleConditions": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "schema": "https://docs.microsoft.com/en-us/azure/templates/microsoft.alertsmanagement/actionrules?tabs=json#condition"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.AlertsManagement/actionRules",
+      "apiVersion": "2021-08-08",
+      "name": "[parameters('actionRuleName')]",
+      "location": "Global",
+      "properties": {
+        "scopes": "[parameters('actionRuleScopes')]",
+        "schedule": {
+          "effectiveFrom": "[parameters('actionRuleEffectiveFrom')]",
+          "timeZone": "[parameters('actionRuleTimeZone')]",
+          "recurrences": "[parameters('actionRuleRecurrence')]"
+        },
+        "conditions": "[parameters('actionRuleConditions')]",
+        "enabled": true,
+        "actions": [
+          {
+            "actionType": "RemoveAllActionGroups"
+          }
+        ]
+      }
+    }
+  ]
+}
