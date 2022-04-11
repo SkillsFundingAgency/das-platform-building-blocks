@@ -24,11 +24,15 @@
       "type": "bool",
       "defaultValue": false
     },
+    "enableFirewall": {
+      "type": "bool",
+      "defaultValue": false
+    },
     "subnetResourceIdList": {
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "A list of subnet resource ids to whitelist on the KeyVault."
+        "description": "A list of subnet resource ids to whitelist on the Key Vault"
       }
     },
     "allowedIpAddressesList": {
@@ -38,11 +42,11 @@
         "description": "A list of allowed IPs"
       }
     },
-    "allowAzureServices": {
+    "allowTrustedMicrosoftServices": {
       "type": "bool",
-      "defaultValue": false,
+      "defaultValue": true,
       "metadata": {
-        "description": "Allow Azure Services access to the KeyVault"
+        "description": "Allow trusted Microsoft services to bypass the firewall of the Key Vault"
       }
     },
     "logAnalyticsWorkspaceName": {
@@ -83,10 +87,10 @@
       ]
     },
     "networkAclObject": {
-      "bypass": "[if(parameters('allowAzureServices'), 'AzureServices', 'None')]",
+      "bypass": "[if(parameters('allowTrustedMicrosoftServices'), 'AzureServices', 'None')]",
       "virtualNetworkRules": "[variables('virtualNetworkRules').virtualNetworkRules]",
       "ipRules": "[variables('ipRules').ipRules]",
-      "defaultAction": "Deny"
+      "defaultAction": "[if(parameters('enableFirewall'), 'Deny', 'Allow')]"
     },
     "logDiagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
     "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
@@ -107,7 +111,7 @@
           "name": "Standard",
           "family": "A"
         },
-        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
+        "networkAcls": "[variables('networkAclObject')]"
       },
       "resources": [
         {
