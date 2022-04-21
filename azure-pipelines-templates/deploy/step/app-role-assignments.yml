@@ -2,7 +2,7 @@ parameters:
   ServiceConnection:
   ResourceName:
   Tenant:
-  AADGroupObjectIdArray: ""
+  AADGroupObjectIdArray: []
   IsMultiRepoCheckout: false
   DryRun: $false
 
