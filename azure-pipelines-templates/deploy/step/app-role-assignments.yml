@@ -18,7 +18,7 @@ steps:
       scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
     ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
       scriptPath: das-platform-automation/Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
-    ${{ if (eq(length(parameters.AADGroupObjectIdArray), 0)) }}:
+    ${{ if eq(length(parameters.AADGroupObjectIdArray), 0) }}:
       arguments:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
         -ResourceName ${{ parameters.ResourceName }}
