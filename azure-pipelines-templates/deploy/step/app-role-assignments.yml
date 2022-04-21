@@ -23,6 +23,6 @@ steps:
       -ResourceName ${{ parameters.ResourceName }}
       -Tenant ${{ parameters.Tenant }}
       -DryRun ${{ parameters.DryRun }}
-    ${{ if not(eq(length(parameters.AADGroupObjectIdArray), 0)) }}:
-      -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
+    - ${{ if not(eq(length(parameters.AADGroupObjectIdArray), 0)) }}:
+        -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
       
