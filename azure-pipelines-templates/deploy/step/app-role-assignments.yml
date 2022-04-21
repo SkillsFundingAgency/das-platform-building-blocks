@@ -2,7 +2,7 @@ parameters:
   ServiceConnection:
   ResourceName:
   Tenant:
-  AADGroupObjectIdArray: ""
+  AADGroupObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
 
@@ -22,5 +22,7 @@ steps:
       -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
       -ResourceName ${{ parameters.ResourceName }}
       -Tenant ${{ parameters.Tenant }}
-      -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
       -DryRun ${{ parameters.DryRun }}
+    ${{ if not(eq(length(parameters.AADGroupObjectIdArray), 0)) }}:
+      -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
+      
