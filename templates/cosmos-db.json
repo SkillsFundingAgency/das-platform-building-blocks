@@ -94,8 +94,41 @@
         }
       }
     ],
-    "logDiagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
-    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+    "diagnosticSettingsEnabled": "[not(empty(parameters('logAnalyticsWorkspaceName')))]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
+    "commonDiagnosticSettings": [
+      {
+        "category": "ControlPlaneRequests",
+        "enabled": true,
+        "retentionPolicy": {
+          "enabled": true,
+          "days": 90
+        }
+      }
+    ],
+    "mongoSpecificDiagnosticSettings": [
+      {
+        "category": "MongoRequests",
+        "enabled": true,
+        "retentionPolicy": {
+          "enabled": true,
+          "days": 90
+        }
+      }
+    ],
+    "nonMongoSpecificDiagnosticSettings": [
+      {
+        "category": "DataPlaneRequests",
+        "enabled": true,
+        "retentionPolicy": {
+          "enabled": true,
+          "days": 90
+        }
+      }
+    ],
+    "mongoDiagnosticSettings": "[concat(variables('commonDiagnosticSettings'), variables('mongoSpecificDiagnosticSettings'))]",
+    "nonMongoDiagnosticSettings": "[concat(variables('commonDiagnosticSettings'), variables('nonMongoSpecificDiagnosticSettings'))]",
+    "diagnosticSettings": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoDiagnosticSettings'), variables('nonMongoDiagnosticSettings'))]"
   },
   "resources": [
     {
@@ -110,7 +143,7 @@
           "apiVersion": "2021-05-01-preview",
           "type": "providers/diagnosticSettings",
           "name": "Microsoft.Insights/service",
-          "condition": "[variables('logDiagnosticSettingsEnabled')]",
+          "condition": "[variables('diagnosticSettingsEnabled')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbName'))]"
@@ -118,24 +151,7 @@
           "properties": {
             "logAnalyticsDestinationType": "Dedicated",
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
-            "logs": [
-              {
-                "category": "DataPlaneRequests",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
-              },
-              {
-                "category": "ControlPlaneRequests",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
-              }
-            ]
+            "logs": "[variables('diagnosticSettings')]"
           }
         }
       ]
