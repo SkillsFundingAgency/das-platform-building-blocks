@@ -145,7 +145,8 @@
           "connectionStrings": "[parameters('appServiceConnectionStrings').array]",
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
-          "minTlsVersion": "1.2"
+          "minTlsVersion": "1.2",
+          "ftpsState": "Disabled"
         },
         "httpsOnly": true
       },
@@ -167,7 +168,8 @@
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings').array, parameters('appServiceConnectionStrings').array)]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
-              "minTlsVersion": "1.2"
+              "minTlsVersion": "1.2",
+              "ftpsState": "Disabled"
             },
             "httpsOnly": true
           },
