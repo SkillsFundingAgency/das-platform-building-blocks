@@ -80,7 +80,8 @@
           "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
           "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
-          "minTlsVersion": "1.2"
+          "minTlsVersion": "1.2",
+          "ftpsState": "Disabled"
         },
         "httpsOnly": true
       }
