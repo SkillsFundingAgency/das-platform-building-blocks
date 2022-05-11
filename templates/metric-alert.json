@@ -59,7 +59,8 @@
             "defaultValue": "microsoft.insights/components",
             "allowedValues": [
                 "microsoft.insights/components",
-                "Microsoft.DataFactory/factories"
+                "Microsoft.DataFactory/factories",
+                "Microsoft.Network/applicationGateways"
             ],
             "metadata": {
                 "description": "Namespace of the metric."
