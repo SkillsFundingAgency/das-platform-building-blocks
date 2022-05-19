@@ -30,8 +30,8 @@ steps:
     $Projects = Get-ChildItem -Filter *.csproj -Recurse
     $ErrorFound = $false
     foreach ($Project in $Projects) {
-      dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
-      dotnet list $Project package --vulnerable  | Tee-Object -Variable Vulnerable
+      dotnet list $Project package --deprecated --include-transitive | Tee-Object -Variable Deprecated
+      dotnet list $Project package --vulnerable --include-transitive | Tee-Object -Variable Vulnerable
       $Errors = $Deprecated + $Vulnerable | Select-String '>'
 
       if ($Errors.Count -gt 0) {
