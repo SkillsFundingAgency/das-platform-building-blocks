@@ -31,7 +31,7 @@ steps:
     $ErrorFound = $false
     foreach ($Project in $Projects) {
       dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
-      if (([Version](dotnet --version)).Major -ge 6) {
+      if (([Version](dotnet --version)).Major -ge 5) {
         dotnet list $Project package --vulnerable --include-transitive | Tee-Object -Variable Vulnerable
       }
       $Errors = $Deprecated + $Vulnerable | Select-String '>'
