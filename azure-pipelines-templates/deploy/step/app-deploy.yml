@@ -4,7 +4,7 @@ parameters:
   DeploymentPackagePath: ''
 
 steps:
-- task: AzureRmWebAppDeployment@3
+- task: AzureRmWebAppDeployment@4
   displayName: Deploy Staging Slot - ${{ parameters.AppServiceName }}
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
