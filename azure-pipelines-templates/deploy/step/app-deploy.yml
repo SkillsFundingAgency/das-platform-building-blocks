@@ -15,7 +15,6 @@ steps:
     SlotName: staging
     Package: ${{ parameters.DeploymentPackagePath }}
     RemoveAdditionalFilesFlag: true
-    AdditionalArguments: -allowUntrusted
 
 - task: AzureAppServiceManage@0
   displayName: Start Staging Slot - ${{ parameters.AppServiceName }}
