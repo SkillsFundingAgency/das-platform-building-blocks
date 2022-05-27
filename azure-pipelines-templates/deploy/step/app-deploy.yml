@@ -10,11 +10,10 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     appType: webApp
     WebAppName: ${{ parameters.AppServiceName }}
-    DeployToSlotFlag: true
+    DeployToSlotOrASEFlag: true
     ResourceGroupName: $(ResourceGroupName)
     SlotName: staging
     Package: ${{ parameters.DeploymentPackagePath }}
-    UseWebDeploy: true
     RemoveAdditionalFilesFlag: true
     AdditionalArguments: -allowUntrusted
 
