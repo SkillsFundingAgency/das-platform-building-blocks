@@ -16,6 +16,7 @@ steps:
     Package: ${{ parameters.DeploymentPackagePath }}
     UseWebDeploy: true
     RemoveAdditionalFilesFlag: true
+    TakeAppOfflineFlag: false
 
 - task: AzureAppServiceManage@0
   displayName: Start Staging Slot - ${{ parameters.AppServiceName }}
