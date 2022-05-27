@@ -4,17 +4,16 @@ parameters:
   DeploymentPackagePath: ''
 
 steps:
-- task: AzureRmWebAppDeployment@3
+- task: AzureRmWebAppDeployment@4
   displayName: Deploy Staging Slot - ${{ parameters.AppServiceName }}
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     appType: webApp
     WebAppName: ${{ parameters.AppServiceName }}
-    DeployToSlotFlag: true
+    DeployToSlotOrASEFlag: true
     ResourceGroupName: $(ResourceGroupName)
     SlotName: staging
     Package: ${{ parameters.DeploymentPackagePath }}
-    UseWebDeploy: true
     RemoveAdditionalFilesFlag: true
 
 - task: AzureAppServiceManage@0
