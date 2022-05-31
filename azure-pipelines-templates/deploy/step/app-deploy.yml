@@ -16,6 +16,7 @@ steps:
     Package: ${{ parameters.DeploymentPackagePath }}
     RemoveAdditionalFilesFlag: true
     DeploymentType: zipDeploy
+    UseWebDeploy: true
 
 - task: AzureAppServiceManage@0
   displayName: Start Staging Slot - ${{ parameters.AppServiceName }}
