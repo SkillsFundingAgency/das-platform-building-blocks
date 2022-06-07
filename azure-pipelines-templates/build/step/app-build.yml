@@ -2,7 +2,6 @@ parameters:
   # if SonarCloud set to true you will need to manually create the project in SonarCloud by clicking '+' then 'Analyze new project` in https://sonarcloud.io/organizations/educationandskillsfundingagency/projects
   SonarCloud: true
   SonarCloudExtraProperties:
-  SonarCloudProjectKey:
   RunAcceptanceTests: false
 
 steps:
@@ -14,7 +13,7 @@ steps:
     organization: $(SonarCloudOrganisationKey)
     scannerMode: MSBuild
     projectName: "$(Build.DefinitionName)"
-    projectKey: "${{ parameters.SonarCloudProjectKey }}"
+    projectKey: ${{ replace(variables['Build.Repository.Name'], '/', '_') }}
     extraProperties: |
       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.opencover.xml
       ${{ parameters.SonarCloudExtraProperties }}
