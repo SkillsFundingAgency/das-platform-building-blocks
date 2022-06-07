@@ -207,15 +207,19 @@
   "outputs": {
     "storageKey": {
       "type": "string",
-      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+      "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
     },
     "storageConnectionString": {
       "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
     },
     "storagePrimaryEndpointsBlob": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName')), '2019-04-01').primaryEndpoints.blob]"
+      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').primaryEndpoints.blob]"
+    },
+    "storagePrimaryEndpointsWeb": {
+      "type": "string",
+      "value": "[if(equals(parameters('storageKind'), 'StorageV2'), reference(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2021-09-01').primaryEndpoints.web, '')]"
     },
     "storageResourceId": {
       "type": "string",
