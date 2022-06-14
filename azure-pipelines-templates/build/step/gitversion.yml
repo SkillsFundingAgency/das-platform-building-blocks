@@ -9,3 +9,4 @@ steps:
   inputs:
     useConfigFile: true
     configFilePath: GitVersion.yml
+    includePrerelease: false
