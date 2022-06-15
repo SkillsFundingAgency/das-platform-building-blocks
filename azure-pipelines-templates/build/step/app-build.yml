@@ -3,6 +3,7 @@ parameters:
   SonarCloud: true
   SonarCloudExtraProperties:
   RunAcceptanceTests: false
+  WorkingDirectory: $(Agent.BuildDirectory)/s/
 
 steps:
 - task: SonarCloudPrepare@1
@@ -24,6 +25,7 @@ steps:
     command: restore
     projects: 'src/**/*.csproj'
     noCache: true
+    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - pwsh: |
     $Projects = Get-ChildItem -Filter *.csproj -Recurse
@@ -41,7 +43,7 @@ steps:
       }
     }
     $ErrorFound ? $(exit 1) : $(exit 0)
-  workingDirectory:  $(Agent.BuildDirectory)/s/
+  workingDirectory: ${{ parameters.WorkingDirectory }}
   displayName: Package Scanning
   continueOnError: true
 
@@ -50,6 +52,7 @@ steps:
   inputs:
     projects: 'src/**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --no-restore'
+    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: DotNetCoreCLI@2
   displayName: Unit Tests
@@ -58,6 +61,7 @@ steps:
     projects: '**/*UnitTests.csproj'
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
+    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
@@ -67,6 +71,7 @@ steps:
     projects: '**/*.AcceptanceTests.csproj'
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
+    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
