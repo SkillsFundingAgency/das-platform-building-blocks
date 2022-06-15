@@ -3,7 +3,9 @@ parameters:
   SonarCloud: true
   SonarCloudExtraProperties:
   RunAcceptanceTests: false
-  WorkingDirectory: $(Agent.BuildDirectory)/s/
+  TargetProjects: 'src/**/*.csproj'
+  UnitTestProjects: '**/*UnitTests.csproj'
+  AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
 
 steps:
 - task: SonarCloudPrepare@1
@@ -23,12 +25,11 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: 'src/**/*.csproj'
+    projects: ${{ parameters.TargetProjects }}
     noCache: true
-    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - pwsh: |
-    $Projects = Get-ChildItem -Filter *.csproj -Recurse
+    $Projects = Get-ChildItem -Path ${{ parameters.TargetProjects }} -Recurse
     $ErrorFound = $false
     foreach ($Project in $Projects) {
       dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
@@ -43,35 +44,31 @@ steps:
       }
     }
     $ErrorFound ? $(exit 1) : $(exit 0)
-  workingDirectory: ${{ parameters.WorkingDirectory }}
   displayName: Package Scanning
   continueOnError: true
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: 'src/**/*.csproj'
+    projects:  ${{ parameters.TargetProjects }}
     arguments: '--configuration $(buildConfiguration) --no-restore'
-    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: DotNetCoreCLI@2
   displayName: Unit Tests
   inputs:
     command: test
-    projects: '**/*UnitTests.csproj'
+    projects: ${{ parameters.UnitTestProjects }}
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
-    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: DotNetCoreCLI@2
   displayName: Acceptance Tests
   condition: ${{ parameters.RunAcceptanceTests }}
   inputs:
     command: test
-    projects: '**/*.AcceptanceTests.csproj'
+    projects: ${{ parameters.AcceptanceTestProjects }}
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
-    workingDirectory: ${{ parameters.WorkingDirectory }}
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
