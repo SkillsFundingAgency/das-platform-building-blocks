@@ -28,7 +28,7 @@ steps:
     arguments: -f ${{parameters.ManifestFile}}
     outputFormat: ${{parameters.OutputFormat}}
 - task: Kubernetes@1
-  condition: and(succeeded(), eq(variables.VerifyDeployment, 'true'))
+  condition: and(succeeded(), eq(${{parameters.VerifyDeployment}}, 'true'))
   displayName: rollout status deployment ${{parameters.DeploymentName}}
   inputs:
     connectionType: 'Azure Resource Manager'
