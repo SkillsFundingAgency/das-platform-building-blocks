@@ -3,6 +3,7 @@ parameters:
   SonarCloud: true
   SonarCloudExtraProperties:
   RunAcceptanceTests: false
+  SonarCloudProjectKey: ''
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
@@ -16,7 +17,10 @@ steps:
     organization: $(SonarCloudOrganisationKey)
     scannerMode: MSBuild
     projectName: "$(Build.DefinitionName)"
-    projectKey: ${{ replace(variables['Build.Repository.Name'], '/', '_') }}
+    ${{ if eq(parameters.SonarCloudProjectKey, '') }}:
+      projectKey: ${{ replace(variables['Build.Repository.Name'], '/', '_') }}
+    ${{ else }}:
+      projectKey: ${{ parameters.SonarCloudProjectKey }}
     extraProperties: |
       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.opencover.xml
       ${{ parameters.SonarCloudExtraProperties }}
