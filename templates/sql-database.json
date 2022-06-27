@@ -148,7 +148,8 @@
             "retentionDays": 35
           },
           "dependsOn": [
-            "[parameters('databaseName')]"
+            "[parameters('databaseName')]",
+            "current"
           ]
         }
       ]
