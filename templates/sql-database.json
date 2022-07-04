@@ -138,6 +138,19 @@
           "dependsOn": [
             "[parameters('databaseName')]"
           ]
+        },
+        {
+          "name": "default",
+          "type": "backupShortTermRetentionPolicies",
+          "apiVersion": "2021-11-01-preview",
+          "properties": {
+            "diffBackupIntervalInHours": 24,
+            "retentionDays": 35
+          },
+          "dependsOn": [
+            "[parameters('databaseName')]",
+            "current"
+          ]
         }
       ]
     },
