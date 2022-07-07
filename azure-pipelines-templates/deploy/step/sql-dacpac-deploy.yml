@@ -19,6 +19,7 @@ parameters:
 - name: SqlPassword
 
 steps:
+# this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
 - task: PowerShell@2
   displayName: Check for BlockOnPossibleDataLoss override
   inputs:
