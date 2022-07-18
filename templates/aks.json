@@ -150,71 +150,85 @@
         "azure",
         "kubenet"
       ]
+    },
+    "apiServerAuthorizedIPRanges": {
+      "type": "array",
+      "metadata": {
+        "documentation": "https://docs.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges"
+      }
     }
   },
   "variables": {
     "agentPoolProfile": {
-      "withMode": [{
-        "name": "[parameters('agentPoolName')]",
-        "count": "[parameters('agentNodeCount')]",
-        "vmSize": "[parameters('agentVMSize')]",
-        "osType": "Linux",
-        "mode": "System",
-        "vnetSubnetID": "[variables('vnetSubnetID')]",
-        "type": "VirtualMachineScaleSets",
-        "storageProfile": "ManagedDisks"
-      }],
-      "withoutMode": [{
-        "name": "[parameters('agentPoolName')]",
-        "count": "[parameters('agentNodeCount')]",
-        "vmSize": "[parameters('agentVMSize')]",
-        "osType": "Linux",
-        "vnetSubnetID": "[variables('vnetSubnetID')]",
-        "type": "VirtualMachineScaleSets",
-        "storageProfile": "ManagedDisks"
-      }]
+      "withMode": [
+        {
+          "name": "[parameters('agentPoolName')]",
+          "count": "[parameters('agentNodeCount')]",
+          "vmSize": "[parameters('agentVMSize')]",
+          "osType": "Linux",
+          "mode": "System",
+          "vnetSubnetID": "[variables('vnetSubnetID')]",
+          "type": "VirtualMachineScaleSets",
+          "storageProfile": "ManagedDisks"
+        }
+      ],
+      "withoutMode": [
+        {
+          "name": "[parameters('agentPoolName')]",
+          "count": "[parameters('agentNodeCount')]",
+          "vmSize": "[parameters('agentVMSize')]",
+          "osType": "Linux",
+          "vnetSubnetID": "[variables('vnetSubnetID')]",
+          "type": "VirtualMachineScaleSets",
+          "storageProfile": "ManagedDisks"
+        }
+      ]
     },
     "aksBaseProperties": {
-        "kubernetesVersion": "[parameters('kubernetesVersion')]",
-        "dnsPrefix": "[parameters('clusterName')]",
-        "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
-        "addonProfiles": {
-          "omsagent": {
-            "enabled": true,
-            "config": {
-              "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsId')]"
-            }
+      "kubernetesVersion": "[parameters('kubernetesVersion')]",
+      "dnsPrefix": "[parameters('clusterName')]",
+      "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
+      "addonProfiles": {
+        "omsagent": {
+          "enabled": true,
+          "config": {
+            "logAnalyticsWorkspaceResourceID": "[variables('logAnalyticsId')]"
           }
-        },
-        "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
-        "enableRBAC": true,
-        "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
-        "networkProfile": {
-          "networkPlugin": "[parameters('networkPlugin')]",
-          "serviceCidr": "[parameters('serviceCidr')]",
-          "dnsServiceIP": "[parameters('dnsServiceIp')]",
-          "podCidr": "[parameters('podCidr')]",
-          "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
         }
+      },
+      "nodeResourceGroup": "[parameters('nodeResourceGroup')]",
+      "enableRBAC": true,
+      "aadProfile": "[if(empty(parameters('adminGroupObjectId')), variables('aadProfile').configured, variables('aadProfile').managed)]",
+      "networkProfile": {
+        "networkPlugin": "[parameters('networkPlugin')]",
+        "serviceCidr": "[parameters('serviceCidr')]",
+        "dnsServiceIP": "[parameters('dnsServiceIp')]",
+        "podCidr": "[parameters('podCidr')]",
+        "dockerBridgeCidr": "[parameters('dockerBridgeCidr')]"
+      },
+      "apiServerAccessProfile": {
+        "authorizedIPRanges": "[parameters('apiServerAuthorizedIPRanges')]",
+        "enablePrivateCluster": false
+      }
     },
     "aadProfile": {
       "configured": {
-          "clientAppID": "[parameters('rbacClientAppId')]",
-          "serverAppID": "[parameters('rbacServerAppId')]",
-          "serverAppSecret": "[parameters('rbacServerAppSecret')]",
-          "tenantID": "[parameters('rbacTenantId')]"
-        },
-        "managed": {
-          "managed": true,
-          "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
-        }
+        "clientAppID": "[parameters('rbacClientAppId')]",
+        "serverAppID": "[parameters('rbacServerAppId')]",
+        "serverAppSecret": "[parameters('rbacServerAppSecret')]",
+        "tenantID": "[parameters('rbacTenantId')]"
+      },
+      "managed": {
+        "managed": true,
+        "adminGroupObjectIDs": "[array(parameters('adminGroupObjectId'))]"
+      }
     },
     "emptyObject": {},
     "logAnalyticsId": "[resourceId(parameters('logAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
     "servicePrincipalProfile": {
       "servicePrincipalProfile": {
-          "clientId": "[parameters('servicePrincipalClientId')]",
-          "secret": "[parameters('servicePrincipalSecret')]"
+        "clientId": "[parameters('servicePrincipalClientId')]",
+        "secret": "[parameters('servicePrincipalSecret')]"
       }
     },
     "vnetSubnetId": "[resourceId(parameters('virtualNetworkResourceGroup'),'Microsoft.Network/virtualNetworks/subnets',parameters('virtualNetworkName'),parameters('subnetName'))]",
