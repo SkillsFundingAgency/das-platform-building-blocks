@@ -47,6 +47,16 @@ steps:
     SourceSlot: staging
 
 - task: AzureAppServiceManage@0
+  displayName: Cancel Slot Swap so Slots are never left in a pending Swap state
+  condition: always()
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    Action: Cancel Swap
+    WebAppName: ${{ parameters.AppServiceName }}
+    ResourceGroupName: $(ResourceGroupName)
+    Slot: production
+
+- task: AzureAppServiceManage@0
   displayName: Stop Staging Slot - ${{ parameters.AppServiceName }}
   condition: always()
   inputs:
