@@ -110,6 +110,14 @@
                   "enabled": true,
                   "days": 90
                 }
+              },
+              {
+                "category": "RuntimeAuditLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": 90
+                }
               }
             ]
           }
