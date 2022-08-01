@@ -2,7 +2,7 @@ parameters:
   # if SonarCloud set to true you will need to manually create the project in SonarCloud by clicking '+' then 'Analyze new project` in https://sonarcloud.io/organizations/educationandskillsfundingagency/projects
   SonarCloud: true
   SonarCloudExtraProperties:
-  RunAcceptanceTests: false
+  RunAcceptanceTests: true
   SonarCloudProjectKey: ''
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
