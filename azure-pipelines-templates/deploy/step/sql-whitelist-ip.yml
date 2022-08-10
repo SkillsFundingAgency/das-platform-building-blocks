@@ -1,0 +1,20 @@
+parameters:
+  ServiceConnection:
+  SQLServerName:
+  ReturnIPSite: https://ifconfig.me/ip
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Get Agent IP address'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Get-MyIpAddress.ps1'
+    ScriptArguments: '-WhatsMyIpUrl ${{ parameters.ReturnIPSite }}'
+    azurePowerShellVersion: LatestVersion
+- task: AzurePowerShell@5
+  displayName: 'Whitelist Agent IP address on SQL Server'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Add-AzSqlIpException.ps1'
+    ScriptArguments: '-Name $(Build.DefinitionName) -IPAddress $(IPAddress) -ResourceNamePattern ${{ parameters.SQLServerName }}'
+    azurePowerShellVersion: LatestVersion

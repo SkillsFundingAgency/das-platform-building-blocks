@@ -1,0 +1,18 @@
+parameters:
+  ServiceConnection:
+  SQLServerName:
+  IPAddress:
+  AlwaysRun: true
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Remove IP address from SQL Server'
+  ${{ if eq(parameters.AlwaysRun, true) }}:
+    condition: always()
+  ${{ if ne(parameters.AlwaysRun, true) }}:
+    condition: succeeded()
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Remove-AzSqlIpException.ps1'
+    ScriptArguments: '-Name $(Build.DefinitionName) -IPAddress ${{ parameters.IPAddress }} -ResourceNamePattern ${{ parameters.SQLServerName }}'
+    azurePowerShellVersion: LatestVersion
