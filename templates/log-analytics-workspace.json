@@ -48,7 +48,10 @@
         },
         "retentionInDays": "[parameters('dataRetentionDays')]",
         "publicNetworkAccessForIngestion": "[parameters('publicNetworkAccessForIngestion')]",
-        "publicNetworkAccessForQuery": "[parameters('publicNetworkAccessForQuery')]"
+        "publicNetworkAccessForQuery": "[parameters('publicNetworkAccessForQuery')]",
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        }
       }
     }
   ],
