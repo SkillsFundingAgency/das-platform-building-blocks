@@ -1,5 +1,4 @@
 parameters:
-  ServiceConnection:
   EnvironmentId:
   PipelineName:
   RunId:
@@ -8,12 +7,11 @@ parameters:
 
 steps:
 - checkout: das-platform-automation
-- task: AzurePowerShell@5
+- task: PowerShell@2
   displayName: Wait for running deployments
   inputs:
-    azureSubscription: ${{ parameters.ServiceConnection }}
-    scriptPath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
-    scriptArguments:
+    filePath: das-platform-automation/Infrastructure-Scripts/Wait-AzureDevOpsDeployment.ps1
+    arguments:
       -AzureDevOpsOrganisationUri "$(System.CollectionUri)" `
       -AzureDevOpsProjectName $(System.TeamProjectId) `
       -EnvironmentId ${{ parameters.EnvironmentId }} `
@@ -21,7 +19,6 @@ steps:
       -RunId ${{ parameters.RunId }} `
       -SleepTime ${{ parameters.SleepTime }} `
       -RetryLimit ${{ parameters.RetryLimit }}
-    azurePowerShellVersion: LatestVersion
     pwsh: true
   env:
     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
