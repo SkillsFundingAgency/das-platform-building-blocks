@@ -14,9 +14,12 @@ parameters:
   - windows
 - name: WorkingDirectory
   default: $(Build.SourcesDirectory)
+- name: timeoutInMinutes
+  default: 60
 
 steps:
 - task: AzureCLI@2
+  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   displayName: 'Build Image with build number tag'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
