@@ -25,7 +25,7 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     scriptLocation: inlineScript
-    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) --platform ${{ parameters.Platform }} ${{ parameters.AdditionalArgs }} .'
+    inlineScript: 'az acr build --registry ${{ parameters.ContainerRegistryName }} --image ${{ parameters.ImageName }}:$(build.buildnumber) --platform ${{ parameters.Platform }} --timeout $(${{parameters.timeoutInMinutes}} * 60) ${{ parameters.AdditionalArgs }} .'
     workingDirectory: ${{ parameters.WorkingDirectory }}
 - task: AzureCLI@2
   displayName: 'Import Image with latest tag if branch matches BranchToCreateLatestTag parameter'
