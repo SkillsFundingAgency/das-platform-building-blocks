@@ -189,6 +189,9 @@
       "dnsPrefix": "[parameters('clusterName')]",
       "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
       "addonProfiles": {
+        "azurepolicy": {
+          "enabled": true
+        },
         "omsagent": {
           "enabled": true,
           "config": {
