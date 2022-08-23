@@ -52,14 +52,6 @@
     "logAnalyticsWorkspaceResourceGroupName": {
       "type": "string",
       "defaultValue": ""
-    },
-    "backupRetentionPeriod":{
-      "type": "string",
-      "allowedValues": [
-        "Continuous30Days",
-        "Continuous7Days"
-      ],
-      "defaultValue": "Continuous30Days"
     }
   },
   "variables": {
@@ -73,10 +65,7 @@
         "defaultConsistencyLevel": "[parameters('defaultConsistencyLevel')]"
       },
       "backupPolicy": {
-        "type": "Continuous",
-        "continuousModeProperties": {
-          "tier": "[parameters('backupRetentionPeriod')]"
-        }
+        "type": "Continuous"
       },
       "databaseAccountOfferType": "Standard",
       "ipRules": "[variables('ipRulesCopy')]",
@@ -148,7 +137,7 @@
     {
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2022-05-15-preview",
+      "apiVersion": "2022-05-15",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]",
