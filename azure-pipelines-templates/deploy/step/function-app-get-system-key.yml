@@ -1,0 +1,18 @@
+parameters:
+  ServiceConnection:
+  FunctionAppName:
+  OutputVariableName:
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Set function app ${{ parameters.FunctionAppName }} system key durabletask_extension as secret environment variable'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    scriptType: inlineScript
+    inline: |
+      $FunctionAppSystemKey = (Get-AzResource -Name ${{ parameters.FunctionAppName }} -ResourceType "Microsoft.Web/sites" |
+        Invoke-AzResourceAction -Action host/default/listkeys -Force).systemKeys.durabletask_extension
+      Write-Output "Setting secret variable ${{ parameters.OutputVariableName }}"
+      Write-Output "##vso[task.setvariable variable=${{ parameters.OutputVariableName }};isreadonly=true;issecret=true]$FunctionAppSystemKey"
+    pwsh: true
+    azurePowerShellVersion: LatestVersion
