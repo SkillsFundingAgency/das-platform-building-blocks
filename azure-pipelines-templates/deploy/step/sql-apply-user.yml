@@ -39,18 +39,20 @@ steps:
         -Grants ${{parameters.Grants }}
         -DryRun ${{ parameters.DryRun }}
 - pwsh: |
-    $Error = $false
+    $LogWarning = $false
     $RedundantRoles = "$(RedundantRoles)"
     $RedundantGrants = "$(RedundantGrants)"
     if ($RedundantRoles) {
-      Write-Host "##vso[task.logissue type=warning] Redundant roles $RedundantRoles"
-      $Error = $true
+      Write-Host "##vso[task.logissue type=warning] Redundant roles:"
+      Write-Host ($RedundantRoles | ft | Out-String)
+      $LogWarning = $true
     }
-    if ($RedundantRoles) {
-      Write-Host "##vso[task.logissue type=warning] Redundant grants $RedundantGrants"
-      $Error = $true
+    if ($RedundantGrants) {
+      Write-Host "##vso[task.logissue type=warning] Redundant grants:"
+      Write-Host ($RedundantGrants | ft | Out-String)
+      $LogWarning = $true
     }
     
-    $Error ? exit 1 : exit 0
+    $LogWarning ? $(exit 1) : $(exit 0)
   displayName: Log redundant role/grants
   continueOnError: true
