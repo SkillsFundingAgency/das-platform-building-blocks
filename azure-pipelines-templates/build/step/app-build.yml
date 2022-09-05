@@ -33,7 +33,7 @@ steps:
     noCache: true
 
 - pwsh: |
-    $TargetPatterns = "${{ parameters.TargetProjects }}".Split("\n")
+    $TargetPatterns = "${{ parameters.TargetProjects }}".Split("`n")
     $TargetPatterns | ForEach-Object {
       $Projects = Get-ChildItem -Path $_ -Recurse
       $ErrorFound = $false
