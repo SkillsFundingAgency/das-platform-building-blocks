@@ -34,6 +34,7 @@ steps:
 
 - pwsh: |
     $TargetPatterns = "${{ parameters.TargetProjects }}".Split("`n")
+    $TargetPatterns
     $ErrorFound = $false
     $TargetPatterns | ForEach-Object {
       $Projects = Get-ChildItem -Path $_ -Recurse
@@ -45,12 +46,11 @@ steps:
         $Errors = $Deprecated + $Vulnerable | Select-String '>'
 
         if ($Errors.Count -gt 0) {
-          Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
           $ErrorFound = $true
         }
       }
     }
-    $ErrorFound ? $(exit 1) : $(exit 0)
+    $ErrorFound ? Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above";$(exit 1) : $(exit 0)
   displayName: Package Scanning
   continueOnError: true
 
