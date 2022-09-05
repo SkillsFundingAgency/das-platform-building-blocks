@@ -34,9 +34,9 @@ steps:
 
 - pwsh: |
     $TargetPatterns = "${{ parameters.TargetProjects }}".Split("`n")
+    $ErrorFound = $false
     $TargetPatterns | ForEach-Object {
       $Projects = Get-ChildItem -Path $_ -Recurse
-      $ErrorFound = $false
       foreach ($Project in $Projects) {
         dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
         if (([Version](dotnet --version)).Major -ge 5) {
@@ -49,8 +49,8 @@ steps:
           $ErrorFound = $true
         }
       }
-      $ErrorFound ? $(exit 1) : $(exit 0)
     }
+    $ErrorFound ? $(exit 1) : $(exit 0)
   displayName: Package Scanning
   continueOnError: true
 
