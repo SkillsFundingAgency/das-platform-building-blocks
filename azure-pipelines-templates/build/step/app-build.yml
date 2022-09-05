@@ -33,7 +33,7 @@ steps:
     noCache: true
 
 - pwsh: |
-    $TargetPatterns = "${{ parameters.TargetProjects }}".Split("`n")
+    $TargetPatterns = "${{ parameters.TargetProjects }}".Trim().Split("`n")
     $TargetPatterns
     $ErrorFound = $false
     $TargetPatterns | ForEach-Object {
