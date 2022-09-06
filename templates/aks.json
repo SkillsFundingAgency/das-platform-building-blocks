@@ -212,6 +212,14 @@
       "apiServerAccessProfile": {
         "authorizedIPRanges": "[parameters('apiServerAuthorizedIPRanges')]",
         "enablePrivateCluster": false
+      },
+      "securityProfile": {
+        "defender": {
+          "logAnalyticsWorkspaceResourceId": "[variables('logAnalyticsId')]",
+          "securityMonitoring": {
+            "enabled": true
+          }
+        }
       }
     },
     "aadProfile": {
