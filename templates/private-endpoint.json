@@ -1,0 +1,67 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "privateEndpointName": {
+      "type": "string"
+    },
+    "subnetId": {
+      "type": "string"
+    },
+    "privateLinkGroupIds": {
+      "type": "array"
+    },
+    "privateLinkServiceId": {
+      "type": "string"
+    },
+    "privateDnsZoneId": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('privateEndpointName')]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-01-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        },
+        "customNetworkInterfaceName": "[concat(parameters('privateEndpointName'),'-nic')]",
+        "privateLinkServiceConnections": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateLinkServiceId": "[parameters('privateLinkServiceId')]",
+              "groupIds": "[parameters('privateLinkGroupIds')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('privateEndpointName'),'/default')]",
+      "condition": "[greater(length(parameters('privateDnsZoneId')), 0)]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-01-01",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneId')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[parameters('privateEndpointName')]"
+      ]
+    }
+  ],
+  "outputs": {}
+}
