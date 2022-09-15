@@ -1,15 +1,21 @@
 parameters:
-  ServiceConnection: ''
-  SourcePath: ''
-  TargetFileName: ''
+  ServiceConnection:
+  SourcePath:
+  TargetFileName:
   TableName: ''
 
 steps:
-- task: apprenticeship-service.GenerateEnvironmentConfiguration.custom-build-task.GenerateEnvironmentConfiguration@3
-  displayName: 'Generate Configuration'
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: New-ConfigurationTableEntry
   inputs:
-    ServiceConnectionName: ${{ parameters.ServiceConnection }}
-    SourcePath: ${{ parameters.SourcePath }}
-    TargetFilename: ${{ parameters.TargetFileName }}
-    StorageAccountName: '$(ConfigurationStorageAccountName)'
-    TableName: ${{ parameters.TableName }}
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    scriptPath: das-platform-automation/Infrastructure-Scripts/New-ConfigurationTableEntry/New-ConfigurationTableEntry.ps1
+    scriptArguments:
+      -SourcePath = ${{ parameters.SourcePath }}
+      -TargetFilename = ${{ parameters.TargetFileName }}
+      -StorageAccountName = '$(ConfigurationStorageAccountName)'
+      -StorageAccountResourceGroup = '$(SharedEnvResourceGroup)'
+      -EnvironmentName   = '$(EnvironmentName)'
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
