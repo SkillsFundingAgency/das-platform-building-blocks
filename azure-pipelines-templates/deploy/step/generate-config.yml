@@ -12,10 +12,10 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/New-ConfigurationTableEntry/New-ConfigurationTableEntry.ps1
     scriptArguments:
-      -SourcePath = ${{ parameters.SourcePath }}
-      -TargetFilename = ${{ parameters.TargetFileName }}
-      -StorageAccountName = '$(ConfigurationStorageAccountName)'
-      -StorageAccountResourceGroup = '$(SharedEnvResourceGroup)'
-      -EnvironmentName   = '$(EnvironmentName)'
+      -SourcePath ${{ parameters.SourcePath }}
+      -TargetFilename ${{ parameters.TargetFileName }}
+      -StorageAccountName '$(ConfigurationStorageAccountName)'
+      -StorageAccountResourceGroup '$(SharedEnvResourceGroup)'
+      -EnvironmentName '$(EnvironmentName)'
     azurePowerShellVersion: LatestVersion
     pwsh: true
