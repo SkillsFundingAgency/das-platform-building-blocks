@@ -1,9 +1,9 @@
 parameters:
   ServiceConnection:
   SourcePath:
-  TargetFileName:
+  TargetFileName: '*.schema.json'
   ConfigurationSecrets: {}
-  TableName: ''
+  TableName: 'Configuration'
 
 steps:
 - checkout: das-platform-automation
