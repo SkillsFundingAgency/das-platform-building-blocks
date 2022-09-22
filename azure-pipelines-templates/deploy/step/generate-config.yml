@@ -8,7 +8,7 @@ parameters:
 steps:
 - checkout: das-platform-automation
 - task: AzurePowerShell@5
-  displayName: New-ConfigurationTableEntry
+  displayName: 'Generate Configuration'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptPath: das-platform-automation/Infrastructure-Scripts/New-ConfigurationTableEntry/New-ConfigurationTableEntry.ps1
