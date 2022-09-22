@@ -21,6 +21,7 @@ steps:
       -StorageAccountName ${{ parameters.StorageAccountName }}
       -StorageAccountResourceGroup ${{ parameters.StorageAccountResourceGroup }}
       -EnvironmentName ${{ parameters.EnvironmentName }}
+      -TableName ${{ parameters.TableName }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
   env: ${{ parameters.ConfigurationSecrets }}
