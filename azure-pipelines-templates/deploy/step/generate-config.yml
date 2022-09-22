@@ -1,6 +1,9 @@
 parameters:
+  EnvironmentName:
   ServiceConnection:
   SourcePath:
+  StorageAccountName:
+  StorageAccountResourceGroup:
   TargetFileName: '*.schema.json'
   ConfigurationSecrets: {}
   TableName: 'Configuration'
@@ -15,9 +18,9 @@ steps:
     scriptArguments:
       -SourcePath ${{ parameters.SourcePath }}
       -TargetFilename ${{ parameters.TargetFileName }}
-      -StorageAccountName '$(ConfigurationStorageAccountName)'
-      -StorageAccountResourceGroup '$(SharedEnvResourceGroup)'
-      -EnvironmentName '$(EnvironmentName)'
+      -StorageAccountName ${{ parameters.StorageAccountName }}
+      -StorageAccountResourceGroup ${{ parameters.StorageAccountResourceGroup }}
+      -EnvironmentName ${{ parameters.EnvironmentName }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
   env: ${{ parameters.ConfigurationSecrets }}
