@@ -17,9 +17,15 @@
     "privateDnsZoneId": {
       "type": "string",
       "defaultValue": ""
+    },
+    "manualApproval": {
+      "type": "bool",
+      "defaultValue": false
     }
   },
-  "variables": {},
+  "variables": {
+    "privateEndpointServiceConnectionType": "[if(parameters('manualApproval'),'manualPrivateLinkServiceConnections','privateLinkServiceConnections')]"
+  },
   "resources": [
     {
       "name": "[parameters('privateEndpointName')]",
@@ -32,7 +38,7 @@
           "id": "[parameters('subnetId')]"
         },
         "customNetworkInterfaceName": "[concat(parameters('privateEndpointName'),'-nic')]",
-        "privateLinkServiceConnections": [
+        "[variables('privateEndpointServiceConnectionType')]": [
           {
             "name": "[parameters('privateEndpointName')]",
             "properties": {
