@@ -38,7 +38,7 @@
           "id": "[parameters('subnetId')]"
         },
         "customNetworkInterfaceName": "[concat(parameters('privateEndpointName'),'-nic')]",
-        "[variables('privateEndpointServiceConnectionType')]": [
+        "manualPrivateLinkServiceConnections": [
           {
             "name": "[parameters('privateEndpointName')]",
             "properties": {
