@@ -54,12 +54,36 @@
       "metadata": {
         "description": "Bool used to determine whether Runtime Scale Monitoring will be enabled for the given function app"
       }
+    },
+    "netFrameworkVersion": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "",
+        "v6.0"
+      ],
+      "metadata": {
+        "description": ".NET version of project, e.g. v6.0, needed for runtime version ~4 onwards",
+        "link": "https://learn.microsoft.com/en-us/answers/questions/835272/azure-functions-pinned-to-unsupported-dotnet-runti.html"
+      }
     }
   },
   "variables": {
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
-    "functionAppApiVersion": "2019-08-01"
+    "functionAppApiVersion": "2019-08-01",
+    "baseSiteConfig": {
+      "appSettings": "[parameters('functionAppAppSettings').array]",
+      "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
+      "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+      "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
+      "minTlsVersion": "1.2",
+      "ftpsState": "Disabled"
+    },
+    "siteConfigNetFrameworkVersion": {
+      "netFrameworkVersion": "[parameters('netFrameworkVersion')]"
+    },
+    "siteConfig": "[if(greater(length(parameters('netFrameworkVersion')),0), union(variables('baseSiteConfig'), variables('siteConfigNetFrameworkVersion')), variables('baseSiteConfig'))]"
   },
   "resources": [
     {
@@ -74,15 +98,7 @@
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
-        "siteConfig": {
-          "alwaysOn": "[if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')]",
-          "appSettings": "[parameters('functionAppAppSettings').array]",
-          "connectionStrings": "[parameters('functionAppConnectionStrings').array]",
-          "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
-          "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
-          "minTlsVersion": "1.2",
-          "ftpsState": "Disabled"
-        },
+        "siteConfig": "[union(createObject('alwaysOn', if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')), variables('siteConfig'))]",
         "httpsOnly": true
       }
     },
