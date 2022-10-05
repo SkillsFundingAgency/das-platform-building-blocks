@@ -43,7 +43,8 @@
             "name": "[parameters('privateEndpointName')]",
             "properties": {
               "privateLinkServiceId": "[parameters('privateLinkServiceId')]",
-              "groupIds": "[parameters('privateLinkGroupIds')]"
+              "groupIds": "[parameters('privateLinkGroupIds')]",
+              "requestMessage": "[concat('Requested via private endpoint deployment: ', parameters('privateEndpointName'))]"
             }
           }
         ]
