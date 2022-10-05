@@ -1,0 +1,17 @@
+parameters:
+  ServiceConnection:
+  ResourceName:
+  AlwaysRun: true
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Remove IP address from App Service'
+  ${{ if eq(parameters.AlwaysRun, true) }}:
+    condition: always()
+  ${{ if ne(parameters.AlwaysRun, true) }}:
+    condition: succeeded()
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Remove-AppServiceIpException.ps1'
+    ScriptArguments: '-ResourceName ${{ parameters.ResourceName }} -IPAddress $(IPAddress)'
+    azurePowerShellVersion: LatestVersion
