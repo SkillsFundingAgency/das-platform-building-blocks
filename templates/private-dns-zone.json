@@ -3,11 +3,17 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "dnsZoneName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Private DNS Zone name as per: https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns#azure-services-dns-zone-configuration"
+      }
     },
     "vnetId": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional - ResourceId of the Virtual Network to link with the Private DNS Zone"
+      }
     }
   },
   "variables": {},

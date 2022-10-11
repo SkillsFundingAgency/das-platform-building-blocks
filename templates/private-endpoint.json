@@ -3,24 +3,42 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "privateEndpointName": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "Name used for private endpoint"
+      }
     },
     "subnetId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "ResourceId of the subnet to associate with the private endpoint"
+      }
     },
     "privateLinkGroupIds": {
-      "type": "array"
+      "type": "array",
+      "metadata": {
+        "description": "The resource id of private link service. i.e sqlServer"
+      }
     },
     "privateLinkServiceId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "ResourceId of the resource to link the private endpoint is for"
+      }
     },
     "privateDnsZoneId": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "",
+      "metadata": {
+        "description": "ResourceId of the private dns zone to associate with"
+      }
     },
     "manualApproval": {
       "type": "bool",
-      "defaultValue": false
+      "defaultValue": false,
+      "metadata": {
+        "description": "Boolean flag to determine manual or automatic private endpoint approval"
+      }
     }
   },
   "variables": {
