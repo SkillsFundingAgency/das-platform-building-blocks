@@ -1,0 +1,21 @@
+parameters:
+  ServiceConnection:
+  ResourceName:
+  RuleName:
+  ReturnIPSite: https://ifconfig.me/ip
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Get Agent IP address'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Get-MyIpAddress.ps1'
+    ScriptArguments: '-WhatsMyIpUrl ${{ parameters.ReturnIPSite }}'
+    azurePowerShellVersion: LatestVersion
+- task: AzurePowerShell@5
+  displayName: 'Whitelist Agent IP address on App Service'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Add-AppServiceIpException.ps1'
+    ScriptArguments: '-ResourceName ${{ parameters.ResourceName }} -RuleName ${{ parameters.RuleName }} -IPAddress $(IPAddress)'
+    azurePowerShellVersion: LatestVersion
