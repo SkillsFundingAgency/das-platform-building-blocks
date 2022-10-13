@@ -4,9 +4,9 @@ Two new building block templates added to allow pipelines to be whitelisted on a
 
 Addition of the following files -
 
-[appservice-whitelist-ip.yml]
+[appservice-whitelist-ip.yml](https://github.com/SkillsFundingAgency/das-platform-building-blocks/tree/master/azure-pipelines-templates/deploy/step/appservice-whitelist-ip.yml)
 
-[appservice-remove-ip.yml]
+[appservice-remove-ip.yml](https://github.com/SkillsFundingAgency/das-platform-building-blocks/tree/master/azure-pipelines-templates/deploy/step/appservice-remove-ip.yml)
 
 # 2.0.0
 
