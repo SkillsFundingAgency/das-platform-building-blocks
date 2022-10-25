@@ -1,3 +1,13 @@
+# 2.1.0
+
+Addition to the app-build.yml azure-pipelines-template to comment on a Pull Request if the Package Scanning step detects any vulnerabilities.
+
+# 2.0.3
+
+Addition of two azure-pipelines-templates to allow app services including function apps to whitelist and remove the whilist of the pipeline agents.
+
+Needed for automation test suite pipelines.
+
 # 2.0.1
 
 Two new building block templates added to allow pipelines to be whitelisted on a singular or multiple app services and then be removed again.
