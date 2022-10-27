@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.14
+        with:
+          versionSpec: "5.x"
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.14
+        with:
+          useConfigFile: true
+      - name: Create Release
+        id: create_release
+        continue-on-error: true
+        run: gh release create ${{ steps.gitversion.outputs.majorMinorPatch }} --title "${{ steps.gitversion.outputs.majorMinorPatch }} - ${{ github.event.head_commit.message }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
