@@ -1,3 +1,7 @@
+# 2.2.0
+
+Migrated from azure-pipelines.yml to .github/workflows/release.yml to avoid PAT token usage.
+
 # 2.1.0
 
 Addition to the app-build.yml azure-pipelines-template to comment on a Pull Request if the Package Scanning step detects any vulnerabilities.
