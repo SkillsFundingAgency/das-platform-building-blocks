@@ -1,3 +1,7 @@
+# 2.1.1
+
+Removed unused azure-pipelines-templates/deploy/job/arm-deploy.yml and moved placeholder file.
+
 # 2.1.0
 
 templates/cosmos-db.json: Set backupPolicy to Continuous mode (30 days) for Azure Cosmos DB accounts.
