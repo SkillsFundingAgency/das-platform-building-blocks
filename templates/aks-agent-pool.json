@@ -100,6 +100,13 @@
       "metadata": {
         "description": "The maximum amount of nodes to autoscale up to."
       }
+    },
+    "osDiskSizeGB": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "description": "Default of 0 will apply the default osDisk size according to the vmSize specified."
+      }
     }
   },
   "variables": {
@@ -108,6 +115,7 @@
       "count": "[parameters('agentNodeCount')]",
       "vmSize": "[parameters('agentVmSize')]",
       "osType": "[parameters('osType')]",
+      "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
       "storageProfile": "ManagedDisks",
       "type": "VirtualMachineScaleSets",
       "vnetSubnetID": "[variables('vnetSubnetId')]",
