@@ -146,7 +146,8 @@
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
           "minTlsVersion": "1.2",
-          "ftpsState": "Disabled"
+          "ftpsState": "Disabled",
+          "numberOfWorkers": 5
         },
         "httpsOnly": true
       },
@@ -169,7 +170,8 @@
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
               "minTlsVersion": "1.2",
-              "ftpsState": "Disabled"
+              "ftpsState": "Disabled",
+              "numberOfWorkers": 5
             },
             "httpsOnly": true
           },

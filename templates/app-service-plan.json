@@ -50,10 +50,12 @@
         "name": "[parameters('appServicePlanName')]",
         "hostingEnvironmentProfile": {
           "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('aseResourceGroup'), '/providers/Microsoft.Web/hostingEnvironments/', parameters('aseHostingEnvironmentName'))]"
-        }
+        },
+        "perSiteScaling": true
       },
       "WithoutASE": {
-        "name": "[parameters('appServicePlanName')]"
+        "name": "[parameters('appServicePlanName')]",
+        "perSiteScaling": true
       }
     },
     "aspSkuName": "[concat(take(parameters('nonASETier'), 1), parameters('aspSize'), if(equals(parameters('nonASETier'), 'PremiumV2'), 'v2', ''))]",
