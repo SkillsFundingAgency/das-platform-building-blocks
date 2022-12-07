@@ -1,0 +1,92 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "privateEndpointName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name used for private endpoint"
+      }
+    },
+    "subnetId": {
+      "type": "string",
+      "metadata": {
+        "description": "ResourceId of the subnet to associate with the private endpoint"
+      }
+    },
+    "privateLinkGroupIds": {
+      "type": "array",
+      "metadata": {
+        "description": "The resource id of private link service. i.e sqlServer"
+      }
+    },
+    "privateLinkServiceId": {
+      "type": "string",
+      "metadata": {
+        "description": "ResourceId of the resource to link the private endpoint is for"
+      }
+    },
+    "privateDnsZoneId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "ResourceId of the private dns zone to associate with"
+      }
+    },
+    "manualApproval": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Boolean flag to determine manual or automatic private endpoint approval"
+      }
+    }
+  },
+  "variables": {
+    "privateEndpointServiceConnectionType": "[if(parameters('manualApproval'),'manualPrivateLinkServiceConnections','privateLinkServiceConnections')]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('privateEndpointName')]",
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-01-01",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+        "subnet": {
+          "id": "[parameters('subnetId')]"
+        },
+        "customNetworkInterfaceName": "[concat(parameters('privateEndpointName'),'-nic')]",
+        "[variables('privateEndpointServiceConnectionType')]": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateLinkServiceId": "[parameters('privateLinkServiceId')]",
+              "groupIds": "[parameters('privateLinkGroupIds')]",
+              "requestMessage": "[concat('Requested via private endpoint deployment: ', parameters('privateEndpointName'))]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[concat(parameters('privateEndpointName'),'/default')]",
+      "condition": "[greater(length(parameters('privateDnsZoneId')), 0)]",
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-01-01",
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "[parameters('privateEndpointName')]",
+            "properties": {
+              "privateDnsZoneId": "[parameters('privateDnsZoneId')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[parameters('privateEndpointName')]"
+      ]
+    }
+  ],
+  "outputs": {}
+}
