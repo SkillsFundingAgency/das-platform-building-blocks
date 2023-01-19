@@ -21,6 +21,7 @@ steps:
     Package: ${{ parameters.DeploymentPackagePath }}
     ${{ if ne(parameters.VirtualApplication, '') }}:
       VirtualApplication: ${{ parameters.VirtualApplication }}
+    DeploymentType: zipDeploy
 
 - task: AzureAppServiceManage@0
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
