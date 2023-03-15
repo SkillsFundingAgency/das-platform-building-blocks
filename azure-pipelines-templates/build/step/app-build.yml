@@ -52,14 +52,20 @@ steps:
       }
     }
     if($ErrorFound){
-      if (${{  parameters.ContinueOnError }} -eq $false) {
-        Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
-        $(exit 1)
-      } else {
-          Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-        $(exit 0)
-      }
+       try {
+           if (${{  parameters.ContinueOnError }} -eq $false) {
+              Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
+              $(exit 1)
+            } 
+            else {
+              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+              $(exit 0)
+            }
+        }
+        catch {
+            Write-Error "Error: $_"
+        }
     } else {
         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
       $(exit 0)
