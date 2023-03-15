@@ -7,7 +7,7 @@ parameters:
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
-  ContinueOnError: true
+  ContinueOnError: false
 
 steps:
 - task: SonarCloudPrepare@1
@@ -52,7 +52,7 @@ steps:
       }
     }
     if($ErrorFound){
-      if (${{  parameters.ContinueOnError }}) {
+      if (${{  parameters.ContinueOnError }} -eq $false) {
         Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
         $(exit 1)
