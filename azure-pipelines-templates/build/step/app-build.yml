@@ -51,22 +51,26 @@ steps:
         }
       }
     }
-    if($ErrorFound){
-       try {
-           if (${{  parameters.ContinueOnError }} -eq $false) {
+    if(!$ErrorFound){
+        try {
+            if (${{ parameters.ContinueOnError }} -eq $false) {
               Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
               Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
               $(exit 1)
-            } 
-            else {
-              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-              $(exit 0)
             }
         }
         catch {
             Write-Error "Error: $_"
         }
-    } else {
+            else {
+              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+              $(exit 0)
+            }
+          }
+        }
+      }
+    }
+    else {
         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
       $(exit 0)
     }
