@@ -7,7 +7,7 @@ parameters:
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
-  AlwaysRun: false
+  AlwaysRun: true
 
 steps:
 - task: SonarCloudPrepare@1
