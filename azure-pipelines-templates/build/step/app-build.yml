@@ -50,16 +50,28 @@ steps:
         }
       }
     }
-    if($ErrorFound){
-      Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
-      Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
-      $(exit 1)
-    } else {
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-      $(exit 0)
+    function vulnerabilities {
+        if($ErrorFound){
+            Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+            Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
+            $(exit 1)
+          } else {
+              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+            $(exit 0)
+          }
+    }
+
+    try {
+        vulnerabilities
+    }
+    catch {
+        Write-Error $_.Exception.Message
     }
   displayName: Package Scanning
-  continueOnError: true
+  ${{ if eq(parameters.AlwaysRun, true) }}:
+    condition: always()
+  ${{ if ne(parameters.AlwaysRun, true) }}:
+    condition: succeeded()
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
