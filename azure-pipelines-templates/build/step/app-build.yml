@@ -52,7 +52,7 @@ steps:
       }
     }
     function vulnerabilities {
-        if($ErrorFound){
+        if(!$ErrorFound){
             Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
             Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
             $(exit 1)
