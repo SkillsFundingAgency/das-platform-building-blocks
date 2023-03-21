@@ -8,6 +8,7 @@ parameters:
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
   AlwaysRun: false
+  FailByDefault: true
 
 steps:
 - task: SonarCloudPrepare@1
@@ -51,22 +52,30 @@ steps:
         }
       }
     }
-    function vulnerabilities {
+    try {
+
         if($ErrorFound){
             Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
             Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
             $(exit 1)
-          } else {
-              Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-            $(exit 0)
-          }
-    }
-
-    try {
-        vulnerabilities
+        } 
+        else {
+            $FailByDefault = $true
+        }
     }
     catch {
+        
         Write-Error $_.Exception.Message
+    }
+    finally {
+
+        if (${{ parameters.FailByDefault }} -eq $true) {
+            $(exit 1)
+        }
+        else {
+            Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+            $(exit 0)
+        }
     }
   displayName: Package Scanning
   ${{ if eq(parameters.AlwaysRun, true) }}:
