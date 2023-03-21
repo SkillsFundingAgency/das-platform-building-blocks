@@ -76,10 +76,6 @@ steps:
         Write-Error $_.Exception.Message
     }
   displayName: Package Scanning
-  ${{ if eq(parameters.AlwaysRun, true) }}:
-    condition: always()
-  ${{ if ne(parameters.AlwaysRun, true) }}:
-    condition: succeeded()
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
