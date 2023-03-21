@@ -62,6 +62,7 @@ steps:
         else {
             $DefaultFail = ${{ parameters.FailByDefault }}
             if ($DefaultFail -eq $true) {
+                Write-Host "Set to fail by default"
                 exit
             }
             else {
