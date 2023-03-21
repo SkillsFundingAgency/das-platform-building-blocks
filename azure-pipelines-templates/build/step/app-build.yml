@@ -58,24 +58,21 @@ steps:
             Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
             Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
             $(exit 1)
-        } 
+        }
         else {
             $DefaultFail = ${{ parameters.FailByDefault }}
-        }
+            if ($DefaultFail -eq $true) {
+                exit
+            }
+            else {
+                Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+                $(exit 0)
+            }
+        }        
     }
     catch {
         
         Write-Error $_.Exception.Message
-    }
-    finally {
-
-        if ($DefaultFail -eq $true) {
-            exit 1
-        }
-        else {
-            Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-            exit 0
-        }
     }
   displayName: Package Scanning
   ${{ if eq(parameters.AlwaysRun, true) }}:
