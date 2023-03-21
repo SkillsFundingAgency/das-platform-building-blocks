@@ -60,7 +60,7 @@ steps:
             $(exit 1)
         } 
         else {
-            $FailByDefault = $true
+            $DefaultFail = ${{ parameters.FailByDefault }}
         }
     }
     catch {
@@ -69,12 +69,12 @@ steps:
     }
     finally {
 
-        if (${{ parameters.FailByDefault }} -eq $true) {
-            $(exit 1)
+        if ($DefaultFail -eq $true) {
+            exit 1
         }
         else {
             Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-            $(exit 0)
+            exit 0
         }
     }
   displayName: Package Scanning
