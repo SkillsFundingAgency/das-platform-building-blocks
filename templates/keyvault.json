@@ -12,6 +12,10 @@
         "description": "Array of objects with the following schema: https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/2018-02-14/vaults#AccessPolicyEntry"
       }
     },
+    "enableRbacAuthorization": {
+      "type": "bool",
+      "defaultValue": false
+    },
     "enabledForDiskEncryption": {
       "type": "bool",
       "defaultValue": false
@@ -102,6 +106,7 @@
       "apiVersion": "2018-02-14",
       "location": "[resourceGroup().location]",
       "properties": {
+        "enableRbacAuthorization": "[parameters('enableRbacAuthorization')]",
         "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
         "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
         "enableSoftDelete": true,
