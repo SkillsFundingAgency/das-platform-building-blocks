@@ -7,7 +7,7 @@ parameters:
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
-  FailByDefault: true
+  ContinueOnError: true
 
 steps:
 - task: SonarCloudPrepare@1
@@ -57,24 +57,18 @@ steps:
             Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
             Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
             $(exit 1)
-        }
+        } 
         else {
-            $DefaultFail = ${{ parameters.FailByDefault }}
-            if ($DefaultFail -eq $true) {
-                Write-Host "Set to fail by default"
-                exit
-            }
-            else {
-                Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-                $(exit 0)
-            }
-        }        
-    }
+            Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+            $(exit 0)
+        }
+    }      
     catch {
         
         Write-Error $_.Exception.Message
     }
   displayName: Package Scanning
+  continueOnError: ${{ parameters.ContinueOnErrors }}
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
