@@ -130,10 +130,10 @@ steps:
 
 - task: SonarCloudAnalyze@1
   displayName: Run SonarCloud analysis
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main', 'refs/heads/QF-1329-BackendMajorReliabilityImprovements'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
 - task: SonarCloudPublish@1
   displayName: Publish SonarCloud analysis results on build summary
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main', 'refs/heads/QF-1329-BackendMajorReliabilityImprovements'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     pollingTimeoutSec: '300'
