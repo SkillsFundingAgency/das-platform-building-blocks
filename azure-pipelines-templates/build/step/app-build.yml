@@ -11,7 +11,7 @@ parameters:
 steps:
 - task: SonarCloudPrepare@1
   displayName: Prepare SonarCloud analysis configuration
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main', 'refs/heads/branch-QF-1329-BackendMajorReliabilityImprovements'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
     organization: $(SonarCloudOrganisationKey)
