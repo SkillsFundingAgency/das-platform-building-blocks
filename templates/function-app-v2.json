@@ -98,16 +98,18 @@
       "properties": {
         "serverFarmId": "[variables('appServicePlanId')]",
         "clientAffinityEnabled": false,
-        "siteConfig": "[union(createObject('alwaysOn', if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')), variables('siteConfig'))]",
-        "httpsOnly": true,
-        "cors": {
-          "allowedOrigins": [
+        "siteConfig": 
+          "[union(createObject('alwaysOn', if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')), variables('siteConfig'))]",
+          "cors": {
+            "allowedOrigins": [
               "https://functions-next.azure.com",
               "https://functions-staging.azure.com",
               "https://functions.azure.com",
               "https://portal.azure.com"
-          ]
-        }
+            ],
+            "supportCredentials": "false"
+          },
+        "httpsOnly": true
       }
     },
     {
