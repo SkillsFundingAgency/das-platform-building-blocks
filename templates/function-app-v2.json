@@ -69,6 +69,12 @@
     }
   },
   "variables": {
+    "corsAllowedUrls": [
+      "https://functions-next.azure.com",
+      "https://functions-staging.azure.com",
+      "https://functions.azure.com",
+      "https://portal.azure.com"
+    ],
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "functionAppApiVersion": "2019-08-01",
@@ -80,12 +86,7 @@
       "minTlsVersion": "1.2",
       "ftpsState": "Disabled",
       "cors": {
-        "allowedOrigins": [
-          "https://functions-next.azure.com",
-          "https://functions-staging.azure.com",
-          "https://functions.azure.com",
-          "https://portal.azure.com"
-        ],
+        "allowedOrigins": "[variables('corsAllowedUrls')]",
         "supportCredentials": "false"
       }
     },
