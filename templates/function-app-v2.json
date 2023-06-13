@@ -78,16 +78,7 @@
       "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
       "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
       "minTlsVersion": "1.2",
-      "ftpsState": "Disabled",
-      "cors": {
-        "allowedOrigins": [
-          "https://functions-next.azure.com",
-          "https://functions-staging.azure.com",
-          "https://functions.azure.com",
-          "https://portal.azure.com"
-        ],
-        "supportCredentials": "false"
-      }
+      "ftpsState": "Disabled"
     },
     "siteConfigNetFrameworkVersion": {
       "netFrameworkVersion": "[parameters('netFrameworkVersion')]"
@@ -110,6 +101,24 @@
         "siteConfig": "[union(createObject('alwaysOn', if(contains(createArray('functionapp','elastic'),reference(resourceId(parameters('appServicePlanResourceGroup'),'Microsoft.Web/serverFarms',parameters('appServicePlanName')), '2019-08-01').kind), 'false', 'true')), variables('siteConfig'))]",
         "httpsOnly": true
       }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "name": "[concat(parameters('functionAppName'), '/web')]",
+      "apiVersion": "2018-11-01",
+      "properties": {
+        "cors": {
+          "allowedOrigins": [
+            "https://functions-next.azure.com",
+            "https://functions-staging.azure.com",
+            "https://functions.azure.com",
+            "https://portal.azure.com"
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
     },
     {
       "type": "Microsoft.Web/sites/hostnameBindings",
