@@ -109,10 +109,7 @@
       "properties": {
         "cors": {
           "allowedOrigins": [
-            "https://functions-next.azure.com",
-            "https://functions-staging.azure.com",
-            "https://functions.azure.com",
-            "https://portal.azure.com"
+            "*"
           ]
         }
       },
