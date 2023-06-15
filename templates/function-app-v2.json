@@ -109,8 +109,14 @@
       "properties": {
         "cors": {
           "allowedOrigins": [
-            "*"
+            "https://functions-next.azure.com",
+            "https://functions-staging.azure.com",
+            "https://functions.azure.com",
+            "https://portal.azure.com"
           ]
+        },
+        "apiDefinition": {
+          "url": "[concat('https://', reference(concat('Microsoft.Web/sites/', parameters('functionAppName'))).defaultHostName, '/swagger/docs/v1')]"
         }
       },
       "dependsOn": [
