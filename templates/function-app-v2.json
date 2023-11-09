@@ -111,7 +111,7 @@
     {
       "type": "Microsoft.Web/sites/config",
       "name": "[concat(parameters('functionAppName'), '/web')]",
-      "apiVersion": "2018-02-01",
+      "apiVersion": "2020-10-01",
       "properties": {
         "cors": {
           "allowedOrigins": "[parameters('allowedOrigins')]",
