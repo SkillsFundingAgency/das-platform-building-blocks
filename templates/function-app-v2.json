@@ -25,9 +25,7 @@
     },
     "allowedOrigins": {
       "type": "array",
-      "defaultValue": [
-        "*"
-      ]
+      "defaultValue": []
     },
     "customHostName": {
       "type": "string",
