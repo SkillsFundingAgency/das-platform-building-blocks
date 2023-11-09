@@ -23,6 +23,12 @@
         "array": []
       }
     },
+    "allowedOrigins": {
+      "type": "array",
+      "defaultValue": [
+        "*"
+      ]
+    },
     "customHostName": {
       "type": "string",
       "defaultValue": ""
@@ -108,12 +114,8 @@
       "apiVersion": "2018-11-01",
       "properties": {
         "cors": {
-          "allowedOrigins": [
-            "https://functions-next.azure.com",
-            "https://functions-staging.azure.com",
-            "https://functions.azure.com",
-            "https://portal.azure.com"
-          ]
+          "allowedOrigins": "[parameters('allowedOrigins')]",
+          "supportCredentials": "false"
         }
       },
       "dependsOn": [
