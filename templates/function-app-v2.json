@@ -41,9 +41,14 @@
         "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
       }
     },
-    "allowedOrigins": {
+    "backEndCORSOrigins": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [
+        "*"
+      ],
+      "metadata": {
+        "description": "Set the list of origins that should be allowed to make cross-origin calls."
+      }
     },
     "subnetResourceId": {
       "type": "string",
@@ -126,7 +131,9 @@
       "apiVersion": "2020-10-01",
       "properties": {
         "cors": {
-          "allowedOrigins": "[parameters('allowedOrigins')]",
+          "allowedOrigins": [
+            "[parameters('backEndCORSOrigins')]"
+          ],
           "supportCredentials": false
         }
       },
