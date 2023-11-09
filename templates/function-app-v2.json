@@ -41,7 +41,7 @@
         "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
       }
     },
-    "cors": {
+    "allowedOrigins": {
       "type": "array",
       "defaultValue": []
     },
@@ -82,8 +82,7 @@
       "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
       "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
       "minTlsVersion": "1.2",
-      "ftpsState": "Disabled",
-      "cors": "[parameters('cors')]"
+      "ftpsState": "Disabled"
     },
     "siteConfigNetFrameworkVersion": {
       "netFrameworkVersion": "[parameters('netFrameworkVersion')]"
@@ -116,6 +115,20 @@
       "properties": {
         "sslState": "SniEnabled",
         "thumbprint": "[parameters('certificateThumbprint')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "name": "web",
+      "apiVersion": "2020-10-01",
+      "properties": {
+        "cors": {
+          "allowedOrigins": "[parameters('allowedOrigins')]",
+          "supportCredentials": false
+        }
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
