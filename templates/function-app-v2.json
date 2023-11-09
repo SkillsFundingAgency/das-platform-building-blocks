@@ -45,6 +45,10 @@
         "description": "Must use this format: https://docs.microsoft.com/en-us/azure/templates/microsoft.web/2016-08-01/sites#IpSecurityRestriction. 2018-02-01 API will break template using current WAFOutboundIPAddresses shared variable."
       }
     },
+    "cors": {
+      "type": "array",
+      "defaultValue": []
+    },
     "subnetResourceId": {
       "type": "string",
       "defaultValue": "",
@@ -83,11 +87,7 @@
       "functionsRuntimeScaleMonitoringEnabled": "[parameters('runtimeScaleMonitoringEnabled')]",
       "minTlsVersion": "1.2",
       "ftpsState": "Disabled",
-      "cors": {
-        "allowedOrigins": [
-            "*"
-        ]
-      }
+      "cors": "[parameters('cors')]"
     },
     "siteConfigNetFrameworkVersion": {
       "netFrameworkVersion": "[parameters('netFrameworkVersion')]"
