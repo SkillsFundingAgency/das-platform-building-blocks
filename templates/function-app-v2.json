@@ -115,7 +115,7 @@
       "properties": {
         "cors": {
           "allowedOrigins": "[parameters('allowedOrigins')]",
-          "supportCredentials": "false"
+          "supportCredentials": false
         }
       },
       "dependsOn": [
