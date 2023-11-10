@@ -6,8 +6,10 @@
             "type": "string"
         },
         "corsOrigins": {
-            "type": "string",
-            "defaultValue": "*"
+            "type": "array",
+            "defaultValue": [
+                "*"
+            ]
         }
     },
     "resources": [
