@@ -20,10 +20,10 @@ jobs:
 
 
   - task: DotNetCoreCLI@2
-      displayName: Build
-      inputs:
-        projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
-        arguments: '--configuration $(buildConfiguration)  --no-restore'
+    displayName: Build
+    inputs:
+      projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
+      arguments: '--configuration $(buildConfiguration)  --no-restore'
 
 
   - task: CopyFiles@2
