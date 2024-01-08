@@ -9,20 +9,14 @@ jobs:
     demands: Agent.OS -equals Windows_NT
   workspace:
     clean: all
-
   steps:
-  - task: DotNetCoreCLI@2
-    displayName: Restore
+  - task: VSBuild@1
+    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
     inputs:
-     command: restore
-     projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
-     noCache: true
-
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
-      arguments: '--configuration $(buildConfiguration)  --no-restore'
+      solution: ${{ parameters.SqlProjectPath }}
+      platform: any cpu
+      configuration: release
+      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
 
   - task: CopyFiles@2
     displayName: Copy Files to - $(build.artifactstagingdirectory)

@@ -6,17 +6,23 @@ jobs:
 - job: DacpacBuild
   pool:
     name: DAS - Continuous Integration
-    demands: Agent.OS -equals Windows_NT
+    demands: Agent.OS -equals Linux
   workspace:
     clean: all
+
   steps:
-  - task: VSBuild@1
-    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
+  - task: DotNetCoreCLI@2
+    displayName: Restore
     inputs:
-      solution: ${{ parameters.SqlProjectPath }}
-      platform: any cpu
-      configuration: release
-      msbuildArgs: /t:Restore /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
+     command: restore
+     projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
+     noCache: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
+      arguments: '--configuration $(buildConfiguration)  --no-restore'
 
   - task: CopyFiles@2
     displayName: Copy Files to - $(build.artifactstagingdirectory)
