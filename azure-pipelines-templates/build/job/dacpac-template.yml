@@ -10,15 +10,14 @@ jobs:
   workspace:
     clean: all
 
- steps:
- - task: DotNetCoreCLI@2
-   displayName: Restore
-   inputs:
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
      command: restore
      projects: 'src/SFA.DAS.CandidateAccount.Database/SFA.DAS.CandidateAccount.Database.csproj'
      noCache: true
 
-  steps:
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
