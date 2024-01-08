@@ -71,5 +71,19 @@
         "partitionCount": "[parameters('azureSearchPartitionCount')]"
       }
     }
-  ]
+  ],
+  "outputs": {
+    "azureSearchAdminKey": {
+      "type": "string",
+      "value": "[listAdminKeys(parameters('azureSearchName'), '2015-08-19').primaryKey]"
+    },
+    "azureSearchQueryKey": {
+      "type": "string",
+      "value": "[listQueryKeys(parameters('azureSearchName'), '2015-08-19').value[0].key]"
+    },
+    "azureSearchUrl": {
+      "type": "string",
+      "value": "[concat('https://', parameters('azureSearchName'), '.search.windows.net')]"
+    }
+  }
 }
