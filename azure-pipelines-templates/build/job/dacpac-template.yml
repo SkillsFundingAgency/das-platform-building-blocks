@@ -10,15 +10,6 @@ jobs:
   workspace:
     clean: all
   steps:
-  - task: VSBuild@1
-    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
-    inputs:
-      solution: ${{ parameters.SqlProjectPath }}
-      platform: any cpu
-      configuration: release
-      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
-
-
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
