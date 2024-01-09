@@ -1,7 +1,7 @@
 jobs:
 - job: DacpacBuild
   pool:
-    name: DAS - Continuous Integration
+    name: DAS - Continuous Integration Linux
   workspace:
     clean: all
 
