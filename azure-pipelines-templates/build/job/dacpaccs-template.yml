@@ -1,7 +1,3 @@
-parameters:
-  SolutionBaseName:
-  SqlProjectPath:
-
 jobs:
 - job: DacpacBuild
   pool:
