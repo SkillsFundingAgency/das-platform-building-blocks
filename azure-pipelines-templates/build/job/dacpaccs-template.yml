@@ -1,0 +1,37 @@
+parameters:
+ SolutionBaseName:
+ DatabaseProjectPath:
+
+jobs:
+- job: DacpacBuild
+  pool:
+    name: DAS - Continuous Integration Agents
+  workspace:
+    clean: all
+
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+     command: restore
+     projects: ${{ parameters.DatabaseProjectPath }}
+     noCache: true
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      projects: ${{ parameters.DatabaseProjectPath }}
+      arguments: '--configuration $(buildConfiguration)  --no-restore'
+
+  - task: CopyFiles@2
+    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    inputs:
+      contents: |
+        src/**/*.dacpac
+      targetFolder: $(build.artifactstagingdirectory)/publish
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Artifact - ${{ parameters.SolutionBaseName }}
+    inputs:
+      targetPath: $(build.artifactstagingdirectory)/publish
+      artifactName: DacpacArtifact
