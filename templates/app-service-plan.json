@@ -35,6 +35,7 @@
     "nonASETier": {
       "type": "string",
       "allowedValues": [
+        "Free",
         "Basic",
         "Standard",
         "Premium",
