@@ -1,8 +1,7 @@
-﻿# this template depends on GitVersion being implemented earlier in the pipeline using Mainline mode
-# this template should be placed at the end of a code-build stage or in a separate stage to prevent the publish task breaking the pipeline in the event that it needs to be reran
-parameters:
+﻿parameters:
   DotNetFrameworkPackagesToPack: ''
   DotNetStandardPackagesToPack: ''
+  IncludeReferencedProject: false
 
 steps:
 - task: PowerShell@2
@@ -22,6 +21,7 @@ steps:
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDirectory: $(build.artifactstagingdirectory)/NuGetPackages
+    includeReferencedProjects: ${{ parameters.IncludeReferencedProject }}  # Use the optional variable here
 - task: NuGetCommand@2
   condition: ne('${{ parameters.DotNetFrameworkPackagesToPack }}', '')
   displayName: 'NuGet pack'
@@ -31,6 +31,7 @@ steps:
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDestination: $(build.artifactstagingdirectory)/NuGetPackages
+    includeReferencedProjects: ${{ parameters.IncludeReferencedProject }}  # Use the optional variable here
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NuGetPackages'
   inputs:
