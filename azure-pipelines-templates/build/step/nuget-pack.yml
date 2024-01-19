@@ -21,7 +21,6 @@ steps:
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDirectory: $(build.artifactstagingdirectory)/NuGetPackages
-    includeReferencedProjects: ${{ parameters.IncludeReferencedProject }}  # Use the optional variable here
 - task: NuGetCommand@2
   condition: ne('${{ parameters.DotNetFrameworkPackagesToPack }}', '')
   displayName: 'NuGet pack'
@@ -31,7 +30,7 @@ steps:
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDestination: $(build.artifactstagingdirectory)/NuGetPackages
-    includeReferencedProjects: ${{ parameters.IncludeReferencedProject }}  # Use the optional variable here
+    includeReferencedProjects: ${{ parameters.IncludeReferencedProject }}
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NuGetPackages'
   inputs:
