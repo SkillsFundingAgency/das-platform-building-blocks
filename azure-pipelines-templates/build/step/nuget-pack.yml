@@ -1,4 +1,6 @@
-﻿parameters:
+﻿# this template depends on GitVersion being implemented earlier in the pipeline using Mainline mode
+# this template should be placed at the end of a code-build stage or in a separate stage to prevent the publish task breaking the pipeline in the event that it needs to be reran
+parameters:
   DotNetFrameworkPackagesToPack: ''
   DotNetStandardPackagesToPack: ''
   IncludeReferencedProject: false
