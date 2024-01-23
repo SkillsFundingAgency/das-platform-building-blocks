@@ -28,7 +28,7 @@ steps:
   displayName: 'NuGet pack'
   inputs:
     command: pack
-    packagesToPack: ${{ parameters.DotNetFrameworkPackagesToPack }}
+    packagesToPack: ${{ parameters.DotNetStandardPackagesToPack }}
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDestination: $(build.artifactstagingdirectory)/NuGetPackages
