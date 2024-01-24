@@ -7,7 +7,7 @@ parameters:
   TargetProjects: 'src/**/*.csproj'
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
-  ContinueOnVulnerablePackageScanError: true
+  ContinueOnVulnerablePackageScanError: false
 
 steps:
 - task: SonarCloudPrepare@1
