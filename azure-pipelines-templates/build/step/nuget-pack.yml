@@ -24,11 +24,11 @@ steps:
     versionEnvVar: NuGetPackageVersion
     packDirectory: $(build.artifactstagingdirectory)/NuGetPackages
 - task: NuGetCommand@2
-  condition: ne('${{ parameters.DotNetStandardPackagesToPack }}', '')
+  condition: ne('${{ parameters.DotNetFrameworkPackagesToPack }}', '')
   displayName: 'NuGet pack'
   inputs:
     command: pack
-    packagesToPack: ${{ parameters.DotNetStandardPackagesToPack }}
+    packagesToPack: ${{ parameters.DotNetFrameworkPackagesToPack }}
     versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDestination: $(build.artifactstagingdirectory)/NuGetPackages
