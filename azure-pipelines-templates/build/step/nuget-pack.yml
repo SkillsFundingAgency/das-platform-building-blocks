@@ -3,7 +3,7 @@
 parameters:
   DotNetFrameworkPackagesToPack: ''
   DotNetStandardPackagesToPack: ''
-  IncludeReferencedProjects: true
+  IncludeReferencedProjects: false
 
 steps:
 - task: PowerShell@2
