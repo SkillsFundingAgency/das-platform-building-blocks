@@ -89,11 +89,11 @@
   "outputs": {
     "azureSearchAdminKey": {
       "type": "string",
-      "value": "[listAdminKeys(parameters('aiSearchName'), '2015-08-19').primaryKey]"
+      "value": "[listAdminKeys(parameters('aiSearchName'), '2023-11-01').primaryKey]"
     },
     "azureSearchQueryKey": {
       "type": "string",
-      "value": "[listQueryKeys(parameters('aiSearchName'), '2015-08-19').value[0].key]"
+      "value": "[listQueryKeys(parameters('aiSearchName'), '2023-11-01').value[0].key]"
     },
     "azureSearchUrl": {
       "type": "string",
