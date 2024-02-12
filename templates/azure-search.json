@@ -60,7 +60,7 @@
     },
     "aiSearchPublicNetworkAccess": {
       "type": "string",
-      "defaultValue": "Disabled"
+      "defaultValue": "Enabled"
     },
     "aiSearchLocation": {
       "type": "string",
