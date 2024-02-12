@@ -58,6 +58,10 @@
         "description": "Applicable only for SKUs set to standard3. You can set this property to enable a single, high density partition that allows up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU."
       }
     },
+    "aiSearchPublicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled"
+    },
     "aiSearchLocation": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -82,7 +86,8 @@
       "properties": {
         "replicaCount": "[parameters('aiSearchReplicaCount')]",
         "partitionCount": "[parameters('aiSearchPartitionCount')]",
-        "hostingMode": "[parameters('aiSearchHostingMode')]"
+        "hostingMode": "[parameters('aiSearchHostingMode')]",
+        "publicNetworkAccess": "[parameters('aiSearchPublicNetworkAccess')]"
       }
     }
   ],
