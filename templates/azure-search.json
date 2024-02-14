@@ -69,6 +69,10 @@
         "northeurope",
         "westeurope"
       ]
+    },
+    "aiSearchDisableLocalAuth": {
+      "type" : "bool",
+      "defaultValue": true
     }
   },
   "resources": [
@@ -87,7 +91,8 @@
         "replicaCount": "[parameters('aiSearchReplicaCount')]",
         "partitionCount": "[parameters('aiSearchPartitionCount')]",
         "hostingMode": "[parameters('aiSearchHostingMode')]",
-        "publicNetworkAccess": "[parameters('aiSearchPublicNetworkAccess')]"
+        "publicNetworkAccess": "[parameters('aiSearchPublicNetworkAccess')]",
+        "disableLocalAuth": "[parameters('aiSearchDisableLocalAuth')]"
       }
     }
   ],
