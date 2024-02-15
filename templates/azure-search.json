@@ -12,7 +12,7 @@
     },
     "aiSearchSku": {
       "type": "string",
-      "defaultValue": "basic",
+      "defaultValue": "",
       "allowedValues": [
         "free",
         "basic",
