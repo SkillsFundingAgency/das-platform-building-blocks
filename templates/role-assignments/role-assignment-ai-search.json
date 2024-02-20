@@ -23,7 +23,7 @@
     "resources": [
       {
         "type": "Microsoft.Search/searchServices/providers/roleAssignments",
-        "apiVersion": "2018-09-01-preview",
+        "apiVersion": "2021-04-01-preview",
         "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'), parameters('resourceName'), last(split(variables(parameters('assignmentType')), '/')))))]",
         "properties": {
           "roleDefinitionId": "[variables(parameters('assignmentType'))]",
