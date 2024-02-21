@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "Key Vault Certificate User",
+                "Key Vault Secrets User",
+                "Key Vault Crypto User"
+            ]
+        },
+        "principalId": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "Key Vault Certificate User": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'db79e9a7-68ee-4b58-9aeb-b90e7c24fcba')]",
+        "Key Vault Secrets User": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4633458b-17de-408a-b874-0445c86b69e6')]",
+        "Key Vault Crypto User": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '12338af0-0e69-4776-bea7-57ae8d297424')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId')), 'key-vault'))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[resourceId('Microsoft.KeyVault/vaults', parameters('resourceName'))]"
+            }
+        }
+    ]
+}
