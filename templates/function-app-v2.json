@@ -60,7 +60,8 @@
       "defaultValue": "",
       "allowedValues": [
         "",
-        "v6.0"
+        "v6.0",
+        "v8.0"
       ],
       "metadata": {
         "description": ".NET version of project, e.g. v6.0, needed for runtime version ~4 onwards",
