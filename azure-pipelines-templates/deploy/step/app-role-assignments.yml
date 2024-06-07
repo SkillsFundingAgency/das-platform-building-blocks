@@ -5,7 +5,6 @@ parameters:
   AADGroupObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
-  TargetEnvironment: '""'
 
 steps:
 - checkout: das-platform-automation
@@ -24,13 +23,11 @@ steps:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
         -ResourceName ${{ parameters.ResourceName }}
         -Tenant ${{ parameters.Tenant }}
-        -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
     ${{ else }}:
       arguments:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
         -ResourceName ${{ parameters.ResourceName }}
         -Tenant ${{ parameters.Tenant }}
-        -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
         -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
