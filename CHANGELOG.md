@@ -1,3 +1,7 @@
+# 2.1.21
+
+Updated SonarCloud config to use the latest version currently 2.x
+
 # 2.1.1
 
 Removed unused azure-pipelines-templates/deploy/job/arm-deploy.yml and moved placeholder file.
