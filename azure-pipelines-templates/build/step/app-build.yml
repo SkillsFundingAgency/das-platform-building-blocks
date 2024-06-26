@@ -10,7 +10,7 @@ parameters:
   ContinueOnVulnerablePackageScanError: false
 
 steps:
-- task: SonarCloudPrepare@5
+- task: SonarCloudPrepare@2
   displayName: Prepare SonarCloud analysis configuration
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
@@ -131,11 +131,11 @@ steps:
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
-- task: SonarCloudAnalyze@5
+- task: SonarCloudAnalyze@2
   displayName: Run SonarCloud analysis
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
-- task: SonarCloudPublish@5
+- task: SonarCloudPublish@2
   displayName: Publish SonarCloud analysis results on build summary
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
