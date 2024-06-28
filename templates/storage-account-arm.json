@@ -80,6 +80,10 @@
         "True"
       ]
     },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "TLS1_2"
+    },
     "allowedHeaders": {
       "type": "array",
       "defaultValue": [
