@@ -82,7 +82,7 @@
     },
     "minimumTlsVersion": {
       "type": "string",
-      "defaultValue": "TLS1_2"
+      "defaultValue": "1.2"
     },
     "allowedHeaders": {
       "type": "array",
@@ -180,7 +180,8 @@
         "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
         "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
         "supportsHttpsTrafficOnly": true,
-        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]"
+        "networkAcls": "[if(or(greater(length(parameters('subnetResourceIdList')), 0),greater(length(parameters('allowedIpAddressesList')), 0)), variables('networkAclObject'), json('null'))]",
+        "minimumTlsVersion": "[parameters('minimumTlsVersion')]"
       },
       "resources": [
         {
