@@ -39,7 +39,8 @@
         "Basic",
         "Standard",
         "Premium",
-        "PremiumV2"
+        "PremiumV2",
+        "PremiumV3"
       ],
       "defaultValue": "Standard"
     }
@@ -57,7 +58,7 @@
         "name": "[parameters('appServicePlanName')]"
       }
     },
-    "aspSkuName": "[concat(take(parameters('nonASETier'), 1), parameters('aspSize'), if(equals(parameters('nonASETier'), 'PremiumV2'), 'v2', ''))]",
+    "aspSkuName": "[concat(take(parameters('nonASETier'), 1), parameters('aspSize'), if(equals(parameters('nonASETier'), 'PremiumV2'), 'v2', ''), if(equals(parameters('nonASETier'), 'PremiumV3'), 'v3', ''))]",
     "defaultAppServicePlanSKUs": {
       "NonASE": {
         "name": "[variables('aspSkuName')]",
