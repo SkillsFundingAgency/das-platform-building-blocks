@@ -16,12 +16,12 @@
     }
   },
   "variables": {
-    "Log Analytics Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '090c5cfd-751d-490a-894a-3ce6f1109419')]"
+    "Log Analytics Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '73c42c96-874c-492b-b04d-ab87d138a893')]"
   },
   "resources": [
     {
-      "type": "Microsoft.ServiceBus/namespaces/providers/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/providers/roleAssignments",
+      "apiVersion": "2020-08-01",
       "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'), parameters('resourceName'), last(split(variables(parameters('assignmentType')), '/')))))]",
       "properties": {
         "roleDefinitionId": "[variables(parameters('assignmentType'))]",
