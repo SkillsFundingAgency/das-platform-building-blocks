@@ -1,3 +1,7 @@
+# 2.1.22
+
+Addition to the role-assignments.json, created a template for Log Analytics role assignment
+
 # 2.1.21
 
 Updated SonarCloud config to use the latest version currently 2.x
