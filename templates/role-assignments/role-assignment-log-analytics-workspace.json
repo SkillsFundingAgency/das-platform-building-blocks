@@ -21,11 +21,12 @@
   "resources": [
     {
       "type": "Microsoft.OperationalInsights/workspaces/providers/roleAssignments",
-      "apiVersion": "2020-08-01",
-      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'), parameters('resourceName'), last(split(variables(parameters('assignmentType')), '/')))))]",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId')), 'log-analytics-workspace'))]",
       "properties": {
         "roleDefinitionId": "[variables(parameters('assignmentType'))]",
-        "principalId": "[parameters('principalId')]"
+        "principalId": "[parameters('principalId')]",
+        "scope": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('resourceName'))]"
       }
     }
   ]
