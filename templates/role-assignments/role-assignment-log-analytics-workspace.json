@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "principalId": {
+      "type": "string"
+    },
+    "assignmentType": {
+      "type": "string",
+      "allowedValues": [
+        "Log Analytics Reader"
+      ]
+    },
+    "resourceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "Log Analytics Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '73c42c96-874c-492b-b04d-ab87d138a893')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces/providers/roleAssignments",
+      "apiVersion": "2020-04-01-preview",
+      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId')), 'log-analytics-workspace'))]",
+      "properties": {
+        "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+        "principalId": "[parameters('principalId')]",
+        "scope": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('resourceName'))]"
+      }
+    }
+  ]
+}
