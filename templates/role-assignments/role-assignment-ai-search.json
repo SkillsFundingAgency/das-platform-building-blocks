@@ -8,7 +8,7 @@
       "assignmentType": {
         "type": "string",
         "allowedValues": [
-          "SearchIndexDataReader",
+          "AiSearchIndexReader",
           "AiSearchIndexContributor"
         ]
       },
@@ -17,7 +17,7 @@
       }
     },
     "variables": {
-      "SearchIndexDataReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '1407120a-92aa-4202-b7e9-c0e197c71c8f')]",
+      "AiSearchIndexReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '985c0cb4-34a0-4b8d-8a10-eb48105c3ba0')]",
       "AiSearchIndexContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '3361dc54-610a-4045-99fe-6879e51ef62d')]"
     },
     "resources": [
