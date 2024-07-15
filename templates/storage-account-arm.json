@@ -82,10 +82,16 @@
     },
     "minimumTlsVersion": {
       "type": "string",
-      "defaultValue": "TLS1_2",
       "metadata": {
-       "description": "Set the minimum TLS version to be permitted on requests to storage."
-      }
+       "displayName": "Minimum TLS Version",
+       "description": "Minimum version of TLS required to access data in storage accounts"
+      },
+      "allowedValues": [
+          "TLS1_0",
+          "TLS1_1",
+          "TLS1_2"
+        ],
+      "defaultValue": "TLS1_0"
     },
     "allowedHeaders": {
       "type": "array",
