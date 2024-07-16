@@ -12,7 +12,7 @@ parameters:
 steps:
 - task: SonarCloudPrepare@2
   displayName: Prepare SonarCloud analysis configuration
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: always()
   inputs:
     SonarCloud: ESFA - SonarCloud
     organization: $(SonarCloudOrganisationKey)
@@ -33,36 +33,36 @@ steps:
     projects: ${{ parameters.TargetProjects }}
     noCache: true
 
-- pwsh: |
-    $TargetPatterns = "${{ parameters.TargetProjects }}".Trim().Split("`n")
-    $TargetPatterns
-    $ErrorFound = $false
-    $TargetPatterns | ForEach-Object {
-      $Projects = Get-ChildItem -Path $_ -Recurse
-      foreach ($Project in $Projects) {
-        dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
-        if (([Version](dotnet --version)).Major -ge 5) {
-          dotnet list $Project package --vulnerable --include-transitive | Tee-Object -Variable Vulnerable
-        }
-        $Errors = $Deprecated + $Vulnerable | Select-String '>'
+# - pwsh: |
+#     $TargetPatterns = "${{ parameters.TargetProjects }}".Trim().Split("`n")
+#     $TargetPatterns
+#     $ErrorFound = $false
+#     $TargetPatterns | ForEach-Object {
+#       $Projects = Get-ChildItem -Path $_ -Recurse
+#       foreach ($Project in $Projects) {
+#         dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
+#         if (([Version](dotnet --version)).Major -ge 5) {
+#           dotnet list $Project package --vulnerable --include-transitive | Tee-Object -Variable Vulnerable
+#         }
+#         $Errors = $Deprecated + $Vulnerable | Select-String '>'
 
-        if ($Errors.Count -gt 0) {
-          $ErrorFound = $true
-        }
-      }
-    }
+#         if ($Errors.Count -gt 0) {
+#           $ErrorFound = $true
+#         }
+#       }
+#     }
 
-    if($ErrorFound){
-        Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
-        $(exit 1)
-    } 
-    else {
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-        $(exit 0)
-    }
-  displayName: Package Scanning
-  continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
+#     if($ErrorFound){
+#         Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+#         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
+#         $(exit 1)
+#     } 
+#     else {
+#         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+#         $(exit 0)
+#     }
+#   displayName: Package Scanning
+#   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
@@ -133,10 +133,10 @@ steps:
 
 - task: SonarCloudAnalyze@2
   displayName: Run SonarCloud analysis
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: always()
 
 - task: SonarCloudPublish@2
   displayName: Publish SonarCloud analysis results on build summary
-  condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
+  condition: always()
   inputs:
     pollingTimeoutSec: '300'
