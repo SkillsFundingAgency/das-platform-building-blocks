@@ -47,6 +47,13 @@
       "metadata": {
         "description": "An object of the Network Security Group. Object reference can be found here: https://docs.microsoft.com/en-us/azure/templates/microsoft.network/2018-11-01/virtualnetworks/subnets#NetworkSecurityGroup"
       }
+    },
+    "natGatewayId": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "An object containing the NAT gateway ID to attach to the subnet"
+      }
     }
   },
   "variables": {
@@ -69,7 +76,8 @@
     "baseSubnetProperties": {
       "addressPrefix": "[parameters('subnetAddressPrefix')]",
       "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
-      "delegations": "[parameters('delegations')]"
+      "delegations": "[parameters('delegations')]",
+      "natGateway": "[if(empty(parameters('natGatewayId')), json('null'), parameters('natGatewayId'))]"
     },
     "networkSecurityGroupIncludedSubnetProperties": "[if(empty(parameters('networkSecurityGroup')), variables('baseSubnetProperties'), union(variables('baseSubnetProperties'), variables('networkSecurityGroupSubnetProperty')))]",
     "subnetProperties": "[if(empty(parameters('routeTable')), variables('networkSecurityGroupIncludedSubnetProperties'), union(variables('networkSecurityGroupIncludedSubnetProperties'), variables('routeTableSubnetProperty')))]"
