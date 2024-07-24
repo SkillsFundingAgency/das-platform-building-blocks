@@ -233,8 +233,6 @@
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "subnetResourceId": "[parameters('subnetResourceId')]",
-        "swiftSupported": true,
         "healthCheckPath": "[if(greater(length(parameters('healthCheckPath')), 0), parameters('healthCheckPath'), json('null'))]"
       },
       "dependsOn": [
