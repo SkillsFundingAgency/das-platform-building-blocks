@@ -73,7 +73,8 @@
     "routeTableSubnetProperty": {
       "routeTable": "[parameters('routeTable')]"
     },
-    "natGatewaySubnetProperty": "[if(not(empty(parameters('natGatewayId'))), parameters('natGatewayId'), json('null'))]",
+    "natGateway": "[parameters('natGatewayId')]",
+    "natGatewaySubnetProperty": "[if(not(empty(parameters('natGatewayId'))), variables('natGateway'), json('null'))]",
     "baseSubnetProperties": {
       "addressPrefix": "[parameters('subnetAddressPrefix')]",
       "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
