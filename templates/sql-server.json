@@ -13,7 +13,8 @@
       "defaultValue": "[resourceGroup().location]",
       "allowedValues": [
         "westeurope",
-        "northeurope"
+        "northeurope",
+        "uksouth"
       ]
     },
     "sqlServerAdminUserName": {
