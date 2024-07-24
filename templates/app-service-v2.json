@@ -84,6 +84,13 @@
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
+    "healthCheckPath": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The path for the health check endpoint. Leave empty to disable health check."
+      }
+    },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
       "defaultValue": [],
@@ -214,7 +221,8 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "subnetResourceId": "[parameters('subnetResourceId')]",
-        "swiftSupported": true
+        "swiftSupported": true,
+        "healthCheckPath": "[if(greater(length(parameters('healthCheckPath')), 0), parameters('healthCheckPath'), json('null'))]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
