@@ -73,15 +73,14 @@
     "routeTableSubnetProperty": {
       "routeTable": "[parameters('routeTable')]"
     },
-    "natGateway": "[parameters('natGatewayId')]",
-    "natGatewaySubnetProperty": "[if(not(empty(parameters('natGatewayId'))), variables('natGateway'), json('null'))]",
     "baseSubnetProperties": {
       "addressPrefix": "[parameters('subnetAddressPrefix')]",
       "serviceEndpoints": "[if(greater(length(parameters('serviceEndpointList')), 0), variables('serviceEndPoints'), variables('serviceEndPointsEmpty'))]",
-      "delegations": "[parameters('delegations')]"
+      "delegations": "[parameters('delegations')]",
+      "natGateway": "[if(empty(parameters('natGatewayId')), json('null') ,parameters('natGatewayId'))]"
     },
     "networkSecurityGroupIncludedSubnetProperties": "[if(empty(parameters('networkSecurityGroup')), variables('baseSubnetProperties'), union(variables('baseSubnetProperties'), variables('networkSecurityGroupSubnetProperty')))]",
-    "subnetProperties": "[if(empty(parameters('routeTable')), variables('networkSecurityGroupIncludedSubnetProperties'), union(variables('networkSecurityGroupIncludedSubnetProperties'), variables('routeTableSubnetProperty'), variables('natGatewaySubnetProperty')))]"
+    "subnetProperties": "[if(empty(parameters('routeTable')), variables('networkSecurityGroupIncludedSubnetProperties'), union(variables('networkSecurityGroupIncludedSubnetProperties'), variables('routeTableSubnetProperty')))]"
   },
   "resources": [
     {
