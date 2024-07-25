@@ -153,7 +153,8 @@
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
           "minTlsVersion": "1.2",
-          "ftpsState": "Disabled"
+          "ftpsState": "Disabled",
+          "healthCheckPath": ""
         },
         "httpsOnly": true
       },
@@ -226,20 +227,20 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
       ]
-    },
-    {
-      "type": "Microsoft.Web/sites/config",
-      "condition": "[greater(length(parameters('healthCheckPath')), 0)]",
-      "name": "[concat(parameters('appServiceName'), '/web')]",
-      "apiVersion": "2018-11-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "healthCheckPath": "[parameters('healthCheckPath')]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
-      ]
     }
+    // {
+    //   "type": "Microsoft.Web/sites/config",
+    //   "condition": "[greater(length(parameters('healthCheckPath')), 0)]",
+    //   "name": "[concat(parameters('appServiceName'), '/web')]",
+    //   "apiVersion": "2018-11-01",
+    //   "location": "[resourceGroup().location]",
+    //   "properties": {
+    //     "healthCheckPath": "[parameters('healthCheckPath')]"
+    //   },
+    //   "dependsOn": [
+    //     "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+    //   ]
+    // }
   ],
   "outputs": {
     "possibleOutboundIpAddresses": {
