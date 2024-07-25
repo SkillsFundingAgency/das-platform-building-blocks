@@ -221,7 +221,7 @@
       "location": "[resourceGroup().location]",
       "properties": {
         "subnetResourceId": "[parameters('subnetResourceId')]",
-        "swiftSupported": true,
+        "swiftSupported": true
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
@@ -229,6 +229,7 @@
     },
     {
       "type": "Microsoft.Web/sites/config",
+      "condition": "[greater(length(parameters('healthCheckPath')), 0)]",
       "name": "[concat(parameters('appServiceName'), '/web')]",
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
