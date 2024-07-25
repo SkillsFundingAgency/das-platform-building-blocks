@@ -234,7 +234,7 @@
       "apiVersion": "2018-11-01",
       "location": "[resourceGroup().location]",
       "properties": {
-        "healthCheckPath": "[if(greater(length(parameters('healthCheckPath')), 0), parameters('healthCheckPath'), '')]"
+        "healthCheckPath": "[parameters('healthCheckPath')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
