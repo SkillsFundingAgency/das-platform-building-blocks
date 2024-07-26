@@ -1,3 +1,7 @@
+# 2.1.26
+
+Adding the health check property to app-service-v2.json
+
 # 2.1.22
 
 Addition to the role-assignments.json, created a template for Log Analytics role assignment

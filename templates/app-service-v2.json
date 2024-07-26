@@ -84,6 +84,13 @@
         "description": "Use if any settings will be different between production and staging slots. Specify in the name of the setting in the SlotSetting parameters"
       }
     },
+    "healthCheckPath": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The path for the health check endpoint. Leave empty to disable health check."
+      }
+    },
     "appServiceSlotSettingConnectionStrings": {
       "type": "array",
       "defaultValue": [],
@@ -146,7 +153,8 @@
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
           "minTlsVersion": "1.2",
-          "ftpsState": "Disabled"
+          "ftpsState": "Disabled",
+          "healthCheckPath": "[parameters('healthCheckPath')]"
         },
         "httpsOnly": true
       },
