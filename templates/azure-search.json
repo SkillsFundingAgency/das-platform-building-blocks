@@ -67,7 +67,8 @@
       "defaultValue": "[resourceGroup().location]",
       "allowedValues": [
         "northeurope",
-        "westeurope"
+        "westeurope",
+        "uksouth"
       ]
     },
     "aiSearchDisableLocalAuth": {
