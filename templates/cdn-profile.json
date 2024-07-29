@@ -26,7 +26,7 @@
       "name": "[parameters('cdnProfileName')]",
       "type": "Microsoft.Cdn/profiles",
       "apiVersion": "2017-10-12",
-      "location": "[resourceGroup().location]",
+      "location": "westeurope",
       "tags": {},
       "sku": {
         "name": "[parameters('cdnSKU')]"
