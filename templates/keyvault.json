@@ -104,7 +104,7 @@
       "type": "Microsoft.KeyVault/vaults",
       "name": "[parameters('keyVaultName')]",
       "apiVersion": "2018-02-14",
-      "location": "[resourceGroup().location]",
+      "location": "westeurope",
       "properties": {
         "enableRbacAuthorization": "[parameters('enableRbacAuthorization')]",
         "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
