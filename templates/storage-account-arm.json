@@ -90,7 +90,7 @@
         "TLS1_0",
         "TLS1_2"
       ],
-      "defaultValue": "TLS1_0"
+      "defaultValue": "TLS1_2"
     },
     "allowedHeaders": {
       "type": "array",
