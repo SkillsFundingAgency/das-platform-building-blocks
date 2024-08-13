@@ -5,7 +5,7 @@ parameters:
   AADGroupObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
-  TargetEnvironment: '""'
+  TargetEnvironment: $null 
 
 steps:
 - checkout: das-platform-automation
