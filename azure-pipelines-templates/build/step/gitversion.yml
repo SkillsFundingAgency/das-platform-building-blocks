@@ -2,10 +2,10 @@ parameters:
   ConfigFilePath: GitVersion.yml
 
 steps:
-- task: gitversion/setup@0
+- task: gitversion/setup@3
   displayName: gitversion/setup
   inputs:
-    versionSpec: 6.x
+    versionSpec: '5.x'
 
 - task: gitversion/execute@0
   displayName: gitversion/execute
