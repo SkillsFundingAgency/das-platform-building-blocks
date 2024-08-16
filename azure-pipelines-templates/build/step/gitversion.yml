@@ -12,4 +12,5 @@ steps:
   inputs:
     useConfigFile: true
     configFilePath: ${{ parameters.ConfigFilePath }}
+    verbosity: diagnostic
     includePrerelease: false
