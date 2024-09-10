@@ -136,6 +136,10 @@
     "managedServiceIdentityId": {
       "type": "string",
       "value": "[reference(parameters('functionAppName'), variables('functionAppApiVersion'), 'Full').identity.principalId]"
+    },
+    "functionAppResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
     }
   }
 }
