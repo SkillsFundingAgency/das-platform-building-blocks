@@ -1,0 +1,25 @@
+parameters:
+  dashboardUID: ''
+  panelId: 0
+  tags: ''
+  text: ''
+  BearerToken: ''
+  IsMultiRepoCheckout: false
+
+steps:
+- checkout: self
+- task: PowerShell@2
+  displayName: "Create Grafana Annotation - ${{ parameters.dashboardUID }}"
+  inputs:
+    targetType: 'filePath'
+    ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
+      filePath: Infrastructure-Scripts/New-GrafanaDashboardAnnotation.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
+      filePath: das-platform-automation/Infrastructure-Scripts/New-GrafanaDashboardAnnotation.ps1
+    arguments: |
+      -dashboardUID ${{ parameters.dashboardUID }} `
+      -panelId ${{ parameters.panelId }} `
+      -tags ${{ parameters.tags }} `
+      -text ${{ parameters.text }} `
+      -token (ConvertTo-SecureString "${{ parameters.BearerToken }}" -AsPlainText -Force)
+    pwsh: true
