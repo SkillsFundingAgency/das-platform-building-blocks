@@ -140,7 +140,9 @@
       "enableAutoScaling": true,
       "minCount": "[parameters('minNodeAutoScalingCount')]",
       "maxCount": "[parameters('maxNodeAutoScalingCount')]",
-      "drainTimeoutInMinutes": "[parameters('nodeDrainTimeout')]"
+      "upgradeSettings": {
+        "drainTimeoutInMinute": "[parameters('nodeDrainTimeout')]"
+      }
     },
     "agentPoolsProperties": "[if(parameters('enableNodeAutoScaling'), union(variables('baseProperties'), variables('withAutoscalingNodeProperties')), variables('baseProperties'))]"
   },
