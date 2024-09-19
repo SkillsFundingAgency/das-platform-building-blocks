@@ -1,7 +1,7 @@
 parameters:
   dashboardUID: ''
   panelId: 0
-  tags: []  # Expecting an array
+  tags: []  # Define tags as an array
   text: ''
   BearerToken: ''
   IsMultiRepoCheckout: false
@@ -19,7 +19,7 @@ steps:
     arguments: |
       -dashboardUID ${{ parameters.dashboardUID }} `
       -panelId ${{ parameters.panelId }} `
-      -tags @(${{ format('{0}', join(',', parameters.tags)) }}) `  # Use 'format' to handle array as a comma-separated string
+      -tags "${{ join(',', parameters.tags) }}" `  # Join tags array into a comma-separated string
       -text "${{ parameters.text }}" `
       -token (ConvertTo-SecureString "${{ parameters.BearerToken }}" -AsPlainText -Force)
     pwsh: true
