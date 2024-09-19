@@ -19,7 +19,9 @@ steps:
     arguments: |
       -dashboardUID ${{ parameters.dashboardUID }} `
       -panelId ${{ parameters.panelId }} `
-      -tags @(${{ parameters.tags[*] }}) `  # Correctly pass tags as an array
+      -tags @(${{
+        join(',', parameters.tags)  # Join the array elements into a comma-separated string
+      }}) `
       -text "${{ parameters.text }}" `
       -token (ConvertTo-SecureString "${{ parameters.BearerToken }}" -AsPlainText -Force)
     pwsh: true
