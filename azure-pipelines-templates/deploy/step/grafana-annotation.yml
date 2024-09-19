@@ -2,8 +2,8 @@ parameters:
   dashboardUID: ''
   panelId: 0
   tags: []  # Define tags as an array
-  text: ''
-  BearerToken: ''
+  text: ''  # Ensure text is passed
+  BearerToken: ''  # Ensure BearerToken is passed
   IsMultiRepoCheckout: false
 
 steps:
@@ -19,7 +19,9 @@ steps:
     arguments: |
       -dashboardUID ${{ parameters.dashboardUID }} `
       -panelId ${{ parameters.panelId }} `
-      -tags "${{ join(',', parameters.tags) }}" `  # Join tags array into a comma-separated string
-      -text "${{ parameters.text }}" `
-      -token (ConvertTo-SecureString "${{ parameters.BearerToken }}" -AsPlainText -Force)
+      -tags @(${{
+        parameters.tags | join(',')
+      }}) `  # Pass tags as a comma-separated string
+      -text "${{ parameters.text }}" `  # Ensure text is passed
+      -token (ConvertTo-SecureString "${{ parameters.BearerToken }}" -AsPlainText -Force)  # Ensure BearerToken is passed
     pwsh: true
