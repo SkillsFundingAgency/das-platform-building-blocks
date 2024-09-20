@@ -1,3 +1,7 @@
+# 2.1.27
+
+Added encrypyion at host property on AKS and AKS node pools
+
 # 2.1.26
 
 Adding the health check property to app-service-v2.json
