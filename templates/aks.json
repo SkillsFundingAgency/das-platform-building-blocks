@@ -156,6 +156,10 @@
       "metadata": {
         "documentation": "https://docs.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges"
       }
+    },
+    "enableEncryptionAtHost": {
+      "type": "bool",
+      "defaultValue": true
     }
   },
   "variables": {
@@ -169,7 +173,8 @@
           "mode": "System",
           "vnetSubnetID": "[variables('vnetSubnetID')]",
           "type": "VirtualMachineScaleSets",
-          "storageProfile": "ManagedDisks"
+          "storageProfile": "ManagedDisks",
+          "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
         }
       ],
       "withoutMode": [
@@ -180,7 +185,8 @@
           "osType": "Linux",
           "vnetSubnetID": "[variables('vnetSubnetID')]",
           "type": "VirtualMachineScaleSets",
-          "storageProfile": "ManagedDisks"
+          "storageProfile": "ManagedDisks",
+          "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
         }
       ]
     },
