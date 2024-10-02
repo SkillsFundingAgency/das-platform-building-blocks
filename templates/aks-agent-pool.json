@@ -101,6 +101,13 @@
         "description": "The maximum amount of nodes to autoscale up to."
       }
     },
+    "nodeDrainTimeout": {
+      "type": "int",
+      "defaultValue": 15,
+      "metadata": {
+        "description": "The amount of time (in minutes) to wait on eviction of pods and graceful termination per node. This eviction wait time honors waiting on pod disruption budgets. If this time is exceeded, the upgrade fails."
+      }
+    },
     "osDiskSizeGB": {
       "type": "int",
       "defaultValue": 0,
@@ -132,13 +139,16 @@
     "withAutoscalingNodeProperties": {
       "enableAutoScaling": true,
       "minCount": "[parameters('minNodeAutoScalingCount')]",
-      "maxCount": "[parameters('maxNodeAutoScalingCount')]"
+      "maxCount": "[parameters('maxNodeAutoScalingCount')]",
+      "upgradeSettings": {
+        "drainTimeoutInMinutes": "[parameters('nodeDrainTimeout')]"
+      }
     },
     "agentPoolsProperties": "[if(parameters('enableNodeAutoScaling'), union(variables('baseProperties'), variables('withAutoscalingNodeProperties')), variables('baseProperties'))]"
   },
   "resources": [
     {
-      "apiVersion": "2021-05-01",
+      "apiVersion": "2023-06-01",
       "type": "Microsoft.ContainerService/managedClusters/agentPools",
       "name": "[concat(parameters('clusterName'),'/', parameters('agentPoolName'))]",
       "location": "[resourceGroup().location]",
