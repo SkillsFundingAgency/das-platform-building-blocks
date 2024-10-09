@@ -16,7 +16,7 @@ jobs:
       solution: ${{ parameters.SqlProjectPath }}
       platform: any cpu
       configuration: release
-      msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
+      msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish" /verbosity:diagnostic'
 
   - task: CopyFiles@2
     displayName: Copy Files to - $(build.artifactstagingdirectory)
