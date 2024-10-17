@@ -124,14 +124,29 @@
       {
         "name": "WEBSITE_LOCAL_CACHE_SIZEINMB",
         "value": "1000"
+      },
+      {
+        "name": "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+        "value": 1
+      }
+    ],
+    "appServiceStagingSlotAppSettings": [
+      {
+        "name": "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+        "value": 1
       }
     ],
     "useCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
     "appServicePlanId": "[resourceId(parameters('appServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings').array), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings').array), 0)]",
+    "useAppServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings').array, variables('appServiceStagingSlotAppSettings'))]",
     "appServiceApiVersion": "2018-11-01",
-    "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceProductionSlotAppSettings'))]"
+    "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceProductionSlotAppSettings'))]",
+    "appServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceStagingSlotAppSettings'))]"
+    
+
+
   },
   "resources": [
     {
@@ -172,7 +187,7 @@
             "serverFarmId": "[variables('appServicePlanId')]",
             "clientAffinityEnabled": false,
             "siteConfig": {
-              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), parameters('appServiceSlotAppSettings').array, parameters('appServiceAppSettings').array)]",
+              "appSettings": "[if(variables('useAppServiceSlotAppSettings'), variables('useAppServiceStagingSlotAppSettingsCombined'), variables('appServiceStagingSlotAppSettingsCombined'))]",
               "connectionStrings": "[if(variables('useAppServiceSlotConnectionStrings'), parameters('appServiceSlotConnectionStrings').array, parameters('appServiceConnectionStrings').array)]",
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
