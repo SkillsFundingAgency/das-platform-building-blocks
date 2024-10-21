@@ -1,4 +1,8 @@
-# 2.1.27
+# 2.3.0
+
+Setting default value of WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG to 1
+
+# 2.2.0
 
 Added encrypyion at host property on AKS and AKS node pools
 
