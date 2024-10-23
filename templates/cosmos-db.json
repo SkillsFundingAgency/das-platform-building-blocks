@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "cosmosDbName": {
@@ -52,19 +52,6 @@
     "logAnalyticsWorkspaceResourceGroupName": {
       "type": "string",
       "defaultValue": ""
-    },
-    "minimalTlsVersion": {
-      "type": "string",
-      "metadata": {
-        "displayName": "Minimum TLS Version",
-        "description": "Minimum version of TLS required to access data in the cosmos db"
-      },
-      "allowedValues": [
-        "Tls",
-        "Tls11",
-        "Tls12"
-      ],
-      "defaultValue": "Tls12"
     }
   },
   "variables": {
@@ -150,7 +137,7 @@
     {
       "name": "[parameters('cosmosDbName')]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2024-05-15",
+      "apiVersion": "2023-11-15",
       "location": "[resourceGroup().location]",
       "kind": "[parameters('cosmosDbType')]",
       "properties": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoCosmosProperties'), variables('baseCosmosProperties'))]",
