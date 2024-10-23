@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "customHostname": {
+      "type": "string"
+    },
+    "appServiceName": {
+      "type": "string"
+    },
+    "certificateThumbprint": {
+      "type": "string"
+    },
+    "sslState": {
+      "type": "string",
+      "defaultValue": "SniEnabled"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites/hostnameBindings",
+      "name": "[concat(parameters('appServiceName'), '/', parameters('customHostname'))]",
+      "apiVersion": "2022-09-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sslState": "[parameters('sslState')]",
+        "thumbprint": "[parameters('certificateThumbprint')]"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
