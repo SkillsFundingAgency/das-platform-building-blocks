@@ -6,6 +6,7 @@ jobs:
 - job: DacpacBuild
   pool:
     name: DAS - Continuous Integration
+    demands: Agent.OS -equals Windows_NT
   workspace:
     clean: all
   steps:
