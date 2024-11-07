@@ -176,7 +176,7 @@
       }
     },
     "nodeScanInterval": {
-      "defaultValue": "10",
+      "defaultValue": "10s",
       "type": "string",
       "metadata": {
         "description": "How often the cluster is reevaluated for scale up or down."
