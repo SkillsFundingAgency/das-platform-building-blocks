@@ -5,8 +5,7 @@ parameters:
 jobs:
 - job: DacpacBuild
   pool:
-    name: DAS - Continuous Integration Beta
-    demands: Agent.OS -equals Windows_NT
+    name: DAS - Continuous Integration
   workspace:
     clean: all
   steps:
