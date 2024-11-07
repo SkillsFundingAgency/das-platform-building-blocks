@@ -160,6 +160,27 @@
     "enableEncryptionAtHost": {
       "type": "bool",
       "defaultValue": true
+    },
+    "nodeMaxGracefulTerminationSec": {
+      "defaultValue": "1200",
+      "type": "string",
+      "metadata": {
+        "description": "Maximum number of seconds the cluster autoscaler waits for pod termination when trying to scale down a node."
+      }
+    },
+    "nodeScaleDownUnneededTime": {
+      "defaultValue": "60m",
+      "type": "string",
+      "metadata": {
+        "description": "How long a node should be unneeded before it's eligible for scale down."
+      }
+    },
+    "nodeScanInterval": {
+      "defaultValue": "10s",
+      "type": "string",
+      "metadata": {
+        "description": "How often the cluster is reevaluated for scale up or down."
+      }
     }
   },
   "variables": {
@@ -220,9 +241,14 @@
         "enablePrivateCluster": false
       },
       "workloadAutoScalerProfile": {
-      "keda": {
-        "enabled": true
+        "keda": {
+          "enabled": true
         }
+      },
+      "autoScalerProfile": {
+        "max-graceful-termination-sec": "[parameters('nodeMaxGracefulTerminationSec')]",
+        "scale-down-unneeded-time": "[parameters('nodeScaleDownUnneededTime')]",
+        "scan-interval": "[parameters('nodeScanInterval')]"
       }
     },
     "aadProfile": {
