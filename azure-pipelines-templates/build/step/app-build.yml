@@ -10,13 +10,13 @@ parameters:
   ContinueOnVulnerablePackageScanError: false
 
 steps:
-- task: SonarCloudPrepare@2
+- task: SonarCloudPrepare@3
   displayName: Prepare SonarCloud analysis configuration
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
     organization: $(SonarCloudOrganisationKey)
-    scannerMode: MSBuild
+    scannerMode: dotnet
     projectName: "$(Build.DefinitionName)"
     ${{ if eq(parameters.SonarCloudProjectKey, '') }}:
       projectKey: ${{ replace(variables['Build.Repository.Name'], '/', '_') }}
@@ -56,7 +56,7 @@ steps:
         Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
         $(exit 1)
-    } 
+    }
     else {
         Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
         $(exit 0)
@@ -131,11 +131,11 @@ steps:
     publishTestResults: true
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
-- task: SonarCloudAnalyze@2
+- task: SonarCloudAnalyze@3
   displayName: Run SonarCloud analysis
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
-- task: SonarCloudPublish@2
+- task: SonarCloudPublish@3
   displayName: Publish SonarCloud analysis results on build summary
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
