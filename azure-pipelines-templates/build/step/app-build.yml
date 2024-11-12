@@ -16,7 +16,7 @@ steps:
   inputs:
     SonarCloud: ESFA - SonarCloud
     organization: $(SonarCloudOrganisationKey)
-    scannerMode: MSBuild
+    scannerMode: dotnet
     projectName: "$(Build.DefinitionName)"
     ${{ if eq(parameters.SonarCloudProjectKey, '') }}:
       projectKey: ${{ replace(variables['Build.Repository.Name'], '/', '_') }}
