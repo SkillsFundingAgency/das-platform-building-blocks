@@ -20,13 +20,16 @@
     "confidentialData": {
       "type": "bool",
       "defaultValue": true
+    },
+    "ipAllowlist": {
+      "type": "array"
     }
   },
   "variables": {},
   "resources": [
     {
       "type": "Microsoft.MachineLearningServices/workspaces",
-      "apiVersion": "2021-07-01",
+      "apiVersion": "2024-10-01-preview",
       "name": "[parameters('workspaceName')]",
       "location": "[resourceGroup().location]",
       "identity": {
@@ -39,7 +42,8 @@
         "applicationInsights": "[parameters('appInsightsResourceId')]",
         "containerRegistry": "[parameters('containerRegistryResourceId')]",
         "hbiWorkspace": "[parameters('confidentialData')]",
-        "systemDatastoresAuthMode": "identity"
+        "systemDatastoresAuthMode": "identity",
+        "ipAllowlist": "[parameters('ipAllowlist')]"
       }
     }
   ],
