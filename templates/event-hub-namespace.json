@@ -67,6 +67,9 @@
           "type": "providers/diagnosticSettings",
           "apiVersion": "2021-05-01-preview",
           "name": "Microsoft.Insights/service",
+          "dependsOn": [
+            "[resourceId('Microsoft.EventHub/namespaces', parameters('eventHubNamespaceName'))]"
+          ],
           "properties": {
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
             "logs": [
