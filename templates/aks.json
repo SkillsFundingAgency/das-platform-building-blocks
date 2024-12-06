@@ -288,9 +288,31 @@
       "identity": {
         "type": "[if(empty(parameters('servicePrincipalClientId')), 'SystemAssigned', 'None')]"
       },
-      "properties": "[variables('aksProperties')]"
+      "properties": "[variables('aksProperties')]",
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "apiVersion": "2021-05-01-preview",
+          "name": "Microsoft.Insights/service",
+          "dependsOn": [
+            "[resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName'))]"
+          ],
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsId')]",
+            "logs": [
+              {
+                "categoryGroup": "audit",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
-  "outputs": {
-  }
+  "outputs": {}
 }
