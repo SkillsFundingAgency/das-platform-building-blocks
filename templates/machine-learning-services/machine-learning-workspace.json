@@ -23,9 +23,11 @@
     },
     "ipAllowlist": {
       "type": "array"
+    },
+    "logAnalyticsWorkspaceResourceId": {
+      "type": "string"
     }
   },
-  "variables": {},
   "resources": [
     {
       "type": "Microsoft.MachineLearningServices/workspaces",
@@ -44,7 +46,30 @@
         "hbiWorkspace": "[parameters('confidentialData')]",
         "systemDatastoresAuthMode": "identity",
         "ipAllowlist": "[parameters('ipAllowlist')]"
-      }
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "apiVersion": "2021-05-01-preview",
+          "name": "Microsoft.Insights/service",
+          "dependsOn": [
+            "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+          ],
+          "properties": {
+            "workspaceId": "[parameters('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "categoryGroup": "audit",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "outputs": {}
