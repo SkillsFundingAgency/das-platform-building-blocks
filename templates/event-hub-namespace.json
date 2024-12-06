@@ -30,9 +30,23 @@
       "metadata": {
         "description": "Upper limit for Auto Inflate scaling"
       }
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Log Analytics workspace to send diagnostic logs to."
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource group name of the Log Analytics workspace."
+      }
     }
   },
-  "variables": {},
+  "variables": {
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+  },
   "resources": [
     {
       "name": "[parameters('eventHubNamespaceName')]",
@@ -47,7 +61,27 @@
       "properties": {
         "isAutoInflateEnabled": "[parameters('isAutoInflateEnabled')]",
         "maximumThroughputUnits": "[parameters('maximumThroughputUnits')]"
-      }
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "apiVersion": "2021-05-01-preview",
+          "name": "Microsoft.Insights/service",
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "categoryGroup ": "audit",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": false,
+                  "days": 0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "outputs": {}
