@@ -1,4 +1,8 @@
-# 2.3.0
+# 2.2.13
+
+Added applicaton insights failed request template and get product app insights infomation step
+
+# 2.2.3
 
 Setting default value of WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG to 1
 
