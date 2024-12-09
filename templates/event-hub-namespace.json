@@ -74,7 +74,7 @@
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
             "logs": [
               {
-                "categoryGroup ": "audit",
+                "categoryGroup": "audit",
                 "enabled": true,
                 "retentionPolicy": {
                   "enabled": false,
