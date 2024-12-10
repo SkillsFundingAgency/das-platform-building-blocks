@@ -1,0 +1,21 @@
+parameters:
+  ServiceConnection:
+  AppInsightsResourceGroup:
+  AppInsightsName:
+  IsMultiRepoCheckout: false
+
+steps:
+- checkout: das-platform-automation
+- task: AzurePowerShell@5
+  displayName: Get-ProductApplicationInsights
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    ${{ if eq(parameters.IsMultiRepoCheckout, false) }}:
+      scriptPath: Infrastructure-Scripts/Get-ProductApplicationInsights.ps1
+    ${{ if eq(parameters.IsMultiRepoCheckout, true) }}:
+      scriptPath: das-platform-automation/Infrastructure-Scripts/Get-ProductApplicationInsights.ps1
+    scriptArguments:
+      -AppInsightsResourceGroup ${{ parameters.AppInsightsResourceGroup }} `
+      -AppInsightsName ${{ parameters.AppInsightsName }}
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
