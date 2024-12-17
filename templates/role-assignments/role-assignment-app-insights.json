@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "principalId": {
+      "type": "string"
+    },
+    "assignmentType": {
+      "type": "string",
+      "allowedValues": [
+        "Monitoring Metrics Publisher"
+      ]
+    },
+    "resourceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "Monitoring Metrics Publisher": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '3913510d-42f4-4e42-8a64-420c390055eb')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(uniqueString(parameters('resourceName'), variables(parameters('assignmentType')), parameters('principalId')))]",
+      "scope": "[concat(resourceGroup().id, '/providers/microsoft.insights/components/', parameters('resourceName'))]",
+      "properties": {
+        "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+        "principalId": "[parameters('principalId')]"
+      }
+    }
+  ]
+}

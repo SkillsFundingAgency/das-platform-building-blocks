@@ -203,5 +203,11 @@
         }
       }
     }
-  ]
+  ],
+  "outputs":{
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(parameters('apimName'), '2019-12-01', 'Full').identity.principalId]"
+    }
+  }
 }
