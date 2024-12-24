@@ -110,11 +110,11 @@
         },
         "numberOfEvaluationPeriods": {
             "type": "int",
-            "defaultValue": 2
+            "defaultValue": 1
         },
         "minFailingPeriodsToAlert": {
             "type": "int",
-            "defaultValue": 2
+            "defaultValue": 1
         }
     },
     "variables": {
