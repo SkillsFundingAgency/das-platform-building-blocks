@@ -7,6 +7,7 @@ parameters:
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
   ContinueOnVulnerablePackageScanError: false
+  Workloads: 'maui-ios,maui-tizen'
 
 steps:
 - task: SonarCloudPrepare@3
@@ -24,6 +25,13 @@ steps:
     extraProperties: |
       sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/CoverageResults/coverage.opencover.xml
       ${{ parameters.SonarCloudExtraProperties }}
+
+- task: DotNetCoreCLI@2
+  displayName: Workloads
+  inputs:
+    command: custom
+    custom: workload
+    arguments: install ${{ parameters.Workloads }} --skip-manifest-update
 
 - task: DotNetCoreCLI@2
   displayName: Restore
