@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apimName": {
+            "type": "string"
+        },
+        "keyVaultSecretId": {
+            "type": "string"
+        },
+        "namedValueName": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/namedValues",
+            "name": "[concat(parameters('apimName'), '/', parameters('namedValueName'))]",
+            "apiVersion": "2024-06-01-preview",
+            "properties": {
+                "displayName": "[parameters('namedValueName')]",
+                "keyVault": {
+                    "secretIdentifier": "[parameters('keyVaultSecretId')]"
+                },
+                "secret": true
+            }
+        }
+    ],
+    "outputs": {
+        "namedValueName": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.ApiManagement/service/namedValues', parameters('apimName'), parameters('namedValueName')), '2024-06-01-preview', 'Full').properties.displayName]"
+        }
+    }
+}
