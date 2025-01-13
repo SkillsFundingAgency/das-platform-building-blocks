@@ -8,6 +8,7 @@ parameters:
   UnitTestProjects: '**/*UnitTests.csproj'
   AcceptanceTestProjects: '**/*.AcceptanceTests.csproj'
   ContinueOnVulnerablePackageScanError: false
+  AzureArtifactsFeed: ''
 
 steps:
 - task: SonarCloudPrepare@3
@@ -27,11 +28,23 @@ steps:
       ${{ parameters.SonarCloudExtraProperties }}
 
 - task: DotNetCoreCLI@2
+  condition: eq('${{ parameters.AzureArtifactsFeed }}', '')
   displayName: Restore
   inputs:
     command: restore
     projects: ${{ parameters.TargetProjects }}
     noCache: true
+
+- task: DotNetCoreCLI@2
+  condition: ne('${{ parameters.AzureArtifactsFeed }}', '')
+  displayName: Restore - Including Custom Feed
+  inputs:
+    command: restore
+    projects: ${{ parameters.TargetProjects }}
+    noCache: true
+    feedsToUse: 'select'
+    vstsFeed: ${{ parameters.AzureArtifactsFeed }}
+    includeNuGetOrg: true
 
 - pwsh: |
     $TargetPatterns = "${{ parameters.TargetProjects }}".Trim().Split("`n")
