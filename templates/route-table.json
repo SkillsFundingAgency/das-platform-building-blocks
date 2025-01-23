@@ -8,12 +8,6 @@
                 "description": "Name of the Route Table"
             }
         },
-        "routeTableRoutes": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of route objects for the route table"
-            }
-        },
         "disableBgpRoutePropagation": {
             "type": "bool",
             "metadata": {
@@ -29,8 +23,7 @@
             "name": "[parameters('routeTableName')]",
             "location": "[resourceGroup().location]",
             "properties": {
-                "disableBgpRoutePropagation": "[parameters('disableBgpRoutePropagation')]",
-                "routes": "[parameters('routeTableRoutes')]"
+                "disableBgpRoutePropagation": "[parameters('disableBgpRoutePropagation')]"
             },
             "tags": {}
         }
