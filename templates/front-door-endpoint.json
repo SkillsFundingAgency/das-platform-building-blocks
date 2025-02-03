@@ -1,0 +1,159 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureFrontDoorName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Azure Front Door profile"
+      }
+    },
+    "azureFrontDoorEndpointName": {
+      "type": "string"
+    },
+    "azureFrontDoorEnabledState": {
+      "type": "string",
+      "defaultValue": "Enabled"
+    },
+    "originGroupName":{
+      "type": "string"
+    },
+    "originHostName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of origin host name"
+      }
+    },
+    "endpointRouteName":{
+      "type": "string"
+    },
+    "customDomainName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the custom domain name"
+      }
+    },
+
+    "queryStringCachingBehavior": {
+      "type": "string",
+      "defaultValue": "IgnoreQueryString",
+      "allowedValues": [
+        "NotSet",
+        "IgnoreQueryString",
+        "UseQueryString",
+        "BypassCaching"
+      ]
+    },
+    "originPath": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "azureFrontDoorEndpointOriginName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of "
+      }
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "TLS12",
+      "metadata": {
+        "description": "Minimum TLS Version"
+      }
+    },
+    "certificateType": {
+      "type": "string",
+      "defaultValue": "ManagedCertificate",
+      "metadata": {
+        "description": "SSL certificate type for custom domain"
+      }
+    }
+  },
+  "variables": {
+    "fullEndpointName": "[concat(parameters('azureFrontDoorName'), '/', parameters('azureFrontDoorEndpointName'))]",
+    "customDomainEnabled": "[greater(length(parameters('customDomainName')), 0)]",
+    "originHostName": "[replace(replace(parameters('originHostName'),'https://',''),'/','')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Cdn/profiles/afdendpoints",
+      "apiVersion": "2024-09-01",
+      "name": "[variables('fullEndpointName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "enabledState": "[parameters('azureFrontDoorEnabledState')]"
+      }
+    },
+    {
+      "condition": "[variables('customDomainEnabled')]",
+      "type": "Microsoft.Cdn/profiles/customdomains",
+      "apiVersion": "2024-09-01",
+      "name": "[concat(parameters('azureFrontDoorName'), '/', if(variables('customDomainEnabled'), replace(parameters('customDomainName'), '.', '-'), 'placeholder'))]",
+      "properties": {
+        "hostName": "[parameters('customDomainName')]",
+        "tlsSettings": {
+          "certificateType": "[parameters('certificateType')]",
+          "minimumTlsVersion": "[parameters('minimumTlsVersion')]"
+        }
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Cdn/profiles/origingroups",
+      "apiVersion": "2024-09-01",
+      "name": "[parameters('originGroupName')]",
+      "properties": {},
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Cdn/profiles/origingroups/origins",
+      "apiVersion": "2024-09-01",
+      "name": "[concat(parameters('originGroupName'), '/', parameters('azureFrontDoorEndpointOriginName'))]",
+      "properties": {
+        "hostName": "[variables('originHostName')]",
+        "httpPort": 80,
+        "httpsPort": 443,
+        "originHostHeader": "[variables('originHostName')]",
+        "priority": 1,
+        "weight": 1000
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Cdn/profiles/afdendpoints/routes",
+      "apiVersion": "2024-09-01",
+      "name": "[parameters('endpointRouteName')]",
+      "properties": {
+        "cacheConfiguration": {
+          "compressionSettings": {
+            "isCompressionEnabled": true
+          },
+          "queryStringCachingBehavior": "[parameters('queryStringCachingBehavior')]"
+        },
+        "customDomains": [
+          {
+            "id": "[if(variables('customDomainEnabled'), resourceId('Microsoft.Cdn/profiles/customdomains', parameters('azureFrontDoorName'),  replace(parameters('customDomainName'), '.', '-')), 'placeholder')]"
+          }
+        ],
+        "originGroup": {
+          "id": "[resourceId('Microsoft.Cdn/profiles/origingroups', parameters('azureFrontDoorName'), parameters('originGroupName'))]"
+        },
+        "originPath": "[parameters('originPath')]",
+        "ruleSets": [],
+        "supportedProtocols": [
+          "Http",
+          "Https"
+        ],
+        "patternsToMatch": [
+          "/*"
+        ],
+        "forwardingProtocol": "MatchRequest",
+        "linkToDefaultDomain": "Enabled",
+        "httpsRedirect": "Enabled"
+      },
+      "dependsOn":[]
+    }
+  ],
+  "outputs": {}
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "azureFrontDoorName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Azure Front Door profile"
+      }
+    },
+    "azureFrontDoorSKU": {
+      "type": "string",
+      "defaultValue": "Standard_AzureFrontDoor",
+      "allowedValues": [
+        "Standard_AzureFrontDoor",
+        "Premium_AzureFrontDoor"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Cdn/profiles",
+      "apiVersion": "2024-09-01",
+      "location": "Global",
+      "name": "[parameters('azureFrontDoorName')]",
+      "properties": {},
+      "sku": {
+        "name": "[parameters('azureFrontDoorSKU')]"
+      },
+      "tags": {}
+    }
+  ],
+  "outputs": {}
+}
