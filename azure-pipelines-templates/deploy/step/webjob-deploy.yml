@@ -23,7 +23,7 @@ steps:
     ${{ if ne(parameters.VirtualApplication, '') }}:
       VirtualApplication: ${{ parameters.VirtualApplication }}
     DeploymentType: ${{ parameters.DeploymentType }}
-    AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1'
+    AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1,-WEBSITE_RUN_FROM_PACKAGE 0'
 
 - task: AzureAppServiceManage@0
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
