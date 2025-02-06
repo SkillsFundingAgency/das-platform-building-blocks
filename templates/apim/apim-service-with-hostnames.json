@@ -73,6 +73,14 @@
       "type": "string",
       "defaultValue": ""
     },
+    "secureGatewayHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "secureGatewayKeyVaultSecretId": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "managementHostname": {
       "type": "string",
       "defaultValue": ""
@@ -119,6 +127,13 @@
             "type": "Proxy",
             "hostName": "[parameters('gatewayHostname')]",
             "keyVaultId": "[parameters('gatewayKeyVaultSecretId')]",
+            "negotiateClientCertificate": false,
+            "defaultSslBinding": true
+          },
+          {
+            "type": "Proxy",
+            "hostName": "[parameters('secureGatewayHostname')]",
+            "keyVaultId": "[parameters('secureGatewayKeyVaultSecretId')]",
             "negotiateClientCertificate": false
           },
           {
