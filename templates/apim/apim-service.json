@@ -92,6 +92,14 @@
       "type": "string",
       "defaultValue": ""
     },
+    "secureGatewayHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "secureGatewayKeyVaultCertificateName": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "managementHostname": {
       "type": "string",
       "defaultValue": ""
@@ -111,7 +119,7 @@
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/DASD-12694/templates/",
     "deployCustomHostnames": "[and(greater(length(parameters('portalKeyVaultCertificateName')), 0), greater(length(parameters('gatewayKeyVaultCertificateName')), 0))]",
     "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "subnetResourceId": "[concat(resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('subnetName'))]",
@@ -177,6 +185,12 @@
             "value": "[parameters('gatewayHostname')]"
           },
           "gatewayKeyVaultSecretId": {
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
+          },
+          "secureGatewayHostname": {
+            "value": "[parameters('secureGatewayHostname')]"
+          },
+          "secureGatewayKeyVaultSecretId": {
             "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "managementHostname": {
