@@ -14,7 +14,7 @@ steps:
     Action: 'Stop all continuous webjobs'
     WebAppName: ${{ parameters.AppServiceName }}
 
-- task: AzureRmWebAppDeployment@4
+- task: AzureRmWebAppDeployment@3
   displayName: 'Azure App Service Deploy: $(AppServiceName)'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
@@ -23,7 +23,6 @@ steps:
     ${{ if ne(parameters.VirtualApplication, '') }}:
       VirtualApplication: ${{ parameters.VirtualApplication }}
     DeploymentType: ${{ parameters.DeploymentType }}
-    AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1 -WEBSITE_RUN_FROM_PACKAGE 0'
 
 - task: AzureAppServiceManage@0
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
