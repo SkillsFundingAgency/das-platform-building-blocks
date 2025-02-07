@@ -14,8 +14,8 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     ScriptType: InlineScript
     Inline: |
-      $resourceGroupName = "$(ResourceGroupName)"
-      $webAppName = "$(AppServiceName)"
+      $resourceGroupName = ${{ parameters.ResourceGroupName }}
+      $webAppName = ${{ parameters.AppServiceName }}
       $appSettings = (Get-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName).SiteConfig.AppSettings
       $settingsHashtable = @{}
       foreach ($setting in $appSettings) {
@@ -42,8 +42,8 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     ScriptType: InlineScript
     Inline: |
-      $resourceGroupName = "$(ResourceGroupName)"
-      $webAppName = "$(AppServiceName)"
+      $resourceGroupName = ${{ parameters.ResourceGroupName }}
+      $webAppName = ${{ parameters.AppServiceName }}
       $appSettings = (Get-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName).SiteConfig.AppSettings
       $settingsHashtable = @{}
       foreach ($setting in $appSettings) {
