@@ -15,14 +15,14 @@ steps:
     WebAppName: ${{ parameters.AppServiceName }}
 
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: $(AppServiceName)'
+  displayName: 'Azure App Service Deploy: ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     WebAppName: ${{ parameters.AppServiceName }}
-    Package: ${{ parameters.DeploymentPackagePath }}
-    ${{ if ne(parameters.VirtualApplication, '') }}:
-      VirtualApplication: ${{ parameters.VirtualApplication }}
+    packageForLinux: ${{ parameters.DeploymentPackagePath }}
+    enableCustomDeployment: true
     DeploymentType: ${{ parameters.DeploymentType }}
+    TakeAppOfflineFlag: false
     AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1'
 
 - task: AzureAppServiceManage@0
@@ -31,4 +31,3 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     Action: 'Start all continuous webjobs'
     WebAppName: ${{ parameters.AppServiceName }}
-
