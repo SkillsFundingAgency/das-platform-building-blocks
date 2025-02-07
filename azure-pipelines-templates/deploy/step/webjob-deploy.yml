@@ -3,31 +3,77 @@ parameters:
   AppServiceName: ''
   DeploymentPackagePath: ''
   VirtualApplication: ''
+  ResourceGroupName: ''
   DeploymentType: webDeploy
 
 steps:
 
-- task: AzureAppServiceManage@0
+- task: AzurePowerShell@5
   displayName: 'Stop all continuous webjobs - ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    Action: 'Stop all continuous webjobs'
-    WebAppName: ${{ parameters.AppServiceName }}
+    ScriptType: InlineScript
+    Inline: |
+      $resourceGroupName = "$(ResourceGroupName)"
+      $webAppName = "$(AppServiceName)"
+      $appSettings = (Get-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName).SiteConfig.AppSettings
+      $settingsHashtable = @{}
+      foreach ($setting in $appSettings) {
+          $settingsHashtable[$setting.Name] = $setting.Value
+      }
+      $settingsHashtable["WEBJOBS_STOPPED"] = "1"
+      Set-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName -AppSettings $settingsHashtable
+    azurePowerShellVersion: LatestVersion
 
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: ${{ parameters.AppServiceName }}'
+  displayName: 'Azure App Service Deploy: $(AppServiceName)'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     WebAppName: ${{ parameters.AppServiceName }}
-    packageForLinux: ${{ parameters.DeploymentPackagePath }}
-    enableCustomDeployment: true
+    Package: ${{ parameters.DeploymentPackagePath }}
+    ${{ if ne(parameters.VirtualApplication, '') }}:
+      VirtualApplication: ${{ parameters.VirtualApplication }}
     DeploymentType: ${{ parameters.DeploymentType }}
-    TakeAppOfflineFlag: false
     AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1'
 
-- task: AzureAppServiceManage@0
+- task: AzurePowerShell@5
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    Action: 'Start all continuous webjobs'
-    WebAppName: ${{ parameters.AppServiceName }}
+    ScriptType: InlineScript
+    Inline: |
+      $resourceGroupName = "$(ResourceGroupName)"
+      $webAppName = "$(AppServiceName)"
+      $appSettings = (Get-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName).SiteConfig.AppSettings
+      $settingsHashtable = @{}
+      foreach ($setting in $appSettings) {
+          $settingsHashtable[$setting.Name] = $setting.Value
+      }
+      $settingsHashtable["WEBJOBS_STOPPED"] = "0"
+      Set-AzWebApp -ResourceGroupName $resourceGroupName -Name $webAppName -AppSettings $settingsHashtable
+    azurePowerShellVersion: LatestVersion
+
+# - task: AzureAppServiceManage@0
+#   displayName: 'Stop all continuous webjobs - ${{ parameters.AppServiceName }}'
+#   inputs:
+#     azureSubscription: ${{ parameters.ServiceConnection }}
+#     Action: 'Stop all continuous webjobs'
+#     WebAppName: ${{ parameters.AppServiceName }}
+
+# - task: AzureRmWebAppDeployment@4
+#   displayName: 'Azure App Service Deploy: ${{ parameters.AppServiceName }}'
+#   inputs:
+#     azureSubscription: ${{ parameters.ServiceConnection }}
+#     WebAppName: ${{ parameters.AppServiceName }}
+#     packageForLinux: ${{ parameters.DeploymentPackagePath }}
+#     enableCustomDeployment: true
+#     DeploymentType: ${{ parameters.DeploymentType }}
+#     TakeAppOfflineFlag: false
+#     AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1'
+
+# - task: AzureAppServiceManage@0
+#   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
+#   inputs:
+#     azureSubscription: ${{ parameters.ServiceConnection }}
+#     Action: 'Start all continuous webjobs'
+#     WebAppName: ${{ parameters.AppServiceName }}
