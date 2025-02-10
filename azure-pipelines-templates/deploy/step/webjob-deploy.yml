@@ -3,19 +3,28 @@ parameters:
   AppServiceName: ''
   DeploymentPackagePath: ''
   VirtualApplication: ''
+  ResourceGroupName: ''
   DeploymentType: webDeploy
 
 steps:
 
-- task: AzureAppServiceManage@0
+- task: AzurePowerShell@5
   displayName: 'Stop all continuous webjobs - ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    Action: 'Stop all continuous webjobs'
-    WebAppName: ${{ parameters.AppServiceName }}
+    ScriptType: InlineScript
+    Inline: |
+      $appSettings = (Get-AzWebApp -ResourceGroupName ${{ parameters.ResourceGroupName }} -Name ${{ parameters.AppServiceName }}).SiteConfig.AppSettings
+      $settingsHashtable = @{}
+      foreach ($setting in $appSettings) {
+          $settingsHashtable[$setting.Name] = $setting.Value
+      }
+      $settingsHashtable["WEBJOBS_STOPPED"] = "1"
+      Set-AzWebApp -ResourceGroupName ${{ parameters.ResourceGroupName }} -Name ${{ parameters.AppServiceName }} -AppSettings $settingsHashtable
+    azurePowerShellVersion: LatestVersion
 
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: $(AppServiceName)'
+  displayName: 'Azure App Service Deploy: ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
     WebAppName: ${{ parameters.AppServiceName }}
@@ -23,11 +32,19 @@ steps:
     ${{ if ne(parameters.VirtualApplication, '') }}:
       VirtualApplication: ${{ parameters.VirtualApplication }}
     DeploymentType: ${{ parameters.DeploymentType }}
+    AppSettings: '-WEBSITE_ENABLE_SYNC_UPDATE_SITE 1'
 
-- task: AzureAppServiceManage@0
+- task: AzurePowerShell@5
   displayName: 'Start all continuous webjobs - ${{ parameters.AppServiceName }}'
   inputs:
     azureSubscription: ${{ parameters.ServiceConnection }}
-    Action: 'Start all continuous webjobs'
-    WebAppName: ${{ parameters.AppServiceName }}
-
+    ScriptType: InlineScript
+    Inline: |
+      $appSettings = (Get-AzWebApp -ResourceGroupName ${{ parameters.ResourceGroupName }} -Name ${{ parameters.AppServiceName }}).SiteConfig.AppSettings
+      $settingsHashtable = @{}
+      foreach ($setting in $appSettings) {
+          $settingsHashtable[$setting.Name] = $setting.Value
+      }
+      $settingsHashtable["WEBJOBS_STOPPED"] = "0"
+      Set-AzWebApp -ResourceGroupName ${{ parameters.ResourceGroupName }} -Name ${{ parameters.AppServiceName }} -AppSettings $settingsHashtable
+    azurePowerShellVersion: LatestVersion
