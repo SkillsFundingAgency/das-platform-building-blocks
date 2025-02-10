@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apimName": {
+            "type": "string"
+        },
+        "policyFragmentName": {
+            "type": "string"
+        },
+        "policyFragmentDescription": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "policyFragmentFormat": {
+            "type": "string",
+            "allowedValues": [
+                "rawxml",
+                "xml"
+            ],
+            "defaultValue": "rawxml"
+        },
+        "policyFragmentContent": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/policyFragments",
+            "name": "[concat(parameters('apimName'), '/', parameters('policyFragmentName'))]",
+            "apiVersion": "2024-06-01-preview",
+            "properties": {
+                "description": "[parameters('policyFragmentDescription')]",
+                "format": "[parameters('policyFragmentFormat')]",
+                "value": "[parameters('policyFragmentContent')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
