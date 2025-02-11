@@ -119,7 +119,7 @@
     }
   },
   "variables": {
-    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/DASD-12694/templates/",
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
     "deployCustomHostnames": "[and(greater(length(parameters('portalKeyVaultCertificateName')), 0), greater(length(parameters('gatewayKeyVaultCertificateName')), 0))]",
     "deployToNetwork": "[and(greater(length(parameters('virtualNetworkName')), 0), not(equals(parameters('virtualNetworkType'), 'None')))]",
     "subnetResourceId": "[concat(resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '/subnets/', parameters('subnetName'))]",
