@@ -92,6 +92,14 @@
       "type": "string",
       "defaultValue": ""
     },
+    "secureGatewayHostname": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "secureGatewayKeyVaultCertificateName": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "managementHostname": {
       "type": "string",
       "defaultValue": ""
@@ -177,6 +185,12 @@
             "value": "[parameters('gatewayHostname')]"
           },
           "gatewayKeyVaultSecretId": {
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
+          },
+          "secureGatewayHostname": {
+            "value": "[parameters('secureGatewayHostname')]"
+          },
+          "secureGatewayKeyVaultSecretId": {
             "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "managementHostname": {
