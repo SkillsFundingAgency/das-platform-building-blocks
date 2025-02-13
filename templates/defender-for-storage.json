@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2023-10-07/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "capGBPerMonth": {
+            "type": "int",
+            "defaultValue": 10
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "enableSensitiveDataDiscovery": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "overrideSubscriptionLevelSettings": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "enableOnUploadMalwareScanning": {
+            "type": "bool",
+            "defaultValue": false
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2022-12-01-preview",
+            "name": "current",
+            "type": "Microsoft.Security/DefenderForStorageSettings",
+            "properties": {
+                "isEnabled": true,
+                "malwareScanning": {
+                    "onUpload": {
+                        "isEnabled": "[parameters('enableOnUploadMalwareScanning')]",
+                        "capGBPerMonth": "[parameters('capGBPerMonth')]"
+                    }
+                },
+                "sensitiveDataDiscovery": {
+                    "isEnabled": "[parameters('enableSensitiveDataDiscovery')]"
+                },
+                "overrideSubscriptionLevelSettings": "[parameters('overrideSubscriptionLevelSettings')]"
+            },
+            "scope": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+        }
+    ]
+}
