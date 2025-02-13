@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2023-10-07/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "capGBPerMonth": {
@@ -11,15 +11,15 @@
         },
         "enableSensitiveDataDiscovery": {
             "type": "bool",
-            "defaultValue": false
+            "defaultValue": true
         },
         "overrideSubscriptionLevelSettings": {
             "type": "bool",
-            "defaultValue": false
+            "defaultValue": true
         },
         "enableOnUploadMalwareScanning": {
             "type": "bool",
-            "defaultValue": false
+            "defaultValue": true
         }
     },
     "resources": [
