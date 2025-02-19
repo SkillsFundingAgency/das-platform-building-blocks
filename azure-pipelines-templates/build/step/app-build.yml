@@ -146,10 +146,10 @@ steps:
 
 - task: SonarCloudAnalyze@3
   displayName: Run SonarCloud analysis
-  condition: condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
+  condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
 
 - task: SonarCloudPublish@3
   displayName: Publish SonarCloud analysis results on build summary
-  condition: condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
+  condition: and(succeeded(), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     pollingTimeoutSec: '300'
