@@ -1,0 +1,23 @@
+parameters:
+  Environment:
+
+steps:
+- ${{ if eq(parameters.Environment, 'PROD') }}:
+  - checkout: das-platform-automation
+
+  - task: PowerShell@2
+    name: RetainOnSuccess
+    displayName: Retain Build on Successful PROD Deployment
+    condition: and(succeeded(), not(canceled()))
+    inputs:
+      failOnStderr: true
+      targetType: 'filePath'
+      filePath: "$(Build.SourcesDirectory)/das-platform-automation/Infrastructure-Scripts/Retain-Build.ps1"
+      arguments: >
+        -DefinitionId $(System.DefinitionId)
+        -RunId $(Build.BuildId)
+        -OwnerId "User:$(Build.RequestedForId)"
+        -CollectionUri "$(System.CollectionUri)"
+        -TeamProject "$(System.TeamProject)"
+        -AccessToken $(System.AccessToken)
+      pwsh: true
