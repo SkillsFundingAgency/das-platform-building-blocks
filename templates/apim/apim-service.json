@@ -191,7 +191,7 @@
             "value": "[parameters('secureGatewayHostname')]"
           },
           "secureGatewayKeyVaultSecretId": {
-            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('gatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
+            "value": "[if(variables('deployCustomHostnames'), reference(resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults/secrets', parameters('keyVaultName'), parameters('secureGatewayKeyVaultCertificateName')), '2018-02-14').secretUri, json('null'))]"
           },
           "managementHostname": {
             "value": "[parameters('managementHostname')]"
