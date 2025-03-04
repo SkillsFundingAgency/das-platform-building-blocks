@@ -65,6 +65,13 @@
         "Tls12"
       ],
       "defaultValue": "Tls12"
+    },
+    "capabilities": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "List of additional capabilities to enable for the Cosmos DB account. Defaults are always included."
+      }
     }
   },
   "variables": {
@@ -145,7 +152,14 @@
     ],
     "mongoDiagnosticSettings": "[concat(variables('commonDiagnosticSettings'), variables('mongoSpecificDiagnosticSettings'))]",
     "nonMongoDiagnosticSettings": "[concat(variables('commonDiagnosticSettings'), variables('nonMongoSpecificDiagnosticSettings'))]",
-    "diagnosticSettings": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoDiagnosticSettings'), variables('nonMongoDiagnosticSettings'))]"
+    "diagnosticSettings": "[if(equals(parameters('cosmosDbType'), 'MongoDB'), variables('mongoDiagnosticSettings'), variables('nonMongoDiagnosticSettings'))]",
+    "defaultCapabilities": [
+      { "name": "EnableAggregationPipeline" },
+      { "name": "AllowSelfServeUpgradeToMongo36" },
+      { "name": "DisableRateLimitingResponses" },
+      { "name": "EnableMongo" }
+    ],
+    "mergedCapabilities": "[union(variables('defaultCapabilities'), parameters('capabilities'))]"
   },
   "resources": [
     {
@@ -168,7 +182,8 @@
           "properties": {
             "logAnalyticsDestinationType": "Dedicated",
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
-            "logs": "[variables('diagnosticSettings')]"
+            "logs": "[variables('diagnosticSettings')]",
+            "capabilities": "[variables('mergedCapabilities')]"
           }
         }
       ]
