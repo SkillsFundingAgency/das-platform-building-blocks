@@ -99,7 +99,7 @@
       "minimalTlsVersion": "[parameters('minimalTlsVersion')]"
     },
     "ipRangeFilterArray": "[split(parameters('ipRangeFilter'),',')]",
-    "mongoCosmosProperties": "[union(variables('baseCosmosProperties'), variables('apiProperties'))]",
+    "mongoCosmosProperties": "[union(variables('baseCosmosProperties'), variables('apiProperties'), createObject('capabilities', variables('mergedCapabilities')))]",
     "virtualNetworkRulesEmpty": [],
     "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRulesCopy'), variables('virtualNetworkRulesEmpty'))]",
     "copy": [
@@ -182,8 +182,7 @@
           "properties": {
             "logAnalyticsDestinationType": "Dedicated",
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
-            "logs": "[variables('diagnosticSettings')]",
-            "capabilities": "[variables('mergedCapabilities')]"
+            "logs": "[variables('diagnosticSettings')]"
           }
         }
       ]
