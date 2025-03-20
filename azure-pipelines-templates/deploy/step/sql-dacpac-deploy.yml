@@ -16,7 +16,6 @@ parameters:
   type: boolean
 - name: ServerName
 - name: SqlUsername
-- name: SqlPassword
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
@@ -26,6 +25,16 @@ steps:
     filePath: das-platform-automation/Infrastructure-Scripts/Approve-SqlDacpacDeploymentDataLoss.ps1
     # note: double dollar sign ($$) converts Azure DevOps boolean to PowerShell boolean by prefixing the True\False string with a dollar sign
     arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss $${{ parameters.OverrideBlockOnPossibleDataLoss }} -Verbose
+- task: AzurePowerShell@5
+  displayName: 'Fetch SQL Server Admin password from key vault'
+  inputs:
+    azureSubscription: ${{ parameters.AzureSubscription }}
+    scriptType: inlineScript
+    inline: |
+      $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
+      Write-Output "Setting variable SharedSqlServerAdminPassword"
+      Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
+    azurePowerShellVersion: LatestVersion
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
   displayName: Execute Azure SQL DacpacTask without AdditionalArguments
@@ -34,7 +43,7 @@ steps:
     ServerName: ${{ parameters.ServerName }}
     DatabaseName: ${{ parameters.DatabaseName }}
     SqlUsername: ${{ parameters.SqlUsername }}
-    SqlPassword: ${{ parameters.SqlPassword }}
+    SqlPassword: $(SharedSqlServerAdminPassword)
     DacpacFile: ${{ parameters.DacpacFile }}
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), eq(variables.SetBlockOnPossibleDataLossArgument, true))
@@ -44,6 +53,6 @@ steps:
     ServerName: ${{ parameters.ServerName }}
     DatabaseName: ${{ parameters.DatabaseName }}
     SqlUsername: ${{ parameters.SqlUsername }}
-    SqlPassword: ${{ parameters.SqlPassword }}
+    SqlPassword: $(SharedSqlServerAdminPassword)
     DacpacFile: ${{ parameters.DacpacFile }}
     AdditionalArguments: /p:BlockOnPossibleDataLoss=false

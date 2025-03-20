@@ -1,3 +1,9 @@
+# 3.0.0
+
+This change allows the SQL server password to be fetched during pipeline runtime to allow easier rotation of the secret.
+
+Breaking change to [sql-dacpac-deploy.yml](azure-pipelines-templates/deploy/step/sql-dacpac-deploy.yml). Removed ```${{ parameters.SqlPassword }}``` which is passed into template from service pipelines, no longer required when using AZ CLI. Any pipeline using this template will need to remove the parameter before bumping to this version.
+
 # 2.2.13
 
 Added applicaton insights failed request template and get product app insights infomation step
