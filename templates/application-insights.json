@@ -8,11 +8,18 @@
         "description": "Name of the application insights resource"
       }
     },
+    "sharedEnvResourceGroup": {
+      "type": "string"
+    },
     "attachedService": {
       "defaultValue": "",
       "type": "string"
     },
     "logAnalyticsWorkspaceId": {
+      "defaultValue": "",
+      "type": "string"
+    },
+    "appInsightsResourceId": {
       "defaultValue": "",
       "type": "string"
     },
@@ -51,8 +58,11 @@
       "apiVersion": "2021-09-01",
       "name": "[concat(parameters('privateLinkScopeName'),'/', parameters('appInsightsName'))]",
       "properties": {
-        "linkedResourceId": "[parameters('appInsightsResourceId')]"
+        "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
       }
+      "dependsOn": [
+        "[resourceId(parameters('sharedEnvResourceGroup'), 'Microsoft.Insights/privateLinkScopes', parameters('privateLinkScopeName'))]"
+      ]
     }
   ],
   "outputs": {
