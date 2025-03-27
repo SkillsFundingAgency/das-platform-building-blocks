@@ -55,7 +55,7 @@
       "name": "[concat(parameters('privateLinkScopeName'),'/', parameters('appInsightsName'))]",
       "properties": {
         "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
-      }
+      },
       "dependsOn": [
         "[resourceId(parameters('sharedEnvResourceGroup'), 'Microsoft.Insights/privateLinkScopes', parameters('privateLinkScopeName'))]"
       ]
