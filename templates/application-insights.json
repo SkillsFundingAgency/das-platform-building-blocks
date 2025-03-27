@@ -19,10 +19,6 @@
       "defaultValue": "",
       "type": "string"
     },
-    "appInsightsResourceId": {
-      "defaultValue": "",
-      "type": "string"
-    },
     "privateLinkScopeName": {
       "type": "string",
       "metadata": {
