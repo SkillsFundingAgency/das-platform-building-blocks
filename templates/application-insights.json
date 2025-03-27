@@ -15,6 +15,12 @@
     "logAnalyticsWorkspaceId": {
       "defaultValue": "",
       "type": "string"
+    },
+    "privateLinkScopeName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the private link scope resource"
+      }
     }
   },
   "variables" : {
@@ -39,6 +45,17 @@
         "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('attachedService')))]": "Resource"
       },
       "properties": "[variables('appInsightsProperties')]"
+    },
+    {
+      "type": "Microsoft.Insights/privateLinkScopes/scopedResources",
+      "apiVersion": "2021-09-01",
+      "name": "[concat(parameters('privateLinkScopeName'),'/', parameters('appInsightsName'))]",
+      "properties": {
+        "linkedResourceId": "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/privateLinkScopes', parameters('privateLinkScopeName'))]"
+      ]
     }
   ],
   "outputs": {
