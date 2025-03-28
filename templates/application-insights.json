@@ -53,7 +53,7 @@
     {
       "type": "Microsoft.Insights/privateLinkScopes/scopedResources",
       "apiVersion": "2021-09-01",
-      "name": "[concat(parameters('privateLinkScopeName'),'/', parameters('appInsightsName'))]",
+      "name": "[concat(parameters('privateLinkScopeName'))]",
       "properties": {
         "linkedResourceId": "[parameters('appInsightsResourceId')]"
       }
