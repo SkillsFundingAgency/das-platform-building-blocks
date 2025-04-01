@@ -15,11 +15,12 @@
     "logAnalyticsWorkspaceId": {
       "defaultValue": "",
       "type": "string"
-    }
+    },
   },
   "variables" : {
     "baseProperties": {
-      "Application_Type": "web"
+      "Application_Type": "web",
+      "publicNetworkAccessForIngestion": "Disabled"
     },
     "logAnalyticsWorkspaceProperties": {
       "WorkspaceResourceId": "[parameters('logAnalyticsWorkspaceId')]"
