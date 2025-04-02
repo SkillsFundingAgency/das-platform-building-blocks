@@ -19,8 +19,7 @@
   },
   "variables" : {
     "baseProperties": {
-      "Application_Type": "web",
-      "publicNetworkAccessForIngestion": "Disabled"
+      "Application_Type": "web"
     },
     "logAnalyticsWorkspaceProperties": {
       "WorkspaceResourceId": "[parameters('logAnalyticsWorkspaceId')]"
