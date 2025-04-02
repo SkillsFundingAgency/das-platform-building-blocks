@@ -7,6 +7,7 @@ parameters:
   TargetFileName: '*.schema.json'
   ConfigurationSecrets: {}
   TableName: 'Configuration'
+  Version: ''
 
 steps:
 - checkout: das-platform-automation
@@ -22,6 +23,7 @@ steps:
       -StorageAccountResourceGroup ${{ parameters.StorageAccountResourceGroup }}
       -EnvironmentName ${{ parameters.EnvironmentName }}
       -TableName ${{ parameters.TableName }}
+      -Version ${{ coalesce(parameters.Version, '1.0') }}
     azurePowerShellVersion: LatestVersion
     pwsh: true
   env: ${{ parameters.ConfigurationSecrets }}
