@@ -13,6 +13,13 @@
             "metadata": {
                 "description": "Indicates whether BGP route propagation is disabled"
             }
+        },
+        "routeTableRoutes": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Array of routes to be added to route table"
+            }
         }
     },
     "variables": {},
@@ -23,7 +30,8 @@
             "name": "[parameters('routeTableName')]",
             "location": "[resourceGroup().location]",
             "properties": {
-                "disableBgpRoutePropagation": "[parameters('disableBgpRoutePropagation')]"
+                "disableBgpRoutePropagation": "[parameters('disableBgpRoutePropagation')]",
+                "routes": "[parameters('routeTableRoutes')]"
             },
             "tags": {}
         }
