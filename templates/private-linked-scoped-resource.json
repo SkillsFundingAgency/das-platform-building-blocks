@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "appInsightsName": {
+        "scopedResourceName": {
             "type": "string",
             "metadata": {
                 "description": "Name of the application insights resource"
@@ -14,7 +14,7 @@
                 "description": "Name of the Private Link Scope"
             }
         },
-        "appInsightsResourceId": {
+        "scopedResourceId": {
             "defaultValue": "",
             "type": "string"
         }
@@ -23,9 +23,9 @@
         {
             "type": "Microsoft.Insights/privateLinkScopes/scopedResources",
             "apiVersion": "2021-09-01",
-            "name": "[concat(parameters('privateLinkScopeName'), '/', parameters('appInsightsName'), '-connection')]",
+            "name": "[concat(parameters('privateLinkScopeName'), '/', parameters('scopedResourceName'), '-connection')]",
             "properties": {
-                "linkedResourceId": "[parameters('appInsightsResourceId')]"
+                "linkedResourceId": "[parameters('scopedResourceId')]"
             }
         }
     ]
