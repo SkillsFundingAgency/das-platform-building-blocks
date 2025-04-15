@@ -8,7 +8,7 @@ jobs:
     - task: AzureCLI@2
       displayName: "Trigger das-live-smoke-test-suite"
       inputs:
-        azureSubscription: SFA-DAS-DevTest-ARM
+        azureSubscription: SFA-DIG-Prod-ARM
         scriptType: "ps"
         scriptLocation: "inlineScript"
         inlineScript: |
