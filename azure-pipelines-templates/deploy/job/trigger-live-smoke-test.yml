@@ -1,3 +1,4 @@
+jobs:
 - job: TriggerSmokeTest
   displayName: "Trigger Live Smoke Test"
   condition: succeeded()
