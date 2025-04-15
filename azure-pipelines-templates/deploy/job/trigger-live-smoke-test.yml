@@ -1,0 +1,20 @@
+jobs:
+- job: TriggerSmokeTest
+  displayName: "Trigger Live Smoke Test"
+  condition: succeeded()
+  pool:
+    name: DAS - Continuous Deployment Agents
+  steps:
+    - task: AzureCLI@2
+      displayName: "Trigger das-live-smoke-test-suite"
+      inputs:
+        azureSubscription: SFA-DAS-DevTest-ARM
+        scriptType: "ps"
+        scriptLocation: "inlineScript"
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az extension add --name azure-devops
+          az pipelines run --organization $(OrganisationUrl) --project $(ProjectName) --id $(PipelineId) --branch $(PipelineBranch)
+          az extension remove --name azure-devops
+      env:
+        AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
