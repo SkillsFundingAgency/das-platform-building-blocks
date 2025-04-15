@@ -15,5 +15,6 @@ jobs:
           az config set extension.use_dynamic_install=yes_without_prompt
           az extension add --name azure-devops
           az pipelines run --organization $(OrganisationUrl) --project $(ProjectName) --id $(PipelineId) --branch $(PipelineBranch)
+          az extension remove --name azure-devops
       env:
         AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
