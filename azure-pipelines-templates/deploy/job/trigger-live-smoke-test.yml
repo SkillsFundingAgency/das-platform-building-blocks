@@ -8,7 +8,7 @@ jobs:
     - task: AzureCLI@2
       displayName: "Trigger das-live-smoke-test-suite"
       inputs:
-        azureSubscription: ${{ parameters.ServiceConnection }}
+        azureSubscription: $(ServiceConnection)
         scriptType: "ps"
         scriptLocation: "inlineScript"
         inlineScript: |
