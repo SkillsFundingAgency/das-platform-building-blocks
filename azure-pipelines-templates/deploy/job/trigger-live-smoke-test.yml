@@ -1,6 +1,5 @@
 parameters:
   ServiceConnection:
-  
 jobs:
 - job: TriggerSmokeTest
   displayName: "Trigger Live Smoke Test"
