@@ -90,12 +90,13 @@ steps:
     $null = Install-Package -Name "Octokit" -RequiredVersion "4.0.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
     $null = Install-Package -Name "GitHubJwt" -RequiredVersion "0.0.5" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
     $null = Install-Package -Name "jose-jwt" -RequiredVersion "4.0.1" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-    $null = Install-Package -Name "BouncyCastle.NetCore" -RequiredVersion "1.9.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
+    $null = Install-Package -Name "Portable.BouncyCastle" -RequiredVersion "1.9.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
+
 
     $OctokitDll = "$(Agent.TempDirectory)/packages/Octokit.4.0.0/lib/netstandard2.0/Octokit.dll"
     $GitHubJwtDll = "$(Agent.TempDirectory)/packages/GitHubJwt.0.0.5/lib/netstandard2.0/GitHubJwt.dll"
     $JoseJwtDll = "$(Agent.TempDirectory)/packages/jose-jwt.4.0.1/lib/netstandard2.1/jose-jwt.dll"
-    $BouncyCastleCryptoDll = "$(Agent.TempDirectory)/packages/BouncyCastle.NetCore.1.9.0/lib/netstandard2.0/BouncyCastle.Crypto.dll"
+    $BouncyCastleCryptoDll = "$(Agent.TempDirectory)/packages/Portable.BouncyCastle.1.9.0/lib/netstandard2.0/BouncyCastle.Crypto.dll"
 
     $null = Add-Type -Path $OctokitDll
     $null = Add-Type -Path $GitHubJwtDll
