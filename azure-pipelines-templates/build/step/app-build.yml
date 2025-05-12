@@ -92,6 +92,8 @@ steps:
     $TaggedUsers = $env:PullRequestVulnerabilitiesDetectedTaggedUsers
     $PRNumber = $env:System_PullRequest_PullRequestNumber
 
+    Write-Host "Authenticating GitHub App and posting PR comment..."
+
     function Get-JwtToken {
       Add-Type -AssemblyName System.Security.Cryptography
       $rsa = [System.Security.Cryptography.RSA]::Create()
@@ -102,9 +104,11 @@ steps:
         alg = "RS256"
         typ = "JWT"
       }
+
+      $now = [int][double]::Parse((Get-Date -Date (Get-Date).ToUniversalTime() -UFormat %s))
       $payload = @{
-        iat = [int][double]::Parse((Get-Date -Date (Get-Date).ToUniversalTime() -UFormat %s))
-        exp = [int][double]::Parse((Get-Date -Date (Get-Date).ToUniversalTime().AddMinutes(10) -UFormat %s))
+        iat = $now
+        exp = $now + 540
         iss = $AppId
       }
 
@@ -112,7 +116,7 @@ steps:
         param($obj)
         $json = ($obj | ConvertTo-Json -Compress)
         $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
-        [Convert]::ToBase64String($bytes).TrimEnd('=').Replace('+','-').Replace('/','_')
+        [Convert]::ToBase64String($bytes).TrimEnd('=') -replace '\+', '-' -replace '/', '_'
       }
 
       $headerEncoded = &$toBase64 $header
@@ -124,38 +128,56 @@ steps:
         [System.Security.Cryptography.HashAlgorithmName]::SHA256,
         [System.Security.Cryptography.RSASignaturePadding]::Pkcs1
       )
-      $sigEncoded = [Convert]::ToBase64String($signature).TrimEnd('=').Replace('+','-').Replace('/','_')
+      $sigEncoded = [Convert]::ToBase64String($signature).TrimEnd('=') -replace '\+', '-' -replace '/', '_'
 
       return "$data.$sigEncoded"
     }
 
-    $jwt = Get-JwtToken
+    try {
+      $jwt = Get-JwtToken
 
-    $accessTokenResponse = Invoke-RestMethod -Method POST `
-      -Uri "https://api.github.com/app/installations/$InstallationId/access_tokens" `
-      -Headers @{ 
-        Authorization = "Bearer $jwt"
-        Accept = "application/vnd.github+json"
-        "User-Agent" = "das-github-app"
-      }
+      $accessTokenResponse = Invoke-RestMethod -Method POST `
+        -Uri "https://api.github.com/app/installations/$InstallationId/access_tokens" `
+        -Headers @{ 
+          Authorization = "Bearer $jwt"
+          Accept = "application/vnd.github+json"
+          "User-Agent" = "das-github-app"
+        }
 
-    $accessToken = $accessTokenResponse.token
+      $accessToken = $accessTokenResponse.token
+      $owner, $repo = $RepoName -split '/'
 
-    $owner, $repo = $RepoName -split '/'
-    $commentBody = @{
-      body = "Please remember to check any packages used by this application to ensure they are up to date @$Author. cc/ $TaggedUsers"
-    } | ConvertTo-Json
+      $commentBody = @{
+        body = "🔒 Please remember to check any packages used by this application to ensure they are up to date @$Author.  cc/ $TaggedUsers"
+      } | ConvertTo-Json
 
-    Invoke-RestMethod -Method POST `
-      -Uri "https://api.github.com/repos/$owner/$repo/issues/$PRNumber/comments" `
-      -Headers @{
-        Authorization = "token $accessToken"
-        Accept = "application/vnd.github+json"
-        "User-Agent" = "das-github-app"
-      } `
-      -Body $commentBody
-  displayName: 'Pull Request Commenting'
+      Invoke-RestMethod -Method POST `
+        -Uri "https://api.github.com/repos/$owner/$repo/issues/$PRNumber/comments" `
+        -Headers @{
+          Authorization = "token $accessToken"
+          Accept = "application/vnd.github+json"
+          "User-Agent" = "das-github-app"
+        } `
+        -Body $commentBody | Out-Null
+
+      Write-Host "✅ Comment posted successfully to PR #$PRNumber"
+    }
+    catch {
+      Write-Host "⚠️  Comment could not be posted to PR #$PRNumber"
+      Write-Host "Reason: $($_.Exception.Message)"
+      Write-Host "##vso[task.logissue type=warning;]GitHub PR comment failed: $($_.Exception.Message)"
+    }
+
+    exit 0
+  displayName: 'PR Commenting'
   condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
+  env:
+    DasGitHubAppId: $(DasGitHubAppId)
+    DasGitHubAppInstallationId: $(DasGitHubAppInstallationId)
+    Build_Repository_Name: $(Build.Repository.Name)
+    Build_SourceVersionAuthor: $(Build.SourceVersionAuthor)
+    PullRequestVulnerabilitiesDetectedTaggedUsers: $(PullRequestVulnerabilitiesDetectedTaggedUsers)
+    System_PullRequest_PullRequestNumber: $(System.PullRequest.PullRequestNumber)
 
 - task: DotNetCoreCLI@2
   displayName: Build
