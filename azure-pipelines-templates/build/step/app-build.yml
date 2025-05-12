@@ -10,6 +10,7 @@ parameters:
   ContinueOnVulnerablePackageScanError: false
   AzureArtifactsFeed: ''
 
+steps:
 - task: SonarCloudPrepare@3
   displayName: Prepare SonarCloud analysis configuration
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
@@ -77,7 +78,7 @@ parameters:
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
 
 - task: Bash@3
-  displayName: 'PR Commenting'
+  displayName: '💬 PR Commenting with GitHub CLI'
   condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
   env:
     GH_APP_TOKEN: $(GitHubAppAccessToken)
@@ -88,6 +89,18 @@ parameters:
   inputs:
     targetType: 'inline'
     script: |
+      echo "🔍 Checking for GitHub CLI..."
+      if ! command -v gh &> /dev/null; then
+        echo "🔧 Installing GitHub CLI..."
+        sudo apt-get update
+        sudo apt-get install -y curl git
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+        sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install -y gh
+      fi
+
       echo "🔐 Logging into GitHub CLI..."
       echo "$GH_APP_TOKEN" | gh auth login --with-token
 
