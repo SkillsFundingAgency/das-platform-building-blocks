@@ -77,50 +77,41 @@ steps:
   displayName: Package Scanning
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
 
-# - task: DownloadSecureFile@1
-#   name: DownloadDasGitHubAppPrivateKey
-#   displayName: 'Download DAS GitHub App private key'
-#   inputs:
-#     secureFile: 'das-github-app-private-key.pem'
+- task: Bash@3
+  displayName: '💬 PR Commenting with GitHub CLI'
+  condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
+  env:
+    GH_APP_TOKEN: $(GitHubAppAccessToken)
+    PR_NUMBER: $(System.PullRequest.PullRequestNumber)
+    REPO_NAME: $(Build.Repository.Name)
+    AUTHOR: $(Build.SourceVersionAuthor)
+    TAGGED_USERS: $(PullRequestVulnerabilitiesDetectedTaggedUsers)
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "🔍 Checking for GitHub CLI..."
+      if ! command -v gh &> /dev/null; then
+        echo "🔧 Installing GitHub CLI..."
+        sudo apt-get update
+        sudo apt-get install -y curl git
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+        sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt-get update
+        sudo apt-get install -y gh
+      fi
 
-# - pwsh: |
-#     $null = Register-PackageSource -Name NuGet -Location https://api.nuget.org/v3/index.json -ProviderName NuGet
-#     #NOTE: Install-Package with -SkipDependencies flag used until PowerShellGet v3 can be used to only install Octokit and GitHubJwt along with their dependencies.
-#     #NOTE: https://github.com/PowerShell/PowerShellGet/issues/487#issue-1000366159
-#     $null = Install-Package -Name "Octokit" -RequiredVersion "4.0.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "GitHubJwt" -RequiredVersion "0.0.5" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "jose-jwt" -RequiredVersion "4.0.1" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "Portable.BouncyCastle" -RequiredVersion "1.9.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
+      echo "🔐 Logging into GitHub CLI..."
+      echo "$GH_APP_TOKEN" | gh auth login --with-token
 
-
-#     $OctokitDll = "$(Agent.TempDirectory)/packages/Octokit.4.0.0/lib/netstandard2.0/Octokit.dll"
-#     $GitHubJwtDll = "$(Agent.TempDirectory)/packages/GitHubJwt.0.0.5/lib/netstandard2.0/GitHubJwt.dll"
-#     $JoseJwtDll = "$(Agent.TempDirectory)/packages/jose-jwt.4.0.1/lib/netstandard2.1/jose-jwt.dll"
-#     $BouncyCastleCryptoDll = "$(Agent.TempDirectory)/packages/Portable.BouncyCastle.1.9.0/lib/netstandard2.0/BouncyCastle.Crypto.dll"
-
-#     $null = Add-Type -Path $OctokitDll
-#     $null = Add-Type -Path $GitHubJwtDll
-#     $null = Add-Type -Path $JoseJwtDll
-#     $null = Add-Type -Path $BouncyCastleCryptoDll
-
-#     $PrivateKey = [GitHubJwt.FilePrivateKeySource]::new("$(DownloadDasGitHubAppPrivateKey.secureFilePath)")
-#     $GitHubJwtFactoryOptions = [GitHubJwt.GitHubJwtFactoryOptions]::new()
-#     $GitHubJwtFactoryOptions.AppIntegrationId = $(DasGitHubAppId)
-#     $GitHubJwtFactoryOptions.ExpirationSeconds = 60
-#     $Generator = [GitHubJwt.GitHubJwtFactory]::new($PrivateKey, $GitHubJwtFactoryOptions)
-#     $JwtToken = $Generator.CreateEncodedJwtToken()
-
-#     $AppClient = [Octokit.GitHubClient]::new([Octokit.ProductHeaderValue]::new("das-github-app"))
-#     $AppClient.Credentials = [Octokit.Credentials]::new($JwtToken, ([Octokit.AuthenticationType]::Bearer))
-#     $Response = $AppClient.GitHubApps.CreateInstallationToken($(DasGitHubAppInstallationId)).Result
-
-#     $PullRequestComment = "Please remember to check any packages used by this application to ensure they are up to date @$(Build.SourceVersionAuthor). cc/ $(PullRequestVulnerabilitiesDetectedTaggedUsers)"
-
-#     $InstallationClient = [Octokit.GithubClient]::new([Octokit.ProductHeaderValue]::new("das-github-app-installation"))
-#     $InstallationClient.Credentials = [Octokit.Credentials]::new($Response.Token)
-#     $InstallationClient.Issue.Comment.Create("$(Build.Repository.Name)".Split('/')[0], "$(Build.Repository.Name)".Split('/')[1], $(System.PullRequest.PullRequestNumber), $PullRequestComment)
-#   displayName: Pull Request Commenting
-#   condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
+      if gh pr comment "$PR_NUMBER" \
+        --repo "$REPO_NAME" \
+        --body "🔒 Please remember to check any packages used by this application to ensure they are up to date @$AUTHOR. cc/ $TAGGED_USERS"; then
+          echo "✅ Comment posted successfully to PR #$PR_NUMBER"
+      else
+          echo "##vso[task.logissue type=warning]GitHub PR comment failed."
+          echo "⚠️  Comment could not be posted to PR #$PR_NUMBER"
+      fi
 
 - task: DotNetCoreCLI@2
   displayName: Build
