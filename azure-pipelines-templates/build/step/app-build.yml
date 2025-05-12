@@ -77,50 +77,85 @@ steps:
   displayName: Package Scanning
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
 
-# - task: DownloadSecureFile@1
-#   name: DownloadDasGitHubAppPrivateKey
-#   displayName: 'Download DAS GitHub App private key'
-#   inputs:
-#     secureFile: 'das-github-app-private-key.pem'
+- task: DownloadSecureFile@1
+  name: DownloadDasGitHubAppPrivateKey
+  displayName: 'Download DAS GitHub App private key'
+  inputs:
+    secureFile: 'das-github-app-private-key.pem'
 
-# - pwsh: |
-#     $null = Register-PackageSource -Name NuGet -Location https://api.nuget.org/v3/index.json -ProviderName NuGet
-#     #NOTE: Install-Package with -SkipDependencies flag used until PowerShellGet v3 can be used to only install Octokit and GitHubJwt along with their dependencies.
-#     #NOTE: https://github.com/PowerShell/PowerShellGet/issues/487#issue-1000366159
-#     $null = Install-Package -Name "Octokit" -RequiredVersion "4.0.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "GitHubJwt" -RequiredVersion "0.0.5" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "jose-jwt" -RequiredVersion "4.0.1" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
-#     $null = Install-Package -Name "Portable.BouncyCastle" -RequiredVersion "1.9.0" -Destination "$(Agent.TempDirectory)/packages" -Source "NuGet" -Force -SkipDependencies
+- pwsh: |
+    $AppId = $env:DasGitHubAppId
+    $InstallationId = $env:DasGitHubAppInstallationId
+    $PrivateKeyPath = "$(DownloadDasGitHubAppPrivateKey.secureFilePath)"
+    $RepoName = $env:Build_Repository_Name
+    $Author = $env:Build_SourceVersionAuthor
+    $TaggedUsers = $env:PullRequestVulnerabilitiesDetectedTaggedUsers
+    $PRNumber = $env:System_PullRequest_PullRequestNumber
 
+    function Get-JwtToken {
+      Add-Type -AssemblyName System.Security.Cryptography
+      $rsa = [System.Security.Cryptography.RSA]::Create()
+      $pem = Get-Content $PrivateKeyPath -Raw
+      $rsa.ImportFromPem($pem)
 
-#     $OctokitDll = "$(Agent.TempDirectory)/packages/Octokit.4.0.0/lib/netstandard2.0/Octokit.dll"
-#     $GitHubJwtDll = "$(Agent.TempDirectory)/packages/GitHubJwt.0.0.5/lib/netstandard2.0/GitHubJwt.dll"
-#     $JoseJwtDll = "$(Agent.TempDirectory)/packages/jose-jwt.4.0.1/lib/netstandard2.1/jose-jwt.dll"
-#     $BouncyCastleCryptoDll = "$(Agent.TempDirectory)/packages/Portable.BouncyCastle.1.9.0/lib/netstandard2.0/BouncyCastle.Crypto.dll"
+      $header = @{
+        alg = "RS256"
+        typ = "JWT"
+      }
+      $payload = @{
+        iat = [int][double]::Parse((Get-Date -Date (Get-Date).ToUniversalTime() -UFormat %s))
+        exp = [int][double]::Parse((Get-Date -Date (Get-Date).ToUniversalTime().AddMinutes(10) -UFormat %s))
+        iss = $AppId
+      }
 
-#     $null = Add-Type -Path $OctokitDll
-#     $null = Add-Type -Path $GitHubJwtDll
-#     $null = Add-Type -Path $JoseJwtDll
-#     $null = Add-Type -Path $BouncyCastleCryptoDll
+      $toBase64 = {
+        param($obj)
+        $json = ($obj | ConvertTo-Json -Compress)
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+        [Convert]::ToBase64String($bytes).TrimEnd('=').Replace('+','-').Replace('/','_')
+      }
 
-#     $PrivateKey = [GitHubJwt.FilePrivateKeySource]::new("$(DownloadDasGitHubAppPrivateKey.secureFilePath)")
-#     $GitHubJwtFactoryOptions = [GitHubJwt.GitHubJwtFactoryOptions]::new()
-#     $GitHubJwtFactoryOptions.AppIntegrationId = $(DasGitHubAppId)
-#     $GitHubJwtFactoryOptions.ExpirationSeconds = 60
-#     $Generator = [GitHubJwt.GitHubJwtFactory]::new($PrivateKey, $GitHubJwtFactoryOptions)
-#     $JwtToken = $Generator.CreateEncodedJwtToken()
+      $headerEncoded = &$toBase64 $header
+      $payloadEncoded = &$toBase64 $payload
+      $data = "$headerEncoded.$payloadEncoded"
 
-#     $AppClient = [Octokit.GitHubClient]::new([Octokit.ProductHeaderValue]::new("das-github-app"))
-#     $AppClient.Credentials = [Octokit.Credentials]::new($JwtToken, ([Octokit.AuthenticationType]::Bearer))
-#     $Response = $AppClient.GitHubApps.CreateInstallationToken($(DasGitHubAppInstallationId)).Result
+      $signature = $rsa.SignData(
+        [System.Text.Encoding]::UTF8.GetBytes($data),
+        [System.Security.Cryptography.HashAlgorithmName]::SHA256,
+        [System.Security.Cryptography.RSASignaturePadding]::Pkcs1
+      )
+      $sigEncoded = [Convert]::ToBase64String($signature).TrimEnd('=').Replace('+','-').Replace('/','_')
 
-#     $PullRequestComment = "Please remember to check any packages used by this application to ensure they are up to date @$(Build.SourceVersionAuthor). cc/ $(PullRequestVulnerabilitiesDetectedTaggedUsers)"
+      return "$data.$sigEncoded"
+    }
 
-#     $InstallationClient = [Octokit.GithubClient]::new([Octokit.ProductHeaderValue]::new("das-github-app-installation"))
-#     $InstallationClient.Credentials = [Octokit.Credentials]::new($Response.Token)
-#     $InstallationClient.Issue.Comment.Create("$(Build.Repository.Name)".Split('/')[0], "$(Build.Repository.Name)".Split('/')[1], $(System.PullRequest.PullRequestNumber), $PullRequestComment)
-#   displayName: Pull Request Commenting
-#   condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
+    $jwt = Get-JwtToken
+
+    $accessTokenResponse = Invoke-RestMethod -Method POST `
+      -Uri "https://api.github.com/app/installations/$InstallationId/access_tokens" `
+      -Headers @{ 
+        Authorization = "Bearer $jwt"
+        Accept = "application/vnd.github+json"
+        "User-Agent" = "das-github-app"
+      }
+
+    $accessToken = $accessTokenResponse.token
+
+    $owner, $repo = $RepoName -split '/'
+    $commentBody = @{
+      body = "Please remember to check any packages used by this application to ensure they are up to date @$Author. cc/ $TaggedUsers"
+    } | ConvertTo-Json
+
+    Invoke-RestMethod -Method POST `
+      -Uri "https://api.github.com/repos/$owner/$repo/issues/$PRNumber/comments" `
+      -Headers @{
+        Authorization = "token $accessToken"
+        Accept = "application/vnd.github+json"
+        "User-Agent" = "das-github-app"
+      } `
+      -Body $commentBody
+  displayName: 'Pull Request Commenting'
+  condition: and(succeeded(), eq(variables.VulnerablePackagesDetected, 'true'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables.PullRequestVulnerabilitiesCommentTaskEnabled, 'true'))
 
 - task: DotNetCoreCLI@2
   displayName: Build
