@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "notificationHubNamespaceName": {
+      "type": "string"
+    },
+    "notificationHubName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.NotificationHubs/namespaces",
+      "apiVersion": "2023-09-01-preview",
+      "name": "[parameters('notificationHubNamespaceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Free"
+      },
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "type": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+      "apiVersion": "2023-09-01-preview",
+      "name": "[format('{0}/{1}', parameters('notificationHubNamespaceName'), parameters('notificationHubName'))]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.NotificationHubs/namespaces', parameters('notificationHubNamespaceName'))]"
+      ],
+      "properties": {}
+    }
+  ]
+}
