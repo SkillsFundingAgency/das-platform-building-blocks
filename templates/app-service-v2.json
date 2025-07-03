@@ -113,6 +113,13 @@
       "metadata": {
         "description": "Resource ID of the subnet used for vNet integration"
       }
+    },
+    "vnetRouteAllEnabled": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "This causes all outbound traffic to route through the Virtual Network. Virtual Network Security Groups and User Defined Routes will also be applied when enabled"
+      }
     }
   },
   "variables": {
@@ -141,7 +148,7 @@
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings').array), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings').array), 0)]",
     "useAppServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings').array, variables('appServiceStagingSlotAppSettings'))]",
-    "appServiceApiVersion": "2018-11-01",
+    "appServiceApiVersion": "2020-06-01",
     "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceProductionSlotAppSettings'))]",
     "appServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceStagingSlotAppSettings'))]"
     
@@ -171,7 +178,8 @@
           "ftpsState": "Disabled",
           "healthCheckPath": "[parameters('healthCheckPath')]"
         },
-        "httpsOnly": true
+        "httpsOnly": true,
+        "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
       },
       "resources": [
         {
