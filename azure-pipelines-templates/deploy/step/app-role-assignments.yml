@@ -3,6 +3,7 @@ parameters:
   ResourceName:
   Tenant:
   AADGroupObjectIdArray:
+  AppOwnerObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
   TargetEnvironment: '""'
@@ -34,3 +35,4 @@ steps:
         -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
         -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
+        -AppOwnerObjectIdArray ${{ parameters.AppOwnerObjectIdArray }}
