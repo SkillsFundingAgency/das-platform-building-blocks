@@ -3,6 +3,7 @@ parameters:
   ResourceName:
   Tenant:
   AADGroupObjectIdArray:
+  AppOwnerObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
   TargetEnvironment: '""'
@@ -26,6 +27,7 @@ steps:
         -Tenant ${{ parameters.Tenant }}
         -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
+        -AppOwnerObjectIdArray ${{ parameters.AppOwnerObjectIdArray }}
     ${{ else }}:
       arguments:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
@@ -34,3 +36,4 @@ steps:
         -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
         -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
+        -AppOwnerObjectIdArray ${{ parameters.AppOwnerObjectIdArray }}
