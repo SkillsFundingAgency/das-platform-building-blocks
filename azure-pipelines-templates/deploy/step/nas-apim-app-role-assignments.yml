@@ -5,6 +5,7 @@ parameters:
   AADGroupObjectIdArray:
   IsMultiRepoCheckout: false
   DryRun: $false
+  TargetEnvironment: '""'
 
 steps:
 - checkout: das-platform-automation
@@ -15,19 +16,21 @@ steps:
     azureSubscription: ${{ parameters.ServiceConnection }}
     scriptType: pscore
     ${{ if eq(parameters.IsMultiRepoCheckout, false)  }}:
-      scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
+      scriptPath: Infrastructure-Scripts/Set-AppRoleAssignments/Set-NasApimAppRoleAssignments.ps1
     ${{ if eq(parameters.IsMultiRepoCheckout, true)  }}:
-      scriptPath: das-platform-automation/Infrastructure-Scripts/Set-AppRoleAssignments/Set-AppRoleAssignments.ps1
+      scriptPath: das-platform-automation/Infrastructure-Scripts/Set-AppRoleAssignments/Set-NasApimAppRoleAssignments.ps1
     ${{ if eq(length(parameters.AADGroupObjectIdArray), 0) }}:
       arguments:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
         -ResourceName ${{ parameters.ResourceName }}
         -Tenant ${{ parameters.Tenant }}
+        -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
     ${{ else }}:
       arguments:
         -AppRegistrationConfigurationFilePath $(Pipeline.Workspace)/das-employer-config/Configuration/app-role-assignments/config.json
         -ResourceName ${{ parameters.ResourceName }}
         -Tenant ${{ parameters.Tenant }}
+        -TargetEnvironment ${{ parameters.TargetEnvironment }}
         -DryRun ${{ parameters.DryRun }}
         -AADGroupObjectIdArray ${{parameters.AADGroupObjectIdArray }}
