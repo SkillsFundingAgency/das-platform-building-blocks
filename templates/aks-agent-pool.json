@@ -118,6 +118,13 @@
     "enableEncryptionAtHost": {
       "type": "bool",
       "defaultValue": true
+    },
+    "licenseType": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": ""
+      }
     }
   },
   "variables": {
@@ -134,7 +141,8 @@
       "nodeLabels": "[parameters('nodeLabels')]",
       "nodeTaints": "[parameters('nodeTaints')]",
       "maxPods": "[parameters('maxPods')]",
-      "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
+      "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]",
+      "licenseType": "[parameters('licenseType')]"
     },
     "withAutoscalingNodeProperties": {
       "enableAutoScaling": true,
