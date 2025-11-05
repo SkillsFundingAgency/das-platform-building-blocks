@@ -38,23 +38,27 @@ steps:
     ResourceGroupName: $(ResourceGroupName)
     SourceSlot: staging
 
-- task: Bash@3
+- task: PowerShell@2
   displayName: 'Wait for Staging Slot to Warm Up'
   condition: and(succeeded(), eq('${{ parameters.EnableWarmUpCheck }}', 'true'))
   inputs:
     targetType: 'inline'
     script: |
-      echo "Checking staging slot health..."
-      for i in {1..10}; do
-        STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ parameters.AppServiceName }}-staging.azurewebsites.net/health)
-        if [ "$STATUS" -eq 200 ]; then
-          echo "Staging slot is healthy."
-          exit 0
-        fi
-        echo "Waiting for staging slot to warm up... Attempt $i"
-        sleep 10
-      done
-      echo "Staging slot did not warm up in time."
+      $maxAttempts = 10
+      $url = "https://${{ parameters.AppServiceName }}-staging.azurewebsites.net/health"
+      for ($i = 1; $i -le $maxAttempts; $i++) {
+        try {
+          $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 5
+          if ($response.StatusCode -eq 200) {
+            Write-Host "Staging slot is healthy."
+            exit 0
+          }
+        } catch {
+          Write-Host "Attempt $i: Staging slot not ready yet."
+        }
+        Start-Sleep -Seconds 10
+      }
+      Write-Error "Staging slot did not warm up in time."
       exit 1
 
 - task: AzureAppServiceManage@0
