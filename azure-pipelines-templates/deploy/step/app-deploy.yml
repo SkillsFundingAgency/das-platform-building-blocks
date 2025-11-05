@@ -2,6 +2,7 @@ parameters:
   ServiceConnection: ''
   AppServiceName: ''
   DeploymentPackagePath: ''
+  EnableWarmUpCheck: false  # New parameter to control warm-up logic
 
 steps:
 - task: AzureRmWebAppDeployment@4
@@ -36,6 +37,25 @@ steps:
     WebAppName: ${{ parameters.AppServiceName }}
     ResourceGroupName: $(ResourceGroupName)
     SourceSlot: staging
+
+- task: Bash@3
+  displayName: 'Wait for Staging Slot to Warm Up'
+  condition: and(succeeded(), eq('${{ parameters.EnableWarmUpCheck }}', 'true'))
+  inputs:
+    targetType: 'inline'
+    script: |
+      echo "Checking staging slot health..."
+      for i in {1..10}; do
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ parameters.AppServiceName }}-staging.azurewebsites.net/health)
+        if [ "$STATUS" -eq 200 ]; then
+          echo "Staging slot is healthy."
+          exit 0
+        fi
+        echo "Waiting for staging slot to warm up... Attempt $i"
+        sleep 10
+      done
+      echo "Staging slot did not warm up in time."
+      exit 1
 
 - task: AzureAppServiceManage@0
   displayName: Complete Swap Slot
