@@ -131,9 +131,9 @@
         {
           "name": "current",
           "type": "transparentDataEncryption",
-          "apiVersion": "2014-04-01",
+          "apiVersion": "2024-11-01-preview",
           "properties": {
-            "status": "Enabled"
+            "state": "Enabled"
           },
           "dependsOn": [
             "[parameters('databaseName')]"
@@ -193,7 +193,7 @@
       "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Default')]",
       "condition": "[greater(length(parameters('dataMaskingRules')), 0)]",
       "type": "Microsoft.Sql/servers/databases/dataMaskingPolicies",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2024-11-01-preview",
       "properties": {
         "dataMaskingState": "Enabled",
         "exemptPrincipals": "[parameters('dataMaskingExemptPrincipals')]"
@@ -203,7 +203,7 @@
       "name": "[concat(parameters('sqlServerName'), '/', parameters('databaseName'), '/Default/', if(greater(length(parameters('dataMaskingRules')), 0), concat(parameters('dataMaskingRules')[copyIndex()].schemaName, parameters('dataMaskingRules')[copyIndex()].tableName, parameters('dataMaskingRules')[copyIndex()].columnName),'placeholder'))]",
       "condition": "[greater(length(parameters('dataMaskingRules')), 0)]",
       "type": "Microsoft.Sql/servers/databases/dataMaskingPolicies/rules",
-      "apiVersion": "2014-04-01",
+      "apiVersion": "2024-11-01-preview",
       "properties": "[parameters('dataMaskingRules')[copyIndex()]]",
       "copy": {
         "name": "dataMaskingRuleCopy",
