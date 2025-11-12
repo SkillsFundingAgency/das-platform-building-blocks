@@ -9,7 +9,8 @@
       "type": "string",
       "allowedValues": [
         "North Europe",
-        "West Europe"
+        "West Europe",
+        "UK South"
       ],
       "defaultValue": "West Europe"
     },
