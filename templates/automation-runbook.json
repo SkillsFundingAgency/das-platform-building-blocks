@@ -23,7 +23,7 @@
     },
     "runbookType": {
       "type": "string",
-      "defaultValue": "PowerShell",
+      "defaultValue": "",
       "allowedValues": [
         "Graph",
         "GraphPowerShell",
