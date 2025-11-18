@@ -90,9 +90,6 @@
       "type": "Microsoft.Automation/automationAccounts/runbooks",
       "apiVersion": "2024-10-23",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
-      ],
       "properties": {
         "description": "[parameters('description')]",
         "logVerbose": "[parameters('logVerbose')]",
