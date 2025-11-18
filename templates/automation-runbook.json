@@ -86,7 +86,8 @@
   },
   "resources": [
     {
-      "name": "[parameters('automationAccountName'), parameters('runbookName'))]",
+      "name": "[concat(parameters('automationAccountName'), '/', parameters('runbookName'))]"
+,
       "type": "Microsoft.Automation/automationAccounts/runbooks",
       "apiVersion": "2024-10-23",
       "location": "[parameters('location')]",
