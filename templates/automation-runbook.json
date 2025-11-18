@@ -76,19 +76,6 @@
         "description": "URI to the packaged runbook script (e.g. storage blob SAS)."
       }
     },
-    "publishContentHashAlgorithm": {
-      "type": "string",
-      "defaultValue": "SHA256",
-      "metadata": {
-        "description": "Hash algorithm for the runbook package."
-      }
-    },
-    "publishContentHashValue": {
-      "type": "string",
-      "metadata": {
-        "description": "Hash value for the runbook package."
-      }
-    },
     "publishContentVersion": {
       "type": "string",
       "defaultValue": "1.0.0.0",
@@ -114,11 +101,7 @@
         "runbookType": "[parameters('runbookType')]",
         "publishContentLink": {
           "uri": "[parameters('publishContentUri')]",
-          "version": "[parameters('publishContentVersion')]",
-          "contentHash": {
-            "algorithm": "[parameters('publishContentHashAlgorithm')]",
-            "value": "[parameters('publishContentHashValue')]"
-          }
+          "version": "[parameters('publishContentVersion')]"
         }
       }
     }

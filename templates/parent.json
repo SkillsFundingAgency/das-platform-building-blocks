@@ -1,0 +1,170 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "templateBaseUrl": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+      "metadata": {
+        "description": "Base URL that hosts the automation runbook child template."
+      }
+    },
+    "automationAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the automation account that hosts the runbook."
+      }
+    },
+    "runbookName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the automation runbook."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the runbook resource."
+      }
+    },
+    "runbookType": {
+      "type": "string",
+      "defaultValue": "PowerShell",
+      "allowedValues": [
+        "Graph",
+        "GraphPowerShell",
+        "GraphPowerShellWorkflow",
+        "PowerShell",
+        "PowerShell72",
+        "PowerShellWorkflow",
+        "Python",
+        "Python2",
+        "Python3",
+        "Script"
+      ],
+      "metadata": {
+        "description": "Execution type for the runbook."
+      }
+    },
+    "description": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional description for the runbook."
+      }
+    },
+    "logVerbose": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable verbose logging."
+      }
+    },
+    "logProgress": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable progress logging."
+      }
+    },
+    "logActivityTrace": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 3,
+      "metadata": {
+        "description": "Activity-level tracing (0-3)."
+      }
+    },
+    "publishContentUri": {
+      "type": "string",
+      "metadata": {
+        "description": "URI to the packaged runbook script (e.g. storage blob SAS)."
+      }
+    },
+    "publishContentHashAlgorithm": {
+      "type": "string",
+      "defaultValue": "SHA256",
+      "metadata": {
+        "description": "Hash algorithm for the runbook package."
+      }
+    },
+    "publishContentHashValue": {
+      "type": "string",
+      "metadata": {
+        "description": "Hash value for the runbook package."
+      }
+    },
+    "publishContentVersion": {
+      "type": "string",
+      "defaultValue": "1.0.0.0",
+      "metadata": {
+        "description": "Version label for the published runbook content."
+      }
+    }
+  },
+  "variables": {
+    "automationRunbookTemplateUri": "[concat(parameters('templateBaseUrl'), 'automation-runbook.json')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2021-04-01",
+      "name": "automation-runbook-deployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('automationRunbookTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "automationAccountName": {
+            "value": "[parameters('automationAccountName')]"
+          },
+          "runbookName": {
+            "value": "[parameters('runbookName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "runbookType": {
+            "value": "[parameters('runbookType')]"
+          },
+          "description": {
+            "value": "[parameters('description')]"
+          },
+          "logVerbose": {
+            "value": "[parameters('logVerbose')]"
+          },
+          "logProgress": {
+            "value": "[parameters('logProgress')]"
+          },
+          "logActivityTrace": {
+            "value": "[parameters('logActivityTrace')]"
+          },
+          "publishContentUri": {
+            "value": "[parameters('publishContentUri')]"
+          },
+          "publishContentHashAlgorithm": {
+            "value": "[parameters('publishContentHashAlgorithm')]"
+          },
+          "publishContentHashValue": {
+            "value": "[parameters('publishContentHashValue')]"
+          },
+          "publishContentVersion": {
+            "value": "[parameters('publishContentVersion')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "runbookResourceId": {
+      "type": "string",
+      "value": "[reference('automation-runbook-deployment', '2021-04-01').outputs.runbookResourceId.value]"
+    }
+  }
+}
+
+
