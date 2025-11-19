@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "automationAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the automation account that hosts the runbook."
+      }
+    },
+    "runbookName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the automation runbook."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the runbook resource."
+      }
+    },
+    "runbookType": {
+      "type": "string",
+      "defaultValue": "",
+      "allowedValues": [
+        "Graph",
+        "GraphPowerShell",
+        "GraphPowerShellWorkflow",
+        "PowerShell",
+        "PowerShell72",
+        "PowerShellWorkflow",
+        "Python",
+        "Python2",
+        "Python3",
+        "Script"
+      ],
+      "metadata": {
+        "description": "Execution type for the runbook."
+      }
+    },
+    "description": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional description for the runbook."
+      }
+    },
+    "logVerbose": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable verbose logging."
+      }
+    },
+    "logProgress": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable progress logging."
+      }
+    },
+    "logActivityTrace": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 3,
+      "metadata": {
+        "description": "Activity-level tracing (0-3)."
+      }
+    },
+    "publishContentUri": {
+      "type": "string",
+      "metadata": {
+        "description": "URI to the packaged runbook script (e.g. storage blob SAS)."
+      }
+    },
+    "publishContentVersion": {
+      "type": "string",
+      "defaultValue": "1.0.0.0",
+      "metadata": {
+        "description": "Version label for the published runbook content."
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('automationAccountName'), '/', parameters('runbookName'))]",
+      "type": "Microsoft.Automation/automationAccounts/runbooks",
+      "apiVersion": "2024-10-23",
+      "location": "[parameters('location')]",
+      "properties": {
+        "description": "[parameters('description')]",
+        "logVerbose": "[parameters('logVerbose')]",
+        "logProgress": "[parameters('logProgress')]",
+        "logActivityTrace": "[parameters('logActivityTrace')]",
+        "runbookType": "[parameters('runbookType')]",
+        "publishContentLink": {
+          "uri": "[parameters('publishContentUri')]",
+          "version": "[parameters('publishContentVersion')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "runbookResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Automation/automationAccounts/runbooks', parameters('automationAccountName'), parameters('runbookName'))]"
+    }
+  }
+}
