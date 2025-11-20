@@ -39,7 +39,7 @@
   "outputs": {
     "managedServiceIdentityId": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), 'Full').identity.principalId]"
+      "value": "[reference(parameters('automationAccountName'), 'Full').identity.principalId]"
     }
   }
 }
