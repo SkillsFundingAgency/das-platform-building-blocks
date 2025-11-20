@@ -10,7 +10,8 @@
       "allowedValues": [
         "ServiceBusOwner",
         "ServiceBusReceiver",
-        "ServiceBusSender"
+        "ServiceBusSender",
+        "ServiceBusReader"
       ]
     },
     "resourceName": {
@@ -20,7 +21,8 @@
   "variables": {
     "ServiceBusOwner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '090c5cfd-751d-490a-894a-3ce6f1109419')]",
     "ServiceBusReceiver": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0')]",
-    "ServiceBusSender": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39')]"
+    "ServiceBusSender": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39')]",
+    "ServiceBusReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
   },
   "resources": [
     {
