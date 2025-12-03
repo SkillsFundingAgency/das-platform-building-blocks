@@ -1,0 +1,25 @@
+parameters:
+  ArtifactName: 'ipa-artifact'
+  ReleaseNotes: 'Automated release from Azure DevOps pipeline.'
+
+steps:
+- task: DownloadPipelineArtifact@2
+  displayName: 'Download IPA Artifact'
+  inputs:
+    artifactName: ${{ parameters.ArtifactName }}
+    targetPath: '$(Build.SourcesDirectory)/artifacts'
+
+- script: |
+    gem install bundler
+    bundle install
+  displayName: 'Install Fastlane Dependencies for Pilot'
+
+- script: |
+    # Call the upload_ipa lane, passing the path to the downloaded IPA
+    bundle exec fastlane upload_ipa \
+      ipa_path:'$(Build.SourcesDirectory)/artifacts/${{ parameters.ArtifactName }}/*.ipa' \
+      release_notes:'${{ parameters.ReleaseNotes }}'
+  displayName: 'Run Fastlane Distribution (pilot)'
+  env:
+    FASTLANE_USER: $(FASTLANE_USER)
+    FASTLANE_PASSWORD: $(FASTLANE_PASSWORD)
