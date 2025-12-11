@@ -1,0 +1,34 @@
+parameters:
+  WorkspacePath: ''
+  SchemeName: ''
+  ArtifactName: 'ipa-artifact'
+
+steps:
+- script: |
+    gem install bundler
+    bundle update --bundler
+    bundle install
+  displayName: 'Install Fastlane Dependencies'
+
+- script: |
+    # Configure git to use the System Access Token for Azure Repos
+    git config --global http.extraheader "AUTHORIZATION: bearer $(System.AccessToken)"
+
+    # Call the build_only lane
+    bundle exec fastlane build_only \
+      build_number:$(Build.BuildId) \
+      workspace_path:'${{ parameters.WorkspacePath }}' \
+      scheme_name:'${{ parameters.SchemeName }}'
+  displayName: 'Run Fastlane Build (match + gym)'
+  env:
+    MATCH_PASSWORD: $(MATCH_PASSWORD) 
+    FASTLANE_USER: $(FASTLANE_USER)   
+    FASTLANE_PASSWORD: $(FASTLANE_PASSWORD)
+    GITHUB_PAT: $(GitHubPAT) 
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish IPA Artifact'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/output'
+    artifactName: ${{ parameters.ArtifactName }}
+    publishLocation: 'pipeline'
