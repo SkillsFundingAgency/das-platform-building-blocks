@@ -1,0 +1,41 @@
+parameters:
+  ArtifactName: 'ipa-artifact'
+  ReleaseNotes: 'Automated release from Azure DevOps pipeline.'
+
+steps:
+- task: DownloadPipelineArtifact@2
+  displayName: 'Download IPA Artifact'
+  inputs:
+    artifactName: ${{ parameters.ArtifactName }}
+    targetPath: '$(Build.SourcesDirectory)/artifacts/${{ parameters.ArtifactName }}'
+
+- script: |
+    gem install bundler
+    bundle update --bundler
+    bundle install
+  displayName: 'Install Fastlane Dependencies for Pilot'
+
+- script: |
+    # Dynamically find the IPA file (wildcards in parameters can fail if passed directly to fastlane)
+    IPA_PATH=$(find $(Build.SourcesDirectory)/artifacts/${{ parameters.ArtifactName }} -name "*.ipa" | head -n 1)
+
+    if [ -z "$IPA_PATH" ]; then
+      echo "##vso[task.logissue type=error]No IPA file found in artifact directory."
+      exit 1
+    fi
+
+    echo "Found IPA at: $IPA_PATH"
+
+    # Call the upload_ipa lane, passing the explicit path
+    bundle exec fastlane upload_ipa \
+      ipa_path:"$IPA_PATH" \
+      release_notes:'${{ parameters.ReleaseNotes }}'
+  displayName: 'Run Fastlane Distribution (pilot)'
+  env:
+    FASTLANE_USER: $(FASTLANE_USER)
+    FASTLANE_PASSWORD: $(FASTLANE_PASSWORD)
+    DistributionTarget: $(DistributionTarget)
+    # Map API Key variables for reliable 2FA-bypass
+    APP_STORE_CONNECT_API_KEY_KEY_ID: $(ASC_KEY_ID)
+    APP_STORE_CONNECT_API_KEY_ISSUER_ID: $(ASC_ISSUER_ID)
+    APP_STORE_CONNECT_API_KEY_KEY: $(ASC_KEY_CONTENT)
