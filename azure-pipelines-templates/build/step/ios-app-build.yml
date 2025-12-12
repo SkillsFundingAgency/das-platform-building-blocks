@@ -11,6 +11,9 @@ steps:
   displayName: 'Install Fastlane Dependencies'
 
 - script: |
+    # Configure git to use the System Access Token for Azure Repos
+    git config --global http.extraheader "AUTHORIZATION: bearer $(System.AccessToken)"
+
     # Call the build_only lane
     bundle exec fastlane build_only \
       build_number:$(Build.BuildId) \

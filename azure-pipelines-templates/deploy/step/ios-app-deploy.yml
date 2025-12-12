@@ -26,6 +26,9 @@ steps:
 
     echo "Found IPA at: $IPA_PATH"
 
+    # Configure git to use the System Access Token for Azure Repos
+    git config --global http.extraheader "AUTHORIZATION: bearer $(System.AccessToken)"
+
     # Call the upload_ipa lane, passing the explicit path
     bundle exec fastlane upload_ipa \
       ipa_path:"$IPA_PATH" \
