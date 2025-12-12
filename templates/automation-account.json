@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "automationAccountName": {
@@ -24,8 +24,11 @@
     {
       "name": "[parameters('automationAccountName')]",
       "type": "Microsoft.Automation/automationAccounts",
-      "apiVersion": "2015-10-31",
+      "apiVersion": "2021-06-22",
       "location": "[resourceGroup().location]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "properties": {
         "sku": {
           "name": "[parameters('skuName')]"
@@ -33,5 +36,10 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName')), '2021-06-22', 'Full').identity.principalId]"
+    }
+  }
 }
