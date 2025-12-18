@@ -23,6 +23,7 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: das-platform-automation
           - template: ../../deploy/step/sql-dacpac-deploy.yml
             parameters:
               AzureSubscription: $(ARMServiceConnection)
