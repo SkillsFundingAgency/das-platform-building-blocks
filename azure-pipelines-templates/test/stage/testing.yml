@@ -19,9 +19,9 @@ stages:
     pool:
       name: DAS - Continuous Deployment Agents
     steps:
-    - checkout: das-platform-automation
     - download: current
       artifact: DacpacArtifact
+    - checkout: das-platform-automation
     - template: ../../deploy/step/sql-dacpac-deploy.yml
       parameters:
         AzureSubscription: $(ARMServiceConnection)
