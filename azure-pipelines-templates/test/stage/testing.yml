@@ -7,7 +7,7 @@ parameters:
 stages:
 - stage: Test
   dependsOn: Build
-  displayName: Deploy Ephemeral SQL DB and Run Tests
+  displayName: Run Tests on Ephemeral SQL DB
   variables:
   - group: AT DevTest Shared Resources
   - group: DevTest Management Resources
