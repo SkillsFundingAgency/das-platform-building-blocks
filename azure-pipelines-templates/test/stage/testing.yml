@@ -14,23 +14,24 @@ stages:
   - name: ephemeralSQLDBName
     value: db_ci_tests-$(Build.BuildId)
   jobs:
-  - job: DeploySQLDB
+  - deployment: DeploySQLDB
     displayName: Deploy Ephemeral SQL DB using Dacpac
     pool:
       name: DAS - Continuous Deployment Agents
-    steps:
-    - download: current
-      artifact: DacpacArtifact
-    - checkout: das-platform-automation
-    - template: ../../deploy/step/sql-dacpac-deploy.yml
-      parameters:
-        AzureSubscription: $(ARMServiceConnection)
-        DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
-        DatabaseName: $(ephemeralSQLDBName)
-        Environment: AT
-        OverrideBlockOnPossibleDataLoss: false
-        ServerName: $(SharedSQLServerFQDN)
-        SqlUsername: $(SharedSQLServerUsername)
+    environment: AT
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: ../../deploy/step/sql-dacpac-deploy.yml
+            parameters:
+              AzureSubscription: $(ARMServiceConnection)
+              DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
+              DatabaseName: $(ephemeralSQLDBName)
+              Environment: AT
+              OverrideBlockOnPossibleDataLoss: false
+              ServerName: $(SharedSQLServerFQDN)
+              SqlUsername: $(SharedSQLServerUsername)
 
   - template: ../job/run-tests.yml
     parameters:
