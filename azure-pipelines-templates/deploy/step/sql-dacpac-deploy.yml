@@ -22,7 +22,7 @@ steps:
 - task: PowerShell@2
   displayName: Check for BlockOnPossibleDataLoss override
   inputs:
-    filePath: $(Build.SourcesDirectory)das-platform-automation/Infrastructure-Scripts/Approve-SqlDacpacDeploymentDataLoss.ps1
+    filePath: $(Build.SourcesDirectory)/das-platform-automation/Infrastructure-Scripts/Approve-SqlDacpacDeploymentDataLoss.ps1
     # note: double dollar sign ($$) converts Azure DevOps boolean to PowerShell boolean by prefixing the True\False string with a dollar sign
     arguments: -Environment ${{ parameters.Environment }} -OverrideBlockOnPossibleDataLoss $${{ parameters.OverrideBlockOnPossibleDataLoss }} -Verbose
 - task: AzurePowerShell@5
