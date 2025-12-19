@@ -23,18 +23,70 @@ stages:
       runOnce:
         deploy:
           steps:
-          - checkout: das-platform-automation
-            path: das-platform-automation
-          - template: ../../deploy/step/sql-dacpac-deploy.yml
-            parameters:
-              AzureSubscription: $(ARMServiceConnection)
-              DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
-              DatabaseName: $(ephemeralSQLDBName)
-              Environment: AT
-              OverrideBlockOnPossibleDataLoss: false
-              ServerName: $(SharedSQLServerFQDN)
-              SqlUsername: $(SharedSQLServerUsername)
+          - task: AzurePowerShell@5
+            name: fetchSQLServerPassword
+            displayName: 'Fetch SQL Server Admin password from key vault'
+            inputs:
+              azureSubscription: ${{ parameters.AzureSubscription }}
+              scriptType: inlineScript
+              inline: |
+                $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
+                Write-Output "Setting variable SharedSqlServerAdminPassword"
+                Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
+              azurePowerShellVersion: LatestVersion
+          - task: SqlAzureDacpacDeployment@1
+            condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
+            displayName: Execute Azure SQL DacpacTask without AdditionalArguments
+            inputs:
+              AzureSubscription: ${{ parameters.AzureSubscription }}
+              ServerName: ${{ parameters.ServerName }}
+              DatabaseName: ${{ parameters.DatabaseName }}
+              SqlUsername: ${{ parameters.SqlUsername }}
+              SqlPassword: $(SharedSqlServerAdminPassword)
+              DacpacFile: ${{ parameters.DacpacFile }}
 
-  - template: ../job/run-tests.yml
-    parameters:
-      ArtifactName: ${{ parameters.ArtifactName }}
+  - job: RunTests
+    pool:
+      vmImage: ubuntu-latest
+    displayName: Run Tests
+    dependsOn: DeploySQLDB
+    variables:
+      SharedSqlServerAdminPassword: $[ dependencies.DeploySQLDB.outputs['fetchSQLServerPassword.SharedSqlServerAdminPassword'] ]
+    steps:
+    - checkout: das-platform-automation
+    - download: current
+      artifact: ${{ parameters.ArtifactName }}
+
+    - powershell: |
+        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSQLServerPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      displayName: Set Connection String Variable
+
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+
+    # Unit tests
+    - powershell: |
+        dotnet test --configuration 'Release' --filter 'TestCategory!=Integration'
+      displayName: Run Unit Tests
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.ArtifactName }}/src
+
+    # Integration tests (point SQL DB)
+    - powershell: |
+        $env:ConnectionStrings__Integration = '$(ADO_CONNSTR)'
+        $env:IntegrationTestsDbSchemaName = '$(ephemeralSQLDBName)'
+        dotnet test --configuration 'Release' --filter 'TestCategory=Integration'
+      displayName: Run Integration Tests
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.ArtifactName }}/src
+
+    # Cleanup (best-effort)
+    - task: AzurePowerShell@5
+      displayName: Tear down SQL DB
+      condition: always()
+      inputs:
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: $(ARMServiceConnection)
+        ScriptType: inlineScript
+        Inline: |
+          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerFQDN)' -Force
