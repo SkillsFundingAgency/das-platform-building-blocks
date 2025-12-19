@@ -64,18 +64,18 @@ stages:
         version: '8.x'
 
     # Unit tests
-    # - powershell: |
-    #     dotnet test --configuration 'Release' --filter 'TestCategory!=Integration'
-    #   displayName: Run Unit Tests
-    #   workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
+    - powershell: |
+        dotnet test --configuration 'Release' --filter 'TestCategory!=Integration'
+      displayName: Run Unit Tests
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
 
     # Integration tests (point SQL DB)
-    # - powershell: |
-    #     $env:ConnectionStrings__Integration = '$(ADO_CONNSTR)'
-    #     $env:IntegrationTestsDbSchemaName = '$(ephemeralSQLDBName)'
-    #     dotnet test --configuration 'Release' --filter 'TestCategory=Integration'
-    #   displayName: Run Integration Tests
-    #   workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
+    - powershell: |
+        $env:ConnectionStrings__Integration = '$(ADO_CONNSTR)'
+        $env:IntegrationTestsDbSchemaName = '$(ephemeralSQLDBName)'
+        dotnet test --configuration 'Release' --filter 'TestCategory=Integration'
+      displayName: Run Integration Tests
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
 
     # Cleanup (best-effort)
     - task: AzurePowerShell@5
@@ -87,14 +87,3 @@ stages:
         ScriptType: inlineScript
         Inline: |
           Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerFQDN)' -Force
-    # - task: AzureCLI@2
-    #   displayName: Tear down SQL DB
-    #   condition: always()
-    #   inputs:
-    #     azureSubscription: SFA-DAS-DevTest-ARM
-    #     scriptType: bash 
-    #     scriptLocation: inlineScript
-    #     inlineScript: |
-    #       az sql db delete --name '$(ephemeralSQLDBName)' --resource-group '$(SharedEnvResourceGroup)' --server '$(SharedSQLServerFQDN)' --yes
-          
-    #       az sql db delete --name 'db_ci_tests-1032424' --resource-group 'das-at-shared-rg' --server 'das-at-shared-sql' --yes
