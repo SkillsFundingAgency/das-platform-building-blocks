@@ -24,10 +24,9 @@ stages:
         deploy:
           steps:
           - task: AzurePowerShell@5
-            name: fetchSQLServerPassword
             displayName: 'Fetch SQL Server Admin password from key vault'
             inputs:
-              azureSubscription: ${{ parameters.AzureSubscription }}
+              azureSubscription: $(ARMServiceConnection)
               scriptType: inlineScript
               inline: |
                 $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
@@ -38,12 +37,12 @@ stages:
             condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
             displayName: Execute Azure SQL DacpacTask without AdditionalArguments
             inputs:
-              AzureSubscription: ${{ parameters.AzureSubscription }}
-              ServerName: ${{ parameters.ServerName }}
-              DatabaseName: ${{ parameters.DatabaseName }}
-              SqlUsername: ${{ parameters.SqlUsername }}
+              AzureSubscription: $(ARMServiceConnection)
+              DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
+              DatabaseName: $(ephemeralSQLDBName)
+              ServerName: $(SharedSQLServerFQDN)
               SqlPassword: $(SharedSqlServerAdminPassword)
-              DacpacFile: ${{ parameters.DacpacFile }}
+              SqlUsername: $(SharedSQLServerUsername)
 
   - job: RunTests
     pool:
