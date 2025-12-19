@@ -78,12 +78,21 @@ stages:
       workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
 
     # Cleanup (best-effort)
-    - task: AzurePowerShell@5
+    # - task: AzurePowerShell@5
+    #   displayName: Tear down SQL DB
+    #   condition: always()
+    #   inputs:
+    #     azurePowerShellVersion: LatestVersion
+    #     azureSubscription: SFA-DAS-DevTest-ARM
+    #     ScriptType: inlineScript
+    #     Inline: |
+    #       Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerFQDN)' -Force
+    - task: AzureCLI@2
       displayName: Tear down SQL DB
       condition: always()
       inputs:
-        azurePowerShellVersion: LatestVersion
         azureSubscription: SFA-DAS-DevTest-ARM
-        ScriptType: inlineScript
-        Inline: |
-          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerFQDN)' -Force
+        scriptType: bash 
+        scriptLocation: inlineScript
+        inlineScript: |
+          az sql db delete --name '$(ephemeralSQLDBName)' --resource-group '$(SharedEnvResourceGroup)' --server '$(SharedSQLServerFQDN)' --yes
