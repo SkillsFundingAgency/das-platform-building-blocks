@@ -1,6 +1,4 @@
 parameters:
-- name: ArtifactName
-  type: string
 - name: SolutionBaseName
   type: string
 
@@ -54,7 +52,7 @@ stages:
     steps:
     - checkout: das-platform-automation
     - download: current
-      artifact: ${{ parameters.ArtifactName }}
+      artifact: ${{ parameters.SolutionBaseName }}
 
     - powershell: |
         Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSqlServerAdminPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
@@ -69,7 +67,7 @@ stages:
     - powershell: |
         dotnet test --configuration 'Release' --filter 'TestCategory!=Integration'
       displayName: Run Unit Tests
-      workingDirectory: $(Build.SourcesDirectory)/${{ parameters.ArtifactName }}/src
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
 
     # Integration tests (point SQL DB)
     - powershell: |
@@ -77,7 +75,7 @@ stages:
         $env:IntegrationTestsDbSchemaName = '$(ephemeralSQLDBName)'
         dotnet test --configuration 'Release' --filter 'TestCategory=Integration'
       displayName: Run Integration Tests
-      workingDirectory: $(Build.SourcesDirectory)/${{ parameters.ArtifactName }}/src
+      workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
 
     # Cleanup (best-effort)
     - task: AzurePowerShell@5
