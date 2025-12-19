@@ -91,7 +91,7 @@ stages:
       displayName: Tear down SQL DB
       condition: always()
       inputs:
-        azureSubscription: $(ARMServiceConnection)
+        azureSubscription: SFA-DAS-DevTest-ARM
         scriptType: bash 
         scriptLocation: inlineScript
         inlineScript: |
