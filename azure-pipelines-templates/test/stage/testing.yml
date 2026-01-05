@@ -9,8 +9,7 @@ stages:
   variables:
   - group: AT DevTest Shared Resources
   - group: DevTest Management Resources
-  - name: ephemeralSQLDBName
-    value: db_ci_tests-$(Build.BuildId)
+  - group: das-ci-tests
   jobs:
   - deployment: DeploySQLDB
     displayName: Deploy Ephemeral SQL DB using Dacpac
@@ -27,9 +26,9 @@ stages:
               azureSubscription: $(ARMServiceConnection)
               scriptType: inlineScript
               inline: |
-                $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
-                Write-Output "Setting variable SharedSqlServerAdminPassword"
-                Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
+                $ciSqlServerPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(ciSqlServerName) -AsPlainText
+                Write-Output "Setting variable ciSqlServerPassword"
+                Write-Output "##vso[task.setvariable variable=ciSqlServerPassword;isreadonly=true;issecret=true]$ciSqlServerPassword"
               azurePowerShellVersion: LatestVersion
           - task: SqlAzureDacpacDeployment@1
             condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
@@ -38,9 +37,9 @@ stages:
               AzureSubscription: $(ARMServiceConnection)
               DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
               DatabaseName: $(ephemeralSQLDBName)
-              ServerName: $(SharedSQLServerFQDN)
-              SqlPassword: $(SharedSqlServerAdminPassword)
-              SqlUsername: $(SharedSQLServerUsername)
+              ServerName: $(ciSqlServerName)
+              SqlPassword: $(ciSqlServerPassword)
+              SqlUsername: $(ciSqlServerUser)
 
   - job: RunTests
     pool:
