@@ -39,7 +39,7 @@ stages:
               DatabaseName: $(ephemeralSQLDBName)
               ServerName: $(ciSqlServerFQDN)
               SqlPassword: $(ciSqlServerPassword)
-              SqlUsername: $(ciSqlServerUser)
+              SqlUsername: $(ciSqlServerUsername)
 
   - job: RunTests
     pool:
@@ -54,7 +54,7 @@ stages:
       artifact: ${{ parameters.SolutionBaseName }}
 
     - powershell: |
-        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(ciSqlServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSqlServerAdminPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(ciSqlServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(ciSqlServerUsername);Password=$(ciSqlServerPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       displayName: Set Connection String Variable
 
     - task: UseDotNet@2
