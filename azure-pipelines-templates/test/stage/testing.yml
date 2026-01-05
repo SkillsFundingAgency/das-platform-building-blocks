@@ -47,14 +47,14 @@ stages:
     displayName: Run Tests
     dependsOn: DeploySQLDB
     variables:
-      SharedSqlServerAdminPassword: $[ dependencies.DeploySQLDB.outputs['fetchSQLServerPassword.SharedSqlServerAdminPassword'] ]
+      ciSqlServerPassword: $[ dependencies.DeploySQLDB.outputs['fetchSQLServerPassword.ciSqlServerPassword'] ]
     steps:
     - checkout: das-platform-automation
     - download: current
       artifact: ${{ parameters.SolutionBaseName }}
 
     - powershell: |
-        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSqlServerAdminPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(ciSqlServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSqlServerAdminPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       displayName: Set Connection String Variable
 
     - task: UseDotNet@2
@@ -85,7 +85,7 @@ stages:
         azureSubscription: SFA-DAS-DevTest-ARM
         ScriptType: inlineScript
         Inline: |
-          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerFQDN)' -Force
+          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(ciSqlServerName)' -Force
     # - task: AzureCLI@2
     #   displayName: Tear down SQL DB
     #   condition: always()
