@@ -37,7 +37,7 @@ stages:
               AzureSubscription: $(ARMServiceConnection)
               DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
               DatabaseName: $(ephemeralSQLDBName)
-              ServerName: $(ciSqlServerName)
+              ServerName: $(ciSqlServerFQDN)
               SqlPassword: $(ciSqlServerPassword)
               SqlUsername: $(ciSqlServerUser)
 
