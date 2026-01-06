@@ -9,7 +9,8 @@ stages:
   variables:
   - group: AT DevTest Shared Resources
   - group: DevTest Management Resources
-  - group: das-ci-tests
+  - name: ephemeralSQLDBName
+    value: db_ci_tests-$(Build.BuildId)
   jobs:
   - deployment: DeploySQLDB
     displayName: Deploy Ephemeral SQL DB using Dacpac
@@ -26,9 +27,9 @@ stages:
               azureSubscription: $(ARMServiceConnection)
               scriptType: inlineScript
               inline: |
-                $ciSqlServerPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(ciSqlServerName) -AsPlainText
-                Write-Output "Setting variable ciSqlServerPassword"
-                Write-Output "##vso[task.setvariable variable=ciSqlServerPassword;isreadonly=true;issecret=true]$ciSqlServerPassword"
+                $SharedSQLServerPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
+                Write-Output "Setting variable SharedSQLServerPassword"
+                Write-Output "##vso[task.setvariable variable=SharedSQLServerPassword;isreadonly=true;issecret=true]$SharedSQLServerPassword"
               azurePowerShellVersion: LatestVersion
           - task: SqlAzureDacpacDeployment@1
             condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
@@ -37,9 +38,9 @@ stages:
               AzureSubscription: $(ARMServiceConnection)
               DacpacFile: $(Pipeline.Workspace)/DacpacArtifact/src/${{ parameters.SolutionBaseName }}.Database/bin/release/netstandard2.1/${{ parameters.SolutionBaseName }}.Database.dacpac
               DatabaseName: $(ephemeralSQLDBName)
-              ServerName: $(ciSqlServerFQDN)
-              SqlPassword: $(ciSqlServerPassword)
-              SqlUsername: $(ciSqlServerUsername)
+              ServerName: $(SharedSQLServerFQDN)
+              SqlPassword: $(SharedSQLServerPassword)
+              SqlUsername: $(SharedSQLServerUsername)
 
   - job: RunTests
     pool:
@@ -47,14 +48,14 @@ stages:
     displayName: Run Tests
     dependsOn: DeploySQLDB
     variables:
-      ciSqlServerPassword: $[ dependencies.DeploySQLDB.outputs['fetchSQLServerPassword.ciSqlServerPassword'] ]
+      SharedSQLServerPassword: $[ dependencies.DeploySQLDB.outputs['fetchSQLServerPassword.SharedSQLServerPassword'] ]
     steps:
     - checkout: das-platform-automation
     - download: current
       artifact: ${{ parameters.SolutionBaseName }}
 
     - powershell: |
-        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(ciSqlServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(ciSqlServerUsername);Password=$(ciSqlServerPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSQLServerPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       displayName: Set Connection String Variable
 
     - task: UseDotNet@2
@@ -85,13 +86,4 @@ stages:
         azureSubscription: SFA-DAS-DevTest-ARM
         ScriptType: inlineScript
         Inline: |
-          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(ciSqlServerName)' -Force
-    # - task: AzureCLI@2
-    #   displayName: Tear down SQL DB
-    #   condition: always()
-    #   inputs:
-    #     azureSubscription: SFA-DAS-DevTest-ARM
-    #     scriptType: bash 
-    #     scriptLocation: inlineScript
-    #     inlineScript: |
-    #       az sql db delete --name '$(ephemeralSQLDBName)' --resource-group '$(SharedEnvResourceGroup)' --server '$(SharedSQLServerFQDN)' --yes
+          Remove-AzSqlDatabase -DatabaseName '$(ephemeralSQLDBName)' -ResourceGroupName '$(SharedEnvResourceGroup)' -ServerName '$(SharedSQLServerName)' -Force
