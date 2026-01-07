@@ -44,7 +44,7 @@ stages:
 
   - job: RunTests
     pool:
-      vmImage: DAS - Continuous Integration Agents
+      name: DAS - Continuous Deployment Agents
     displayName: Run Tests
     dependsOn: DeploySQLDB
     variables:
