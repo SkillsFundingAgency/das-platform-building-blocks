@@ -44,7 +44,7 @@ stages:
 
   - job: RunTests
     pool:
-      vmImage: ubuntu-latest
+      vmImage: DAS - Continuous Integration Agents
     displayName: Run Tests
     dependsOn: DeploySQLDB
     variables:
@@ -55,10 +55,8 @@ stages:
       artifact: ${{ parameters.SolutionBaseName }}
 
     - powershell: |
-        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$env:SHARED_SQL_SERVER_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        Write-Host "##vso[task.setvariable variable=ADO_CONNSTR;issecret=true]Server=tcp:$(SharedSQLServerName),1433;Initial Catalog=$(ephemeralSQLDBName);Persist Security Info=False;User ID=$(SharedSQLServerUsername);Password=$(SharedSQLServerPassword);MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       displayName: Set Connection String Variable
-      env:
-        SHARED_SQL_SERVER_PASSWORD: $(SharedSQLServerPassword)
 
     - task: UseDotNet@2
       inputs:
@@ -73,13 +71,11 @@ stages:
 
     # Integration tests (point SQL DB)
     - powershell: |
-        # $env:ConnectionStrings__Integration = '$(ADO_CONNSTR)'
+        $env:ConnectionStrings__Integration = '$(ADO_CONNSTR)'
         $env:IntegrationTestsDbSchemaName = '$(ephemeralSQLDBName)'
         dotnet test --configuration 'Release' --filter 'TestCategory=Integration'
       displayName: Run Integration Tests
       workingDirectory: $(Pipeline.Workspace)/${{ parameters.SolutionBaseName }}/src
-      env:
-        ConnectionStrings__Integration: $(ADO_CONNSTR)
 
     # Cleanup (best-effort)
     - task: AzurePowerShell@5
