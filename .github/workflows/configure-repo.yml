@@ -5,7 +5,11 @@ on:
 jobs:
   configure_repository:
     runs-on: ubuntu-latest
+    if: github.event.client_payload.owner == github.repository_owner
     steps:
       - env:
           MESSAGE: ${{ github.event.client_payload.message }}
-        run: echo $MESSAGE
+          REPO: ${{ github.event.client_payload.repository }}
+        run: 
+          echo $MESSAGE
+          echo $REPO
