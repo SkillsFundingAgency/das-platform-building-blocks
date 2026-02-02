@@ -5,7 +5,7 @@ on:
 jobs:
   configure_repository:
     runs-on: ubuntu-latest
-    if: github.event.client_payload.owner == github.repository_owner
+    if: github.event.organization == github.repository_owner
     steps:
       - env:
           MESSAGE: ${{ github.event.client_payload.message }}
