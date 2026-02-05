@@ -1,3 +1,7 @@
+# 3.1.0
+
+DASD-12494: CDN migration from Edgio to Azure Front Door. Added `afd-profile.json` and `afd-endpoint.json` to support Azure Front Door resources.
+
 # 3.0.0
 
 This change allows the SQL server password to be fetched during pipeline runtime to allow easier rotation of the secret.
