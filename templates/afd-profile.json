@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "afdProfileName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Front Door profile"
+            }
+        },
+        "afdSKU": {
+            "type": "string",
+            "defaultValue": "Standard_AzureFrontDoor",
+            "allowedValues": [
+                "Standard_AzureFrontDoor",
+                "Premium_AzureFrontDoor"
+            ],
+            "metadata": {
+                "description": "The pricing tier of the Azure Front Door profile."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('afdProfileName')]",
+            "type": "Microsoft.Cdn/profiles",
+            "apiVersion": "2023-05-01",
+            "location": "global",
+            "tags": {},
+            "sku": {
+                "name": "[parameters('afdSKU')]"
+            }
+        }
+    ],
+    "outputs": {
+        "cdnProfileId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Cdn/profiles', parameters('afdProfileName'))]"
+        }
+    }
+}
