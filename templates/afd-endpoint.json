@@ -107,6 +107,13 @@
             "metadata": {
                 "description": "Defines how the CDN caches requests that include query strings. You can ignore any query strings when caching, bypass caching to prevent requests that contain query strings from being cached, or cache every request with a unique URL. Permitted values: 'IgnoreQueryString', 'UseQueryString', 'NotSet'"
             }
+        },
+        "healthProbePath": {
+            "type": "string",
+            "defaultValue": "/",
+            "metadata": {
+                "description": "The path used for health probes against the origin. Defaults to '/' if not specified."
+            }
         }
     },
     "variables": {
@@ -135,7 +142,7 @@
                     "additionalLatencyInMilliseconds": 50
                 },
                 "healthProbeSettings": {
-                    "probePath": "/",
+                    "probePath": "[parameters('healthProbePath')]",
                     "probeRequestType": "HEAD",
                     "probeProtocol": "Https",
                     "probeIntervalInSeconds": 100
