@@ -114,20 +114,27 @@ steps:
       Write-Host "  3. Re-run the pipeline once the packages have been updated"
       Write-Host ""
       Write-Host "For more information, see https://devblogs.microsoft.com/dotnet/how-to-scan-nuget-packages-for-security-vulnerabilities/"
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]true"
       Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
       $(exit 1)
     }
     elseif ($ErrorFound) {
       Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]false"
       Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
       $(exit 1)
     }
     else {
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]false"
       Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
       $(exit 0)
     }
   displayName: Package Scanning
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
+
+- pwsh: exit 1
+  displayName: Fail on High or Critical Severity Vulnerabilities
+  condition: and(succeeded(), eq(variables['HighCriticalVulnerabilitiesDetected'], 'true'))
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
