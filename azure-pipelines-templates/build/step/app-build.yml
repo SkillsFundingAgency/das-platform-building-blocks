@@ -95,25 +95,15 @@ steps:
     }
 
     if ($HighCriticalVulnerabilities.Count -gt 0) {
-      Write-Host "##vso[task.logissue type=error]High or Critical severity NuGet package vulnerabilities detected. The pipeline has been failed to ensure security incidents are resolved proactively."
-      Write-Host ""
-      Write-Host "The following packages have High or Critical severity vulnerabilities:"
-      Write-Host ""
-      $HighCriticalVulnerabilities | ForEach-Object {
+      $formattedLines = $HighCriticalVulnerabilities | ForEach-Object {
         $parts = $_ -split '\s+'
         $packageName = $parts[1]
         $advisoryUrl = $parts[-1]
         $fixedVersion = Get-FixedVersion -AdvisoryUrl $advisoryUrl -PackageName $packageName
         $fixText = if ($fixedVersion) { " (fix available: >= $fixedVersion)" } else { "" }
-        Write-Host "  $_$fixText"
+        "  $_$fixText"
       }
-      Write-Host ""
-      Write-Host "Actions required:"
-      Write-Host "  1. Update the affected packages to a secure version"
-      Write-Host "  2. If no fix is available, assess the risk and consider alternative packages"
-      Write-Host "  3. Re-run the pipeline once the packages have been updated"
-      Write-Host ""
-      Write-Host "For more information, see https://devblogs.microsoft.com/dotnet/how-to-scan-nuget-packages-for-security-vulnerabilities/"
+      $formattedLines | Set-Content -Path "$env:AGENT_TEMPDIRECTORY/high-critical-packages.txt"
       Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]true"
       Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
       $(exit 1)
@@ -132,8 +122,22 @@ steps:
   displayName: Package Scanning
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
 
-- pwsh: exit 1
-  displayName: Fail on High or Critical Severity Vulnerabilities
+- pwsh: |
+    $packages = Get-Content -Path "$env:AGENT_TEMPDIRECTORY/high-critical-packages.txt"
+    Write-Host "##vso[task.logissue type=error]High or Critical severity NuGet package vulnerabilities detected. The pipeline has been failed to ensure security incidents are resolved proactively."
+    Write-Host ""
+    Write-Host "The following packages require immediate attention:"
+    Write-Host ""
+    $packages | ForEach-Object { Write-Host $_ }
+    Write-Host ""
+    Write-Host "Actions required:"
+    Write-Host "  1. Update the affected packages to a secure version"
+    Write-Host "  2. If no fix is available, assess the risk and consider alternative packages"
+    Write-Host "  3. Re-run the pipeline once the packages have been updated"
+    Write-Host ""
+    Write-Host "For more information, see https://devblogs.microsoft.com/dotnet/how-to-scan-nuget-packages-for-security-vulnerabilities/"
+    exit 1
+  displayName: High/Critical Severity Vulnerabilities
   condition: and(succeeded(), eq(variables['HighCriticalVulnerabilitiesDetected'], 'true'))
 
 - task: DownloadSecureFile@1
