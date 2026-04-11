@@ -12,7 +12,7 @@ parameters:
 
 steps:
 - task: SonarCloudPrepare@3
-  displayName: Prepare SonarCloud analysis configuration
+  displayName: SonarCloud Prepare
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
@@ -266,11 +266,11 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: SonarCloudAnalyze@3
-  displayName: Run SonarCloud analysis
+  displayName: SonarCloud Analyse
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
 - task: SonarCloudPublish@3
-  displayName: Publish SonarCloud analysis results on build summary
+  displayName: SonarCloud Publish
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     pollingTimeoutSec: '300'
