@@ -37,7 +37,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   condition: ne('${{ parameters.AzureArtifactsFeed }}', '')
-  displayName: Restore - Including Custom Feed
+  displayName: Restore (Custom Feed)
   inputs:
     command: restore
     projects: ${{ parameters.TargetProjects }}
