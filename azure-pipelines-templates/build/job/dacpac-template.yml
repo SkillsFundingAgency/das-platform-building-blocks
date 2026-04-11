@@ -11,7 +11,7 @@ jobs:
     clean: all
   steps:
   - task: VSBuild@1
-    displayName: Build DACPAC - ${{ parameters.SolutionBaseName }}
+    displayName: Build
     inputs:
       solution: ${{ parameters.SqlProjectPath }}
       platform: any cpu
@@ -19,7 +19,7 @@ jobs:
       msbuildArgs: /p:PackageLocation="$(build.artifactstagingdirectory)/publish"
 
   - task: CopyFiles@2
-    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    displayName: Copy Files
     inputs:
       contents: |
         src/**/*.dacpac

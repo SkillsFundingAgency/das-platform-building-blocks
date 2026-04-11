@@ -3,12 +3,12 @@ parameters:
 
 steps:
 - task: gitversion/setup@0
-  displayName: gitversion/setup
+  displayName: GitVersion Setup
   inputs:
     versionSpec: 5.x
 
 - task: gitversion/execute@0
-  displayName: gitversion/execute
+  displayName: GitVersion Execute
   inputs:
     useConfigFile: true
     configFilePath: ${{ parameters.ConfigFilePath }}
