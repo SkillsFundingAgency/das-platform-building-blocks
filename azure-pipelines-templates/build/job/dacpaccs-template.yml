@@ -13,18 +13,18 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: Restore
     inputs:
-     command: restore
-     projects: ${{ parameters.DatabaseProjectPath }}
-     noCache: true
+      command: restore
+      projects: ${{ parameters.DatabaseProjectPath }}
+      noCache: true
 
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
       projects: ${{ parameters.DatabaseProjectPath }}
-      arguments: '--configuration $(buildConfiguration)  --no-restore'
+      arguments: '--configuration $(buildConfiguration) --no-restore'
 
   - task: CopyFiles@2
-    displayName: Copy Files to - $(build.artifactstagingdirectory)
+    displayName: Copy Files
     inputs:
       contents: |
         src/**/*.dacpac
