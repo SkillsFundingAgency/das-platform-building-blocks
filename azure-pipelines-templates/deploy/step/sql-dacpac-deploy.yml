@@ -16,6 +16,12 @@ parameters:
   type: boolean
 - name: ServerName
 - name: SqlUsername
+- name: FailoverGroupName
+  type: string
+  default: ''
+- name: SqlServerResourceGroupName
+  type: string
+  default: ''
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
@@ -34,6 +40,45 @@ steps:
       $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
       Write-Output "Setting variable SharedSqlServerAdminPassword"
       Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
+    azurePowerShellVersion: LatestVersion
+- task: AzurePowerShell@5
+  condition: and(succeeded(), ne('${{ parameters.FailoverGroupName }}', ''))
+  displayName: Ensure SQL database is in failover group
+  inputs:
+    azureSubscription: ${{ parameters.AzureSubscription }}
+    scriptType: inlineScript
+    inline: |
+      $primaryServerName = '${{ parameters.ServerName }}'.Split('.')[0]
+      $databaseName = '${{ parameters.DatabaseName }}'
+      $failoverGroupName = '${{ parameters.FailoverGroupName }}'
+      $resourceGroupName = '${{ parameters.SqlServerResourceGroupName }}'
+
+      if ([string]::IsNullOrWhiteSpace($resourceGroupName)) {
+        $sqlServer = Get-AzResource -ResourceType 'Microsoft.Sql/servers' -Name $primaryServerName -ErrorAction Stop
+        $resourceGroupName = $sqlServer.ResourceGroupName
+      }
+
+      $failoverGroup = Get-AzSqlDatabaseFailoverGroup `
+        -ResourceGroupName $resourceGroupName `
+        -ServerName $primaryServerName `
+        -FailoverGroupName $failoverGroupName `
+        -ErrorAction Stop
+
+      $databaseResourceId = "/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroupName/providers/Microsoft.Sql/servers/$primaryServerName/databases/$databaseName"
+
+      if ($failoverGroup.Databases -contains $databaseResourceId) {
+        Write-Output "Database '$databaseName' is already in failover group '$failoverGroupName'."
+      }
+      else {
+        $databases = @($failoverGroup.Databases + $databaseResourceId | Select-Object -Unique)
+        Set-AzSqlDatabaseFailoverGroup `
+          -ResourceGroupName $resourceGroupName `
+          -ServerName $primaryServerName `
+          -FailoverGroupName $failoverGroupName `
+          -Databases $databases `
+          -ErrorAction Stop
+        Write-Output "Added '$databaseName' to failover group '$failoverGroupName'."
+      }
     azurePowerShellVersion: LatestVersion
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
