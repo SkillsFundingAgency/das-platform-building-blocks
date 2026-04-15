@@ -18,10 +18,8 @@ parameters:
 - name: SqlUsername
 - name: FailoverGroupName
   type: string
-  default: ''
 - name: SqlServerResourceGroupName
   type: string
-  default: ''
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
@@ -42,7 +40,7 @@ steps:
       Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
     azurePowerShellVersion: LatestVersion
 - task: AzurePowerShell@5
-  condition: and(succeeded(), ne('${{ parameters.FailoverGroupName }}', ''))
+  condition: and(succeeded(), ne('${{ parameters.FailoverGroupName }}', ''), in('${{ parameters.Environment }}', 'pp', 'prd'))
   displayName: Ensure SQL database is in failover group
   inputs:
     azureSubscription: ${{ parameters.AzureSubscription }}
