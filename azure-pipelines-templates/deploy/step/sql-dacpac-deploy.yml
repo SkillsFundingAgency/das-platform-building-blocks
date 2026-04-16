@@ -18,10 +18,8 @@ parameters:
 - name: SqlUsername
 - name: FailoverGroupName
   type: string
-  default: ''
 - name: SqlServerResourceGroupName
   type: string
-  default: ''
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
