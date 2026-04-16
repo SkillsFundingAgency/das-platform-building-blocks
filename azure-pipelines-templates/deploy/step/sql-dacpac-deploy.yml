@@ -20,6 +20,8 @@ parameters:
   type: string
 - name: SqlServerResourceGroupName
   type: string
+- name: SharedSQLServerName
+  type: string
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
@@ -45,8 +47,7 @@ steps:
   inputs:
     azureSubscription: ${{ parameters.AzureSubscription }}
     filePath: das-platform-automation/Infrastructure-Scripts/Add-SqlDatabaseFailover.ps1
-    arguments: -ServerName '${{ parameters.ServerName }}' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
-    azurePowerShellVersion: LatestVersion
+    arguments: -SharedSQLServerName '${{ parameters.SharedSQLServerName }}-we' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
   displayName: Execute Azure SQL DacpacTask without AdditionalArguments
