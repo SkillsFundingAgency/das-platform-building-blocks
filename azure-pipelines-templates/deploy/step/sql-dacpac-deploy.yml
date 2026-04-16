@@ -70,12 +70,11 @@ steps:
         Write-Output "Database '$databaseName' is already in failover group '$failoverGroupName'."
       }
       else {
-        $databases = @($failoverGroup.Databases + $databaseResourceId | Select-Object -Unique)
-        Set-AzSqlDatabaseFailoverGroup `
+        Add-AzSqlDatabaseToFailoverGroup `
           -ResourceGroupName $resourceGroupName `
           -ServerName $primaryServerName `
           -FailoverGroupName $failoverGroupName `
-          -Databases $databases `
+          -Database $databaseName `
           -ErrorAction Stop
         Write-Output "Added '$databaseName' to failover group '$failoverGroupName'."
       }
