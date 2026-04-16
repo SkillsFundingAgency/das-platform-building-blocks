@@ -74,7 +74,7 @@ steps:
           -ResourceGroupName $resourceGroupName `
           -ServerName $primaryServerName `
           -FailoverGroupName $failoverGroupName `
-          -Database $databaseName `
+          -DatabaseName $databaseName `
           -ErrorAction Stop
         Write-Output "Added '$databaseName' to failover group '$failoverGroupName'."
       }
