@@ -44,44 +44,8 @@ steps:
   displayName: Ensure SQL database is in failover group
   inputs:
     azureSubscription: ${{ parameters.AzureSubscription }}
-    scriptType: inlineScript
-    inline: |
-      $primaryServerName = "${{ parameters.ServerName }}".Split('.')[0] + '-we'
-      $databaseName = '${{ parameters.DatabaseName }}'
-      $failoverGroupName = '${{ parameters.FailoverGroupName }}'
-      $resourceGroupName = '${{ parameters.SqlServerResourceGroupName }}'
-
-      if ([string]::IsNullOrWhiteSpace($resourceGroupName)) {
-        $sqlServer = Get-AzResource -ResourceType 'Microsoft.Sql/servers' -Name $primaryServerName -ErrorAction Stop
-        $resourceGroupName = $sqlServer.ResourceGroupName
-      }
-
-      $failoverGroup = Get-AzSqlDatabaseFailoverGroup `
-        -ResourceGroupName $resourceGroupName `
-        -ServerName $primaryServerName `
-        -FailoverGroupName $failoverGroupName `
-        -ErrorAction Stop
-
-      $databaseResourceId = "/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$resourceGroupName/providers/Microsoft.Sql/servers/$primaryServerName/databases/$databaseName"
-
-      if ($failoverGroup.Databases -contains $databaseResourceId) {
-        Write-Output "Database '$databaseName' is already in failover group '$failoverGroupName'."
-      }
-      else {
-        $database = Get-AzSqlDatabase `
-          -ResourceGroupName $resourceGroupName `
-          -ServerName $primaryServerName `
-          -DatabaseName $databaseName `
-          -ErrorAction Stop
-
-        Add-AzSqlDatabaseToFailoverGroup `
-          -ResourceGroupName $resourceGroupName `
-          -ServerName $primaryServerName `
-          -FailoverGroupName $failoverGroupName `
-          -Database $database `
-          -ErrorAction Stop
-        Write-Output "Added '$databaseName' to failover group '$failoverGroupName'."
-      }
+    filePath: das-platform-automation/Infrastructure-Scripts/Add-SqlDatabaseFailover.ps1
+    arguments: -ServerName '${{ parameters.ServerName }}' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
     azurePowerShellVersion: LatestVersion
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
