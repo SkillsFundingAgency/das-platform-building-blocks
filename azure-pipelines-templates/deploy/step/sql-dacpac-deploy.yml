@@ -47,7 +47,7 @@ steps:
   inputs:
     azureSubscription: ${{ parameters.AzureSubscription }}
     filePath: das-platform-automation/Infrastructure-Scripts/Add-SqlDatabaseFailover.ps1
-    arguments: -SharedSQLServerName '${{ parameters.SharedSQLServerName }}-we' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
+    arguments: -SharedSQLServerName '${{ parameters.SharedSQLServerName }}' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
   displayName: Execute Azure SQL DacpacTask without AdditionalArguments
