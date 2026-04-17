@@ -16,6 +16,12 @@ parameters:
   type: boolean
 - name: ServerName
 - name: SqlUsername
+- name: FailoverGroupName
+  type: string
+- name: SqlServerResourceGroupName
+  type: string
+- name: SharedSQLServerName
+  type: string
 
 steps:
 # this task requires that a pipeline variable is set in the Azure DevOps UI, see Approve-SqlDacpacDeploymentDataLoss docs for more info.
@@ -34,6 +40,15 @@ steps:
       $SharedSqlServerAdminPassword = Get-AzKeyVaultSecret -VaultName $(SharedKeyVaultName) -Name $(SharedSQLServerName) -AsPlainText
       Write-Output "Setting variable SharedSqlServerAdminPassword"
       Write-Output "##vso[task.setvariable variable=SharedSqlServerAdminPassword;isreadonly=true;issecret=true]$SharedSqlServerAdminPassword"
+    azurePowerShellVersion: LatestVersion
+- task: AzurePowerShell@5
+  condition: and(succeeded(), ne('${{ parameters.FailoverGroupName }}', ''), in('${{ parameters.Environment }}', 'PP', 'PROD'))
+  displayName: Ensure SQL database is in failover group
+  inputs:
+    azureSubscription: ${{ parameters.AzureSubscription }}
+    ScriptType: FilePath
+    ScriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Add-SqlDatabaseFailover.ps1'
+    ScriptArguments: -SharedSQLServerName '${{ parameters.SharedSQLServerName }}' -FailoverGroupName '${{ parameters.FailoverGroupName }}' -SqlServerResourceGroupName '${{ parameters.SqlServerResourceGroupName }}' -DatabaseName '${{ parameters.DatabaseName }}'
     azurePowerShellVersion: LatestVersion
 - task: SqlAzureDacpacDeployment@1
   condition: and(succeeded(), ne(variables.SetBlockOnPossibleDataLossArgument, true))
