@@ -155,7 +155,7 @@
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings').array), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings').array), 0)]",
     "useAppServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings').array, variables('appServiceStagingSlotAppSettings'))]",
-    "appServiceApiVersion": "2023‑01‑01",
+    "appServiceApiVersion": "2023-12-01",
     "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceProductionSlotAppSettings'))]",
     "appServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceStagingSlotAppSettings'))]"
     
@@ -194,7 +194,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "staging",
           "type": "slots",
-          "apiVersion": "2023-01-01",
+          "apiVersion": "2023-12-01",
           "location": "[resourceGroup().location]",
           "identity": {
             "type": "SystemAssigned"
