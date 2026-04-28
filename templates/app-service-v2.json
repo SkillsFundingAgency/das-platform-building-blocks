@@ -194,7 +194,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "staging",
           "type": "slots",
-          "apiVersion": "2018-11-01",
+          "apiVersion": "2023-01-01",
           "location": "[resourceGroup().location]",
           "identity": {
             "type": "SystemAssigned"
