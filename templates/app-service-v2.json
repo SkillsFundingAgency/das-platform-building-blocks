@@ -58,7 +58,7 @@
     },
     "minTlsCipherSuite": { 
       "type": "string", 
-      "defaultValue": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384", 
+      "defaultValue": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", 
       "metadata": {
         "description": "Specify the minimum TLS cipher suite to enforce for the App Service. Use this when you need stricter security requirements than the default."
       }
