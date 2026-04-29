@@ -56,6 +56,13 @@
         "description": "Format removing backlashes: [{\"Name\": \"IP A\",\"ipAddress\": \"123.123.123.123\"},{\"Name\": \"IP B\",\"ipAddress\": \"234.234.234.234\"}]"
       }
     },
+    "minTlsCipherSuite": { 
+      "type": "string", 
+      "defaultValue": "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", 
+      "metadata": {
+        "description": "Specify the minimum TLS cipher suite to enforce for the App Service. Use this when you need stricter security requirements than the default."
+      }
+    },
     "appServiceSlotAppSettings": {
       "type": "secureObject",
       "defaultValue": {
@@ -148,7 +155,7 @@
     "useAppServiceSlotAppSettings": "[greater(length(parameters('appServiceSlotAppSettings').array), 0)]",
     "useAppServiceSlotConnectionStrings": "[greater(length(parameters('appServiceSlotConnectionStrings').array), 0)]",
     "useAppServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceSlotAppSettings').array, variables('appServiceStagingSlotAppSettings'))]",
-    "appServiceApiVersion": "2020-06-01",
+    "appServiceApiVersion": "2023-12-01",
     "appServiceProductionSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceProductionSlotAppSettings'))]",
     "appServiceStagingSlotAppSettingsCombined": "[union(parameters('appServiceAppSettings').array, variables('appServiceStagingSlotAppSettings'))]"
     
@@ -175,6 +182,7 @@
           "virtualApplications": "[parameters('appServiceVirtualApplications')]",
           "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
           "minTlsVersion": "1.2",
+          "minTlsCipherSuite": "[parameters('minTlsCipherSuite')]",
           "ftpsState": "Disabled",
           "healthCheckPath": "[parameters('healthCheckPath')]"
         },
@@ -186,7 +194,7 @@
           "condition": "[parameters('deployStagingSlot')]",
           "name": "staging",
           "type": "slots",
-          "apiVersion": "2018-11-01",
+          "apiVersion": "2023-12-01",
           "location": "[resourceGroup().location]",
           "identity": {
             "type": "SystemAssigned"
@@ -200,6 +208,7 @@
               "virtualApplications": "[parameters('appServiceVirtualApplications')]",
               "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
               "minTlsVersion": "1.2",
+              "minTlsCipherSuite": "[parameters('minTlsCipherSuite')]",
               "ftpsState": "Disabled"
             },
             "httpsOnly": true
