@@ -187,7 +187,10 @@
           "healthCheckPath": "[parameters('healthCheckPath')]"
         },
         "httpsOnly": true,
-        "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]"
+        "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]",
+        "outboundVnetRouting": {
+          "allTraffic": "[parameters('vnetRouteAllEnabled')]"
+        }
       },
       "resources": [
         {
