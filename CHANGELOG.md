@@ -1,3 +1,11 @@
+# 3.2.0
+
+DASD-14624: Updated `app-build.yml` package scanning to fail the pipeline when High or Critical severity NuGet vulnerabilities are detected.
+
+A new "Fail on High or Critical Severity Vulnerabilities" step has been added after the existing "Package Scanning" step. This step runs with `continueOnError: false` and will always fail the pipeline when High or Critical severity packages are found, regardless of the `ContinueOnVulnerablePackageScanError` parameter. Low and Moderate severity vulnerabilities continue to be controlled by that parameter.
+
+**Note:** Pipelines that previously set `ContinueOnVulnerablePackageScanError: true` to suppress all vulnerability failures will now fail if any High or Critical severity packages are present.
+
 # 3.1.0
 
 DASD-12494: CDN migration from Edgio to Azure Front Door. Added `afd-profile.json` and `afd-endpoint.json` to support Azure Front Door resources.

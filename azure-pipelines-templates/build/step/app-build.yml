@@ -12,7 +12,7 @@ parameters:
 
 steps:
 - task: SonarCloudPrepare@3
-  displayName: Prepare SonarCloud analysis configuration
+  displayName: SonarCloud Prepare
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     SonarCloud: ESFA - SonarCloud
@@ -37,7 +37,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   condition: ne('${{ parameters.AzureArtifactsFeed }}', '')
-  displayName: Restore - Including Custom Feed
+  displayName: Restore (Custom Feed)
   inputs:
     command: restore
     projects: ${{ parameters.TargetProjects }}
@@ -50,9 +50,34 @@ steps:
     $TargetPatterns = "${{ parameters.TargetProjects }}".Trim().Split("`n")
     $TargetPatterns
     $ErrorFound = $false
+    $HighCriticalVulnerabilities = [System.Collections.Generic.List[string]]::new()
+
+    function Get-FixedVersion {
+      param([string]$AdvisoryUrl, [string]$PackageName)
+      try {
+        if ($AdvisoryUrl -notmatch 'advisories/(GHSA-[a-z0-9-]+)') { return $null }
+        $ghsaId = $Matches[1]
+        $osvResponse = Invoke-RestMethod -Method GET `
+          -Uri "https://api.osv.dev/v1/vulns/$ghsaId" `
+          -TimeoutSec 5 `
+          -ErrorAction Stop
+        $fixedVersions = $osvResponse.affected |
+          Where-Object { $_.package.ecosystem -eq 'NuGet' -and $_.package.name -ieq $PackageName } |
+          ForEach-Object { $_.ranges } |
+          ForEach-Object { $_.events } |
+          Where-Object { $null -ne $_.fixed } |
+          Select-Object -ExpandProperty fixed
+        return ($fixedVersions | Select-Object -Last 1)
+      }
+      catch {
+        return $null
+      }
+    }
+
     $TargetPatterns | ForEach-Object {
       $Projects = Get-ChildItem -Path $_ -Recurse
       foreach ($Project in $Projects) {
+        $Vulnerable = @()
         dotnet list $Project package --deprecated | Tee-Object -Variable Deprecated
         if (([Version](dotnet --version)).Major -ge 5) {
           dotnet list $Project package --vulnerable --include-transitive | Tee-Object -Variable Vulnerable
@@ -62,24 +87,62 @@ steps:
         if ($Errors.Count -gt 0) {
           $ErrorFound = $true
         }
+
+        $Vulnerable | Select-String '>' | Where-Object { $_ -match '\b(High|Critical)\b' } | ForEach-Object {
+          $HighCriticalVulnerabilities.Add($_.Line.Trim())
+        }
       }
     }
 
-    if($ErrorFound){
-        Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
-        $(exit 1)
+    if ($HighCriticalVulnerabilities.Count -gt 0) {
+      $formattedLines = $HighCriticalVulnerabilities | ForEach-Object {
+        $parts = $_ -split '\s+'
+        $packageName = $parts[1]
+        $advisoryUrl = $parts[-1]
+        $fixedVersion = Get-FixedVersion -AdvisoryUrl $advisoryUrl -PackageName $packageName
+        $fixText = if ($fixedVersion) { " (fix available: >= $fixedVersion)" } else { "" }
+        "  $_$fixText"
+      }
+      $formattedLines | Set-Content -Path "$env:AGENT_TEMPDIRECTORY/high-critical-packages.txt"
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]true"
+      Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
+      $(exit 1)
+    }
+    elseif ($ErrorFound) {
+      Write-Host "##vso[task.logissue type=warning]Package issues discovered, review output above"
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]false"
+      Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]true"
+      $(exit 1)
     }
     else {
-        Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
-        $(exit 0)
+      Write-Output "##vso[task.setvariable variable=HighCriticalVulnerabilitiesDetected;isreadonly=true]false"
+      Write-Output "##vso[task.setvariable variable=VulnerablePackagesDetected;isreadonly=true]false"
+      $(exit 0)
     }
-  displayName: Package Scanning
+  displayName: Scan Packages
   continueOnError: ${{ parameters.ContinueOnVulnerablePackageScanError }}
+
+- pwsh: |
+    $packages = Get-Content -Path "$env:AGENT_TEMPDIRECTORY/high-critical-packages.txt"
+    Write-Host "##vso[task.logissue type=error]High or Critical severity NuGet package vulnerabilities detected. The pipeline has been failed to ensure security incidents are resolved proactively."
+    Write-Host ""
+    Write-Host "The following packages require immediate attention:"
+    Write-Host ""
+    $packages | ForEach-Object { Write-Host $_ }
+    Write-Host ""
+    Write-Host "Actions required:"
+    Write-Host "  1. Update the affected packages to a secure version"
+    Write-Host "  2. If no fix is available, assess the risk and consider alternative packages"
+    Write-Host "  3. Re-run the pipeline once the packages have been updated"
+    Write-Host ""
+    Write-Host "For more information, see https://devblogs.microsoft.com/dotnet/how-to-scan-nuget-packages-for-security-vulnerabilities/"
+    exit 1
+  displayName: Report Vulnerabilities
+  condition: and(succeeded(), eq(variables['HighCriticalVulnerabilitiesDetected'], 'true'))
 
 - task: DownloadSecureFile@1
   name: DownloadDasGitHubAppPrivateKey
-  displayName: 'Download DAS GitHub App private key'
+  displayName: Download GitHub App Key
   inputs:
     secureFile: 'das-github-app-private-key.pem'
 
@@ -203,11 +266,11 @@ steps:
     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: SonarCloudAnalyze@3
-  displayName: Run SonarCloud analysis
+  displayName: SonarCloud Analyse
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
 
 - task: SonarCloudPublish@3
-  displayName: Publish SonarCloud analysis results on build summary
+  displayName: SonarCloud Publish
   condition: and(succeeded(), or(in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main'), eq(variables['Build.Reason'], 'PullRequest')), eq(${{ parameters.SonarCloud }}, true))
   inputs:
     pollingTimeoutSec: '300'
