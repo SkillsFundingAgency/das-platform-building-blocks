@@ -1,3 +1,7 @@
+# 3.2.1
+
+DASD-15508: Fixed `scheduled-query-alert.json` so the `throttlingInMin` (action suppression) property is omitted entirely when `autoMitigate` is `true`. Azure rejects a scheduledQueryRule that has both auto-mitigation and action suppression set ("Auto mitigation must be disabled when action suppression is set"), and setting the throttle to 0 is not sufficient - the property must be absent. The action object is now built with `union()` so alerts that do not opt into `autoMitigate` keep the previous 20 minute throttle, leaving existing behaviour unchanged.
+
 # 3.2.0
 
 DASD-15509: Added `logic-app.json` to support deploying Azure Logic Apps (`Microsoft.Logic/workflows`) with a caller-supplied workflow definition and parameters and an optional system-assigned managed identity. Outputs the Logic App resource id and identity principalId.
