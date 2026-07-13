@@ -1,0 +1,89 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Logic App (workflow)."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for the Logic App."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Tags to apply to the Logic App."
+      }
+    },
+    "identityType": {
+      "type": "string",
+      "defaultValue": "SystemAssigned",
+      "allowedValues": [
+        "SystemAssigned",
+        "None"
+      ],
+      "metadata": {
+        "description": "Managed identity type for the Logic App. Use SystemAssigned when the workflow needs to authenticate to Azure resources; the identity's principalId is returned as an output."
+      }
+    },
+    "state": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "metadata": {
+        "description": "Whether the Logic App is enabled."
+      }
+    },
+    "workflowDefinition": {
+      "type": "object",
+      "metadata": {
+        "description": "The Logic App workflow definition object (schema, triggers, actions, outputs)."
+      }
+    },
+    "workflowParameters": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Values for the workflow definition parameters, in the form { paramName: { value: ... } }."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('logicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2019-05-01",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "identity": {
+        "type": "[parameters('identityType')]"
+      },
+      "properties": {
+        "state": "[parameters('state')]",
+        "definition": "[parameters('workflowDefinition')]",
+        "parameters": "[parameters('workflowParameters')]"
+      }
+    }
+  ],
+  "outputs": {
+    "logicAppResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Logic/workflows', parameters('logicAppName'))]"
+    },
+    "principalId": {
+      "type": "string",
+      "value": "[if(equals(parameters('identityType'), 'SystemAssigned'), reference(resourceId('Microsoft.Logic/workflows', parameters('logicAppName')), '2019-05-01', 'Full').identity.principalId, '')]"
+    }
+  }
+}

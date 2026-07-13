@@ -1,3 +1,13 @@
+# 3.2.0
+
+DASD-15509: Added `logic-app.json` to support deploying Azure Logic Apps (`Microsoft.Logic/workflows`) with a caller-supplied workflow definition and parameters and an optional system-assigned managed identity. Outputs the Logic App resource id and identity principalId.
+
+Added an optional `additionalActionGroupIds` array parameter to `scheduled-query-alert.json` so an alert can invoke extra action groups (e.g. one that triggers a remediation Logic App) alongside the shared notification group passed as `actionGroupId`. Backward compatible (defaults to an empty array).
+
+Corrected the `allowedValues` for the `alertTriggerOperator` parameter in `scheduled-query-alert.json` to the operators actually supported by the scheduledQueryRules metricTrigger (`Equal`, `GreaterThan`, `GreaterThanOrEqual`, `LessThan`, `LessThanOrEqual`). The previous list only permitted `GreaterThan` and the invalid value `EqualTo`, which blocked alerts that need `GreaterThanOrEqual`. Existing callers pass `GreaterThan`, which is unaffected.
+
+Added an optional `autoMitigate` boolean parameter to `scheduled-query-alert.json` so an alert can be automatically resolved (sending a resolved notification to its action groups) once the query stops breaching. Backward compatible (defaults to `false`, preserving the existing fire-only behaviour).
+
 # 3.1.0
 
 DASD-12494: CDN migration from Edgio to Azure Front Door. Added `afd-profile.json` and `afd-endpoint.json` to support Azure Front Door resources.
