@@ -126,6 +126,25 @@
             }
         }
     },
+    "variables": {
+        "alertActionBase": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+            "severity": "[string(parameters('severity'))]",
+            "aznsAction": {
+                "actionGroup": "[concat(array(parameters('actionGroupId')), parameters('additionalActionGroupIds'))]",
+                "emailSubject": "[parameters('alertMessageSubject')]"
+            },
+            "trigger": {
+                "thresholdOperator": "[parameters('queryMetricThresholdOperator')]",
+                "threshold": "[parameters('queryMetricThreshold')]",
+                "metricTrigger": {
+                    "thresholdOperator": "[parameters('alertTriggerOperator')]",
+                    "threshold": "[parameters('alertTriggerThreshold')]",
+                    "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]"
+                }
+            }
+        }
+    },
     "resources": [
         {
             "type": "microsoft.insights/scheduledQueryRules",
@@ -145,24 +164,7 @@
                     "frequencyInMinutes": "[parameters('alertFrequency')]",
                     "timeWindowInMinutes": "[parameters('alertPeriod')]"
                 },
-                "action": {
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
-                    "severity": "[string(parameters('severity'))]",
-                    "aznsAction":{
-                        "actionGroup": "[concat(array(parameters('actionGroupId')), parameters('additionalActionGroupIds'))]",
-                        "emailSubject": "[parameters('alertMessageSubject')]"
-                    },
-                    "throttlingInMin": 20,
-                    "trigger":{
-                        "thresholdOperator": "[parameters('queryMetricThresholdOperator')]",
-                        "threshold": "[parameters('queryMetricThreshold')]",
-                        "metricTrigger":{
-                            "thresholdOperator": "[parameters('alertTriggerOperator')]",
-                            "threshold": "[parameters('alertTriggerThreshold')]",
-                            "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]"
-                        }
-                    }
-                }
+                "action": "[union(variables('alertActionBase'), if(parameters('autoMitigate'), json('{}'), json('{\"throttlingInMin\": 20}')))]"
             }
         }
     ]
