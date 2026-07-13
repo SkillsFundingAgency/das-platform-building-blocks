@@ -41,11 +41,14 @@
         "alertTriggerOperator": {
             "type": "string",
             "allowedValues": [
+                "Equal",
                 "GreaterThan",
-                "EqualTo"
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
             ],
             "metadata": {
-                "description": "The operator used to assess the queryMetricThreshold against the query result."
+                "description": "The operator used to assess the queryMetricThreshold against the query result. Must be one of the metricTrigger thresholdOperator values supported by scheduledQueryRules (Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual)."
             }
         },
         "alertTriggerMetricTriggerType": {
@@ -107,6 +110,20 @@
             "metadata": {
                 "description": "The operator used to assess the results of the kusto query against the threshold."
             }
+        },
+        "additionalActionGroupIds": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Optional additional action group ids to invoke alongside actionGroupId, for example a group that triggers a remediation Logic App. Kept separate so a shared notification group can still be passed as actionGroupId."
+            }
+        },
+        "autoMitigate": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "When true, the alert is automatically resolved once the query stops breaching, sending a resolved notification to the action groups. Defaults to false to preserve the existing fire-only behaviour of alerts that do not opt in."
+            }
         }
     },
     "resources": [
@@ -118,6 +135,7 @@
             "properties": {
                 "description": "[parameters('alertDescription')]",
                 "enabled": "[parameters('enableAlert')]",
+                "autoMitigate": "[parameters('autoMitigate')]",
                 "source": {
                     "query": "[parameters('kustoQuery')]",
                     "dataSourceId": "[parameters('logAnalyticsId')]",
@@ -131,7 +149,7 @@
                     "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
                     "severity": "[string(parameters('severity'))]",
                     "aznsAction":{
-                        "actionGroup": "[array(parameters('actionGroupId'))]",
+                        "actionGroup": "[concat(array(parameters('actionGroupId')), parameters('additionalActionGroupIds'))]",
                         "emailSubject": "[parameters('alertMessageSubject')]"
                     },
                     "throttlingInMin": 20,
