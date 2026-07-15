@@ -20,6 +20,18 @@
         "enableOnUploadMalwareScanning": {
             "type": "bool",
             "defaultValue": true
+        },
+        "scanResultsEventGridTopicResourceId": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "malwareScanningBase": {
+            "onUpload": {
+                "isEnabled": "[parameters('enableOnUploadMalwareScanning')]",
+                "capGBPerMonth": "[parameters('capGBPerMonth')]"
+            }
         }
     },
     "resources": [
@@ -29,12 +41,7 @@
             "type": "Microsoft.Security/DefenderForStorageSettings",
             "properties": {
                 "isEnabled": true,
-                "malwareScanning": {
-                    "onUpload": {
-                        "isEnabled": "[parameters('enableOnUploadMalwareScanning')]",
-                        "capGBPerMonth": "[parameters('capGBPerMonth')]"
-                    }
-                },
+                "malwareScanning": "[if(empty(parameters('scanResultsEventGridTopicResourceId')), variables('malwareScanningBase'), union(variables('malwareScanningBase'), createObject('scanResultsEventGridTopicResourceId', parameters('scanResultsEventGridTopicResourceId'))))]",
                 "sensitiveDataDiscovery": {
                     "isEnabled": "[parameters('enableSensitiveDataDiscovery')]"
                 },
