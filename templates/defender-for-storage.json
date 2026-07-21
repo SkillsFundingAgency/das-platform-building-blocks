@@ -24,6 +24,14 @@
         "scanResultsEventGridTopicResourceId": {
             "type": "string",
             "defaultValue": ""
+        },
+        "blobScanResultsOptions": {
+            "type": "string",
+            "defaultValue": "blobIndexTags",
+            "allowedValues": [
+                "blobIndexTags",
+                "None"
+            ]
         }
     },
     "variables": {
@@ -31,12 +39,13 @@
             "onUpload": {
                 "isEnabled": "[parameters('enableOnUploadMalwareScanning')]",
                 "capGBPerMonth": "[parameters('capGBPerMonth')]"
-            }
+            },
+            "blobScanResultsOptions": "[parameters('blobScanResultsOptions')]"
         }
     },
     "resources": [
         {
-            "apiVersion": "2022-12-01-preview",
+            "apiVersion": "2025-06-01",
             "name": "current",
             "type": "Microsoft.Security/DefenderForStorageSettings",
             "properties": {
