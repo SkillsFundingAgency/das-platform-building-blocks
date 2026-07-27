@@ -1,7 +1,13 @@
 ﻿# this template expects packages to be built with azure-pipelines-templates/build/step/nuget-build.yml
+parameters:
+- name: dependsOn
+  type: string
+  default: Build
+
 stages:
 - stage: NuGetPublish
   condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
+  dependsOn: ${{ parameters.dependsOn }}
   displayName: Publish NuGet Package
   pool:
     name: DAS - Continuous Deployment Agents
