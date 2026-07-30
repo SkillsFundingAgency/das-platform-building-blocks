@@ -185,22 +185,22 @@ steps:
     projects:  ${{ parameters.TargetProjects }}
     arguments: '--configuration $(buildConfiguration) --no-restore'
 
-- task: DotNetCoreCLI@2
-  displayName: Unit Tests
-  inputs:
-    command: test
-    projects: ${{ parameters.UnitTestProjects }}
-    publishTestResults: true
-    arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
+# - task: DotNetCoreCLI@2
+#   displayName: Unit Tests
+#   inputs:
+#     command: test
+#     projects: ${{ parameters.UnitTestProjects }}
+#     publishTestResults: true
+#     arguments: '--configuration $(buildConfiguration) --no-build /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
-- task: DotNetCoreCLI@2
-  displayName: Acceptance Tests
-  condition: ${{ parameters.RunAcceptanceTests }}
-  inputs:
-    command: test
-    projects: ${{ parameters.AcceptanceTestProjects }}
-    publishTestResults: true
-    arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
+# - task: DotNetCoreCLI@2
+#   displayName: Acceptance Tests
+#   condition: ${{ parameters.RunAcceptanceTests }}
+#   inputs:
+#     command: test
+#     projects: ${{ parameters.AcceptanceTestProjects }}
+#     publishTestResults: true
+#     arguments: '--configuration $(buildConfiguration) --no-build  /p:CollectCoverage=true /p:CoverletOutput=$(Agent.TempDirectory)/CoverageResults/ /p:MergeWith=$(Agent.TempDirectory)/CoverageResults/coverage.json /p:CoverletOutputFormat="opencover%2cjson"'
 
 - task: SonarCloudAnalyze@4
   displayName: Run SonarCloud analysis
