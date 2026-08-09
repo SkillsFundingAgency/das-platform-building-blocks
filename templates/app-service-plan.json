@@ -34,6 +34,34 @@
     "aspInstances": {
       "type": "int"
     },
+    "applyAutoScale": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "autoScaleMinAspInstances": {
+      "type": "int",
+      "defaultValue": 2
+    },
+    "autoScaleMaxAspInstances": {
+      "type": "int",
+      "defaultValue": 3
+    },
+    "autoScaleMinCpuPercentageThreshold": {
+      "type": "int",
+      "defaultValue": 20
+    },
+    "autoScaleMaxCpuPercentageThreshold": {
+      "type": "int",
+      "defaultValue": 70
+    },
+    "autoScaleMinMemoryPercentageThreshold": {
+      "type": "int",
+      "defaultValue": 20
+    },
+    "autoScaleMaxMemoryPercentageThreshold": {
+      "type": "int",
+      "defaultValue": 70
+    },
     "nonASETier": {
       "type": "string",
       "allowedValues": [
@@ -88,6 +116,118 @@
       "location": "[parameters('aspLocation')]",
       "properties": "[if(variables('DeployToASE'), variables('ASPResourceProperties').WithASE, variables('ASPResourceProperties').WithoutASE)]",
       "sku": "[if(variables('DeployToASE'), variables('defaultAppServicePlanSKUs').Isolated, variables('defaultAppServicePlanSKUs').NonASE)]"
+    },
+    {
+      "condition": "[parameters('applyAutoScale')]",
+      "type": "microsoft.insights/autoscalesettings",
+      "apiVersion": "2022-10-01",
+      "name": "[concat(parameters('appServicePlanName'), '-autoscalesettings')]",
+      "location": "[parameters('aspLocation')]",
+      "properties": {
+        "profiles": [
+          {
+            "name": "Scale condition",
+            "capacity": {
+              "minimum": "[string(parameters('autoScaleMinAspInstances'))]",
+              "maximum": "[string(parameters('autoScaleMaxAspInstances'))]",
+              "default": "[if(variables('DeployToASE'), string(variables('defaultAppServicePlanSKUs').Isolated.capacity), string(variables('defaultAppServicePlanSKUs').NonASE.capacity))]"
+            },
+            "rules": [
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricNamespace": "microsoft.web/serverfarms",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": "[parameters('autoScaleMinCpuPercentageThreshold')]",
+                  "dimensions": [],
+                  "dividePerInstance": false
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT5M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "CpuPercentage",
+                  "metricNamespace": "microsoft.web/serverfarms",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": "[parameters('autoScaleMaxCpuPercentageThreshold')]",
+                  "dimensions": [],
+                  "dividePerInstance": false
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT5M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "MemoryPercentage",
+                  "metricNamespace": "microsoft.web/serverfarms",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "LessThan",
+                  "threshold": "[parameters('autoScaleMinMemoryPercentageThreshold')]",
+                  "dimensions": [],
+                  "dividePerInstance": false
+                },
+                "scaleAction": {
+                  "direction": "Decrease",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT5M"
+                }
+              },
+              {
+                "metricTrigger": {
+                  "metricName": "MemoryPercentage",
+                  "metricNamespace": "microsoft.web/serverfarms",
+                  "metricResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+                  "timeGrain": "PT1M",
+                  "statistic": "Average",
+                  "timeWindow": "PT10M",
+                  "timeAggregation": "Average",
+                  "operator": "GreaterThan",
+                  "threshold": "[parameters('autoScaleMaxMemoryPercentageThreshold')]",
+                  "dimensions": [],
+                  "dividePerInstance": false
+                },
+                "scaleAction": {
+                  "direction": "Increase",
+                  "type": "ChangeCount",
+                  "value": "1",
+                  "cooldown": "PT5M"
+                }
+              }
+            ]
+          }
+        ],
+        "enabled": true,
+        "name": "[concat(parameters('appServicePlanName'), '-autoscalesettings')]",
+        "targetResourceUri": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+        "notifications": [],
+        "predictiveAutoscalePolicy": {
+          "scaleMode": "Disabled"
+        }
+      }
     }
   ],
   "outputs": {
