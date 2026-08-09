@@ -1,0 +1,58 @@
+parameters:
+  ServiceConnection:
+  ServerName:
+  DatabaseName:
+  Username:
+  Roles:
+  Grants:
+  DryRun: $false
+
+steps:
+- task: AzurePowerShell@5
+  displayName: 'Create SQL user and apply roles/grants'
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    azurePowerShellVersion: LatestVersion
+    pwsh: true
+    continueOnError: true
+    scriptPath: '$(System.DefaultWorkingDirectory)/das-platform-automation/Infrastructure-Scripts/Set-AzSqlUser/Set-AzSqlUser.ps1'
+    ${{ if and(eq(length(parameters.Grants), 0), ne(length(parameters.Roles), 0)) }}:
+      scriptArguments:
+        -SqlServer ${{ parameters.ServerName }}
+        -SqlDatabaseName ${{ parameters.DatabaseName }}
+        -Username ${{ parameters.Username }}
+        -Roles ${{ parameters.Roles }}
+        -DryRun ${{ parameters.DryRun }}
+    ${{ elseif and(eq(length(parameters.Roles), 0), ne(length(parameters.Grants), 0)) }}:
+      scriptArguments:
+        -SqlServer ${{ parameters.ServerName }}
+        -SqlDatabaseName ${{ parameters.DatabaseName }}
+        -Username ${{ parameters.Username }}
+        -Grants ${{parameters.Grants }}
+        -DryRun ${{ parameters.DryRun }}
+    ${{ else }}:
+      scriptArguments:
+        -SqlServer ${{ parameters.ServerName }}
+        -SqlDatabaseName ${{ parameters.DatabaseName }}
+        -Username ${{ parameters.Username }}
+        -Roles ${{ parameters.Roles }}
+        -Grants ${{parameters.Grants }}
+        -DryRun ${{ parameters.DryRun }}
+- pwsh: |
+    $LogWarning = $false
+    $RedundantRoles = "$(RedundantRoles)"
+    $RedundantGrants = "$(RedundantGrants)"
+    if ($RedundantRoles) {
+      Write-Host "##vso[task.logissue type=warning] Redundant roles:"
+      Write-Host ($RedundantRoles | ft | Out-String)
+      $LogWarning = $true
+    }
+    if ($RedundantGrants) {
+      Write-Host "##vso[task.logissue type=warning] Redundant grants:"
+      Write-Host ($RedundantGrants | ft | Out-String)
+      $LogWarning = $true
+    }
+    
+    $LogWarning ? $(exit 1) : $(exit 0)
+  displayName: Log redundant role/grants
+  continueOnError: true
