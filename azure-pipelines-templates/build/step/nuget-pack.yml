@@ -3,6 +3,7 @@
 parameters:
   DotNetFrameworkPackagesToPack: ''
   DotNetStandardPackagesToPack: ''
+  IncludeReferencedProjects: false
 
 steps:
 - task: PowerShell@2
@@ -28,9 +29,11 @@ steps:
   inputs:
     command: pack
     packagesToPack: ${{ parameters.DotNetFrameworkPackagesToPack }}
-    versioningScheme: byEnvVar
     versionEnvVar: NuGetPackageVersion
     packDestination: $(build.artifactstagingdirectory)/NuGetPackages
+    includeReferencedProjects: ${{ parameters.IncludeReferencedProjects }}
+    ${{ if not(parameters.IncludeReferencedProjects) }}:
+      versioningScheme: byEnvVar
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: NuGetPackages'
   inputs:
