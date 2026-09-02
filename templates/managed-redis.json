@@ -1,0 +1,193 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "managedRedisName": {
+      "type": "string"
+    },
+    "managedRedisSku": {
+      "type": "string",
+      "defaultValue": "Balanced_B3"
+    },
+    "highAvailability": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
+    "zones": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "1.2"
+    },
+    "publicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
+    "clusteringPolicy": {
+      "type": "string",
+      "defaultValue": "NoCluster",
+      "allowedValues": [
+        "NoCluster",
+        "OSSCluster",
+        "EnterpriseCluster"
+      ]
+    },
+    "evictionPolicy": {
+      "type": "string",
+      "defaultValue": "VolatileLRU",
+      "allowedValues": [
+        "AllKeysLFU",
+        "AllKeysLRU",
+        "AllKeysRandom",
+        "NoEviction",
+        "VolatileLFU",
+        "VolatileLRU",
+        "VolatileRandom",
+        "VolatileTTL"
+      ]
+    },
+    "clientProtocol": {
+      "type": "string",
+      "defaultValue": "Encrypted",
+      "allowedValues": [
+        "Encrypted",
+        "Plaintext"
+      ]
+    },
+    "port": {
+      "type": "int",
+      "defaultValue": 10000
+    },
+    "accessKeysAuthentication": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
+    "logAnalyticsWorkspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Log Analytics workspace to send diagnostic logs and metrics to."
+      }
+    },
+    "logAnalyticsWorkspaceResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource group name of the Log Analytics workspace."
+      }
+    }
+  },
+  "variables": {
+    "apiVersion": "2025-07-01",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(parameters('logAnalyticsWorkspaceResourceGroupName'), 'Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[parameters('managedRedisName')]",
+      "type": "Microsoft.Cache/redisEnterprise",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('managedRedisSku')]"
+      },
+      "zones": "[parameters('zones')]",
+      "properties": {
+        "encryption": {},
+        "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+        "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+        "highAvailability": "[parameters('highAvailability')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersion')]",
+      "name": "[concat(parameters('managedRedisName'), '/default')]",
+      "type": "Microsoft.Cache/redisEnterprise/databases",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/redisEnterprise', parameters('managedRedisName'))]"
+      ],
+      "properties": {
+        "clientProtocol": "[parameters('clientProtocol')]",
+        "clusteringPolicy": "[parameters('clusteringPolicy')]",
+        "evictionPolicy": "[parameters('evictionPolicy')]",
+        "port": "[parameters('port')]",
+        "accessKeysAuthentication": "[parameters('accessKeysAuthentication')]"
+      }
+    },
+    {
+      "type": "Microsoft.Cache/redisEnterprise/providers/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "name": "[concat(parameters('managedRedisName'), '/Microsoft.Insights/service')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/redisEnterprise', parameters('managedRedisName'))]"
+      ],
+      "properties": {
+        "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+        "metrics": [
+          {
+            "category": "AllMetrics",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": false,
+              "days": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Cache/redisEnterprise/databases/providers/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "name": "[concat(parameters('managedRedisName'), '/default/Microsoft.Insights/service')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/redisEnterprise/databases', parameters('managedRedisName'), 'default')]"
+      ],
+      "properties": {
+        "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+        "logs": [
+          {
+            "category": "ConnectionEvents",
+            "enabled": true,
+            "retentionPolicy": {
+              "enabled": false,
+              "days": 0
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "HostName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Cache/redisEnterprise', parameters('managedRedisName')), variables('apiVersion')).hostName]"
+    },
+    "Port": {
+      "type": "int",
+      "value": "[parameters('port')]"
+    },
+    "ResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Cache/redisEnterprise', parameters('managedRedisName'))]"
+    },
+    "PrimaryKey": {
+      "type": "securestring",
+      "value": "[listKeys(resourceId('Microsoft.Cache/redisEnterprise/databases', parameters('managedRedisName'), 'default'), variables('apiVersion')).primaryKey]"
+    },
+    "SecondaryKey": {
+      "type": "securestring",
+      "value": "[listKeys(resourceId('Microsoft.Cache/redisEnterprise/databases', parameters('managedRedisName'), 'default'), variables('apiVersion')).secondaryKey]"
+    }
+  }
+}
