@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsWorkspaceName": {
+      "type": "string"
+    },
+    "dataExportRuleName": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 63
+    },
+    "destinationResourceId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "tableNames": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "enable": {
+      "type": "bool",
+      "defaultValue": true
+    }
+  },
+  "variables": {
+    "deployRule": "[and(greater(length(parameters('tableNames')), 0), not(empty(parameters('destinationResourceId'))))]",
+    "destination": {
+      "resourceId": "[parameters('destinationResourceId')]",
+      "metaData": "[if(empty(parameters('eventHubName')), json('null'), createObject('eventHubName', parameters('eventHubName')))]"
+    }
+  },
+  "resources": [
+    {
+      "condition": "[variables('deployRule')]",
+      "name": "[concat(parameters('logAnalyticsWorkspaceName'), '/', parameters('dataExportRuleName'))]",
+      "type": "Microsoft.OperationalInsights/workspaces/dataExports",
+      "apiVersion": "2023-09-01",
+      "properties": {
+        "destination": "[variables('destination')]",
+        "tableNames": "[parameters('tableNames')]",
+        "enable": "[parameters('enable')]"
+      }
+    }
+  ],
+  "outputs": {
+    "dataExportRuleDeployed": {
+      "type": "bool",
+      "value": "[variables('deployRule')]"
+    }
+  }
+}

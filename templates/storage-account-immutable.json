@@ -1,0 +1,182 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "accountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ]
+    },
+    "accessTier": {
+      "type": "string",
+      "defaultValue": "Cool",
+      "allowedValues": [
+        "Hot",
+        "Cool"
+      ]
+    },
+    "immutabilityPolicyState": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Unlocked",
+        "Locked"
+      ]
+    },
+    "immutabilityPeriodSinceCreationInDays": {
+      "type": "int",
+      "defaultValue": 365,
+      "minValue": 1,
+      "maxValue": 146000
+    },
+    "allowSharedKeyAccess": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "allowAzureServices": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "networkAclsDefaultAction": {
+      "type": "string",
+      "defaultValue": "Deny",
+      "allowedValues": [
+        "Allow",
+        "Deny"
+      ]
+    },
+    "subnetResourceIdList": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "allowedIpAddressesList": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "TLS1_2",
+      "allowedValues": [
+        "TLS1_0",
+        "TLS1_2"
+      ]
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {
+    "immutabilityEnabled": "[not(equals(parameters('immutabilityPolicyState'), 'Disabled'))]",
+    "immutableStorageConfig": {
+      "enabled": true,
+      "immutabilityPolicy": {
+        "immutabilityPeriodSinceCreationInDays": "[parameters('immutabilityPeriodSinceCreationInDays')]",
+        "allowProtectedAppendWrites": true,
+        "state": "[parameters('immutabilityPolicyState')]"
+      }
+    },
+    "defaultNetworkAclBypass": "Logging, Metrics",
+    "virtualNetworkRules": {
+      "copy": [
+        {
+          "name": "virtualNetworkRules",
+          "count": "[if(greater(length(parameters('subnetResourceIdList')), 0), length(parameters('subnetResourceIdList')), 1)]",
+          "input": {
+            "id": "[if(greater(length(parameters('subnetResourceIdList')), 0), parameters('subnetResourceIdList')[copyIndex('virtualNetworkRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "ipRules": {
+      "copy": [
+        {
+          "name": "ipRules",
+          "count": "[if(greater(length(parameters('allowedIpAddressesList')), 0), length(parameters('allowedIpAddressesList')), 1)]",
+          "input": {
+            "value": "[if(greater(length(parameters('allowedIpAddressesList')), 0), parameters('allowedIpAddressesList')[copyIndex('ipRules')], json('null'))]",
+            "action": "Allow"
+          }
+        }
+      ]
+    },
+    "networkAclObject": {
+      "bypass": "[if(parameters('allowAzureServices'), concat(variables('defaultNetworkAclBypass'), ', AzureServices'), variables('defaultNetworkAclBypass'))]",
+      "virtualNetworkRules": "[if(greater(length(parameters('subnetResourceIdList')), 0), variables('virtualNetworkRules').virtualNetworkRules, json('null'))]",
+      "ipRules": "[if(greater(length(parameters('allowedIpAddressesList')), 0), variables('ipRules').ipRules, json('null'))]",
+      "defaultAction": "[parameters('networkAclsDefaultAction')]"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "location": "[parameters('storageAccountLocation')]",
+      "tags": "[if(empty(parameters('tags')), json('null'), parameters('tags'))]",
+      "sku": {
+        "name": "[parameters('accountType')]"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "[parameters('accessTier')]",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+        "supportsHttpsTrafficOnly": true,
+        "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+        "networkAcls": "[variables('networkAclObject')]",
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": true
+            },
+            "file": {
+              "enabled": true
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        },
+        "immutableStorageWithVersioning": "[if(variables('immutabilityEnabled'), variables('immutableStorageConfig'), json('null'))]"
+      }
+    },
+    {
+      "name": "[concat(parameters('storageAccountName'), '/default')]",
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "properties": {
+        "isVersioningEnabled": "[variables('immutabilityEnabled')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      "value": "[parameters('storageAccountName')]"
+    },
+    "storageResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+    },
+    "immutabilityPolicyState": {
+      "type": "string",
+      "value": "[parameters('immutabilityPolicyState')]"
+    }
+  }
+}
