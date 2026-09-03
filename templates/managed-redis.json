@@ -102,7 +102,7 @@
       "sku": {
         "name": "[parameters('managedRedisSku')]"
       },
-      "zones": "[parameters('zones')]",
+      "zones": "[if(empty(parameters('zones')), json('null'), parameters('zones'))]",
       "properties": {
         "encryption": {},
         "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
