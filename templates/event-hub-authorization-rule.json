@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "eventHubNamespaceName": {
+      "type": "string"
+    },
+    "eventHubAuthorizationRuleName": {
+      "type": "string"
+    },
+    "eventHubAuthorizationRuleRights": {
+      "type": "array",
+      "defaultValue": [
+        "Listen"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('eventHubNamespaceName'), '/', parameters('eventHubAuthorizationRuleName'))]",
+      "type": "Microsoft.EventHub/namespaces/authorizationRules",
+      "apiVersion": "2024-01-01",
+      "properties": {
+        "rights": "[parameters('eventHubAuthorizationRuleRights')]"
+      }
+    }
+  ],
+  "outputs": {
+    "eventHubAuthorizationRuleId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('eventHubNamespaceName'), parameters('eventHubAuthorizationRuleName'))]"
+    }
+  }
+}

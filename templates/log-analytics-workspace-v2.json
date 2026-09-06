@@ -1,0 +1,144 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsWorkspaceName": {
+      "type": "string"
+    },
+    "logAnalyticsWorkspaceSku": {
+      "type": "string",
+      "allowedValues": [
+        "PerGB2018",
+        "PerNode"
+      ]
+    },
+    "dataRetentionDays": {
+      "type": "int",
+      "defaultValue": 31,
+      "minValue": 31,
+      "maxValue": 730
+    },
+    "totalRetentionInDays": {
+      "type": "int",
+      "defaultValue": -1
+    },
+    "tableNames": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "dailyQuotaGb": {
+      "type": "int",
+      "defaultValue": -1
+    },
+    "publicNetworkAccessForIngestion": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
+    "publicNetworkAccessForQuery": {
+      "type": "string",
+      "defaultValue": "Enabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    },
+    "disableLocalAuth": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "enableDataExport": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "tablePlan": {
+      "type": "string",
+      "defaultValue": "Analytics",
+      "allowedValues": [
+        "Analytics",
+        "Basic",
+        "Auxiliary"
+      ]
+    },
+    "resourceLockLevel": {
+      "type": "string",
+      "defaultValue": "None",
+      "allowedValues": [
+        "None",
+        "CanNotDelete"
+      ]
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {}
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('logAnalyticsWorkspaceName')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2025-02-01",
+      "location": "[resourceGroup().location]",
+      "tags": "[if(empty(parameters('tags')), json('null'), parameters('tags'))]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('logAnalyticsWorkspaceSku')]"
+        },
+        "retentionInDays": "[parameters('dataRetentionDays')]",
+        "publicNetworkAccessForIngestion": "[parameters('publicNetworkAccessForIngestion')]",
+        "publicNetworkAccessForQuery": "[parameters('publicNetworkAccessForQuery')]",
+        "workspaceCapping": "[if(equals(parameters('dailyQuotaGb'), -1), json('null'), createObject('dailyQuotaGb', parameters('dailyQuotaGb')))]",
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true,
+          "disableLocalAuth": "[parameters('disableLocalAuth')]",
+          "enableDataExport": "[parameters('enableDataExport')]"
+        }
+      }
+    },
+    {
+      "name": "[concat(parameters('logAnalyticsWorkspaceName'), '/', parameters('tableNames')[copyIndex()])]",
+      "type": "Microsoft.OperationalInsights/workspaces/tables",
+      "apiVersion": "2023-09-01",
+      "properties": {
+        "plan": "[parameters('tablePlan')]",
+        "retentionInDays": "[parameters('dataRetentionDays')]",
+        "totalRetentionInDays": "[parameters('totalRetentionInDays')]"
+      },
+      "copy": {
+        "name": "tableRetentionCopy",
+        "count": "[length(parameters('tableNames'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+      ]
+    },
+    {
+      "condition": "[not(equals(parameters('resourceLockLevel'), 'None'))]",
+      "name": "[concat(parameters('logAnalyticsWorkspaceName'), '-lock')]",
+      "type": "Microsoft.Authorization/locks",
+      "apiVersion": "2020-05-01",
+      "scope": "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]",
+      "properties": {
+        "level": "[parameters('resourceLockLevel')]",
+        "notes": "Prevents deletion of the workspace. Does not prevent a data purge."
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[reference(parameters('logAnalyticsWorkspaceName'),'2020-08-01','Full').resourceId]"
+    },
+    "fullyQualifiedResourceId": {
+      "type": "string",
+      "value": "[concat('/subscriptions/',subscription().subscriptionId,'/resourcegroups/',resourceGroup().name,'/providers/',reference(parameters('logAnalyticsWorkspaceName'),'2020-08-01','Full').resourceId)]"
+    }
+  }
+}
