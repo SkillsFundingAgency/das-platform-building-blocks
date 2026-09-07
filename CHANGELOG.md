@@ -1,3 +1,9 @@
+# 3.4.0
+
+Added `service-bus-queue.json` to deploy a `Microsoft.ServiceBus/namespaces/queues` resource. The repository already had `service-bus-topic.json` but no queue equivalent.
+
+Added `autoscale-settings.json` to deploy a `Microsoft.Insights/autoscalesettings` resource. Takes a full `profiles` array where the caller needs one, or builds a single metric based scale out and scale in profile from `minimumCapacity`, `maximumCapacity`, `scaleOutThreshold` and `scaleInThreshold`. Autoscale is in use on app service plans in the estate with no template managing it, so it is not currently protected from drift.
+
 # 3.2.1
 
 DASD-15508: Fixed `scheduled-query-alert.json` so the `throttlingInMin` (action suppression) property is omitted entirely when `autoMitigate` is `true`. Azure rejects a scheduledQueryRule that has both auto-mitigation and action suppression set ("Auto mitigation must be disabled when action suppression is set"), and setting the throttle to 0 is not sufficient - the property must be absent. The action object is now built with `union()` so alerts that do not opt into `autoMitigate` keep the previous 20 minute throttle, leaving existing behaviour unchanged.

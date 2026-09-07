@@ -1,0 +1,87 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string"
+    },
+    "serviceBusQueueName": {
+      "type": "string"
+    },
+    "lockDuration": {
+      "type": "string",
+      "defaultValue": "PT1M"
+    },
+    "maxSizeInMegabytes": {
+      "type": "int",
+      "defaultValue": 1024
+    },
+    "maxDeliveryCount": {
+      "type": "int",
+      "defaultValue": 10
+    },
+    "defaultMessageTimeToLive": {
+      "type": "string",
+      "defaultValue": "P14D"
+    },
+    "requiresDuplicateDetection": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "duplicateDetectionHistoryTimeWindow": {
+      "type": "string",
+      "defaultValue": "PT10M"
+    },
+    "requiresSession": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "deadLetteringOnMessageExpiration": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "enablePartitioning": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "forwardTo": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "forwardDeadLetteredMessagesTo": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[concat(parameters('serviceBusNamespaceName'), '/', parameters('serviceBusQueueName'))]",
+      "type": "Microsoft.ServiceBus/namespaces/queues",
+      "apiVersion": "2021-11-01",
+      "properties": {
+        "lockDuration": "[parameters('lockDuration')]",
+        "maxSizeInMegabytes": "[parameters('maxSizeInMegabytes')]",
+        "maxDeliveryCount": "[parameters('maxDeliveryCount')]",
+        "defaultMessageTimeToLive": "[parameters('defaultMessageTimeToLive')]",
+        "requiresDuplicateDetection": "[parameters('requiresDuplicateDetection')]",
+        "duplicateDetectionHistoryTimeWindow": "[parameters('duplicateDetectionHistoryTimeWindow')]",
+        "requiresSession": "[parameters('requiresSession')]",
+        "deadLetteringOnMessageExpiration": "[parameters('deadLetteringOnMessageExpiration')]",
+        "enablePartitioning": "[parameters('enablePartitioning')]",
+        "forwardTo": "[if(empty(parameters('forwardTo')), json('null'), parameters('forwardTo'))]",
+        "forwardDeadLetteredMessagesTo": "[if(empty(parameters('forwardDeadLetteredMessagesTo')), json('null'), parameters('forwardDeadLetteredMessagesTo'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "serviceBusQueueName": {
+      "type": "string",
+      "value": "[parameters('serviceBusQueueName')]"
+    },
+    "serviceBusQueueResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ServiceBus/namespaces/queues', parameters('serviceBusNamespaceName'), parameters('serviceBusQueueName'))]"
+    }
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "autoscaleSettingName": {
+      "type": "string"
+    },
+    "targetResourceId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "enabled": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "minimumCapacity": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "maximumCapacity": {
+      "type": "int",
+      "defaultValue": 3
+    },
+    "defaultCapacity": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "metricName": {
+      "type": "string",
+      "defaultValue": "CpuPercentage"
+    },
+    "scaleOutThreshold": {
+      "type": "int",
+      "defaultValue": 70
+    },
+    "scaleInThreshold": {
+      "type": "int",
+      "defaultValue": 30
+    },
+    "scaleOutCooldown": {
+      "type": "string",
+      "defaultValue": "PT5M"
+    },
+    "scaleInCooldown": {
+      "type": "string",
+      "defaultValue": "PT10M"
+    },
+    "timeGrain": {
+      "type": "string",
+      "defaultValue": "PT1M"
+    },
+    "timeWindow": {
+      "type": "string",
+      "defaultValue": "PT10M"
+    },
+    "profiles": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "notificationEmails": {
+      "type": "array",
+      "defaultValue": []
+    }
+  },
+  "variables": {
+    "defaultProfile": [
+      {
+        "name": "Default",
+        "capacity": {
+          "minimum": "[string(parameters('minimumCapacity'))]",
+          "maximum": "[string(parameters('maximumCapacity'))]",
+          "default": "[string(parameters('defaultCapacity'))]"
+        },
+        "rules": [
+          {
+            "metricTrigger": {
+              "metricName": "[parameters('metricName')]",
+              "metricResourceUri": "[parameters('targetResourceId')]",
+              "timeGrain": "[parameters('timeGrain')]",
+              "statistic": "Average",
+              "timeWindow": "[parameters('timeWindow')]",
+              "timeAggregation": "Average",
+              "operator": "GreaterThan",
+              "threshold": "[parameters('scaleOutThreshold')]"
+            },
+            "scaleAction": {
+              "direction": "Increase",
+              "type": "ChangeCount",
+              "value": "1",
+              "cooldown": "[parameters('scaleOutCooldown')]"
+            }
+          },
+          {
+            "metricTrigger": {
+              "metricName": "[parameters('metricName')]",
+              "metricResourceUri": "[parameters('targetResourceId')]",
+              "timeGrain": "[parameters('timeGrain')]",
+              "statistic": "Average",
+              "timeWindow": "[parameters('timeWindow')]",
+              "timeAggregation": "Average",
+              "operator": "LessThan",
+              "threshold": "[parameters('scaleInThreshold')]"
+            },
+            "scaleAction": {
+              "direction": "Decrease",
+              "type": "ChangeCount",
+              "value": "1",
+              "cooldown": "[parameters('scaleInCooldown')]"
+            }
+          }
+        ]
+      }
+    ],
+    "notifications": [
+      {
+        "operation": "Scale",
+        "email": {
+          "sendToSubscriptionAdministrator": false,
+          "sendToSubscriptionCoAdministrators": false,
+          "customEmails": "[parameters('notificationEmails')]"
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "name": "[parameters('autoscaleSettingName')]",
+      "type": "Microsoft.Insights/autoscalesettings",
+      "apiVersion": "2022-10-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[parameters('autoscaleSettingName')]",
+        "targetResourceUri": "[parameters('targetResourceId')]",
+        "enabled": "[parameters('enabled')]",
+        "profiles": "[if(greater(length(parameters('profiles')), 0), parameters('profiles'), variables('defaultProfile'))]",
+        "notifications": "[if(greater(length(parameters('notificationEmails')), 0), variables('notifications'), json('[]'))]"
+      }
+    }
+  ],
+  "outputs": {
+    "autoscaleSettingName": {
+      "type": "string",
+      "value": "[parameters('autoscaleSettingName')]"
+    },
+    "autoscaleSettingResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Insights/autoscalesettings', parameters('autoscaleSettingName'))]"
+    }
+  }
+}
