@@ -1,0 +1,115 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceType": {
+      "type": "string"
+    },
+    "resourceName": {
+      "type": "string"
+    },
+    "diagnosticSettingName": {
+      "type": "string",
+      "defaultValue": "service"
+    },
+    "logAnalyticsWorkspaceResourceId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "storageAccountResourceId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "eventHubAuthorizationRuleId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "logAnalyticsDestinationType": {
+      "type": "string",
+      "defaultValue": "Default",
+      "allowedValues": [
+        "Default",
+        "AzureDiagnostics",
+        "Dedicated"
+      ]
+    },
+    "logCategoryGroups": {
+      "type": "array",
+      "defaultValue": [
+        "allLogs"
+      ]
+    },
+    "logCategories": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "metricCategories": {
+      "type": "array",
+      "defaultValue": [
+        "AllMetrics"
+      ]
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "logCategoryGroupObjects",
+        "count": "[if(greater(length(parameters('logCategoryGroups')), 0), length(parameters('logCategoryGroups')), 1)]",
+        "input": {
+          "categoryGroup": "[if(greater(length(parameters('logCategoryGroups')), 0), parameters('logCategoryGroups')[copyIndex('logCategoryGroupObjects')], json('null'))]",
+          "enabled": true
+        }
+      },
+      {
+        "name": "logCategoryObjects",
+        "count": "[if(greater(length(parameters('logCategories')), 0), length(parameters('logCategories')), 1)]",
+        "input": {
+          "category": "[if(greater(length(parameters('logCategories')), 0), parameters('logCategories')[copyIndex('logCategoryObjects')], json('null'))]",
+          "enabled": true
+        }
+      },
+      {
+        "name": "metricObjects",
+        "count": "[if(greater(length(parameters('metricCategories')), 0), length(parameters('metricCategories')), 1)]",
+        "input": {
+          "category": "[if(greater(length(parameters('metricCategories')), 0), parameters('metricCategories')[copyIndex('metricObjects')], json('null'))]",
+          "enabled": true
+        }
+      }
+    ],
+    "logs": "[concat(if(greater(length(parameters('logCategoryGroups')), 0), variables('logCategoryGroupObjects'), json('[]')), if(greater(length(parameters('logCategories')), 0), variables('logCategoryObjects'), json('[]')))]",
+    "metrics": "[if(greater(length(parameters('metricCategories')), 0), variables('metricObjects'), json('[]'))]",
+    "scope": "[concat(parameters('resourceType'), '/', parameters('resourceName'))]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('diagnosticSettingName')]",
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2021-05-01-preview",
+      "scope": "[variables('scope')]",
+      "properties": {
+        "workspaceId": "[if(empty(parameters('logAnalyticsWorkspaceResourceId')), json('null'), parameters('logAnalyticsWorkspaceResourceId'))]",
+        "storageAccountId": "[if(empty(parameters('storageAccountResourceId')), json('null'), parameters('storageAccountResourceId'))]",
+        "eventHubAuthorizationRuleId": "[if(empty(parameters('eventHubAuthorizationRuleId')), json('null'), parameters('eventHubAuthorizationRuleId'))]",
+        "eventHubName": "[if(empty(parameters('eventHubName')), json('null'), parameters('eventHubName'))]",
+        "logAnalyticsDestinationType": "[if(equals(parameters('logAnalyticsDestinationType'), 'Default'), json('null'), parameters('logAnalyticsDestinationType'))]",
+        "logs": "[variables('logs')]",
+        "metrics": "[variables('metrics')]"
+      }
+    }
+  ],
+  "outputs": {
+    "diagnosticSettingName": {
+      "type": "string",
+      "value": "[parameters('diagnosticSettingName')]"
+    },
+    "scope": {
+      "type": "string",
+      "value": "[variables('scope')]"
+    }
+  }
+}

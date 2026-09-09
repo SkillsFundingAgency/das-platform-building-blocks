@@ -1,10 +1,20 @@
+# 3.3.0
+
+[DASD-15605](https://skillsfundingagency.atlassian.net/browse/DASD-15605): Added five templates for security and audit Log Analytics workspaces. All are new files; nothing existing is modified.
+
+- `log-analytics-workspace-v2.json` - workspace with long term retention, table plans, resource lock and data export. A v2 rather than an edit to `log-analytics-workspace.json`, which is capped at 90 day retention on apiVersion `2020-08-01` and is consumed by three T Levels repos.
+- `diagnostic-settings.json` - generic diagnostic settings for any resource, replacing the pattern currently copied inside ten resource templates. Nothing consumes it yet; onboarding is a later ticket.
+- `log-analytics-workspace-data-export.json` - exports whole tables to a storage account or Event Hubs namespace. Cannot filter rows, so the selection is a table list.
+- `storage-account-immutable.json` - storage account with a WORM immutability policy, for tamper protected log retention. **`Locked` is irreversible** and blocks deletion of the account and its resource group until the period expires.
+- `event-hub-authorization-rule.json` - namespace auth rule, `Listen` only by default.
+
 # 3.2.1
 
-DASD-15508: Fixed `scheduled-query-alert.json` so the `throttlingInMin` (action suppression) property is omitted entirely when `autoMitigate` is `true`. Azure rejects a scheduledQueryRule that has both auto-mitigation and action suppression set ("Auto mitigation must be disabled when action suppression is set"), and setting the throttle to 0 is not sufficient - the property must be absent. The action object is now built with `union()` so alerts that do not opt into `autoMitigate` keep the previous 20 minute throttle, leaving existing behaviour unchanged.
+[DASD-15508](https://skillsfundingagency.atlassian.net/browse/DASD-15508): Fixed `scheduled-query-alert.json` so the `throttlingInMin` (action suppression) property is omitted entirely when `autoMitigate` is `true`. Azure rejects a scheduledQueryRule that has both auto-mitigation and action suppression set ("Auto mitigation must be disabled when action suppression is set"), and setting the throttle to 0 is not sufficient - the property must be absent. The action object is now built with `union()` so alerts that do not opt into `autoMitigate` keep the previous 20 minute throttle, leaving existing behaviour unchanged.
 
 # 3.2.0
 
-DASD-15509: Added `logic-app.json` to support deploying Azure Logic Apps (`Microsoft.Logic/workflows`) with a caller-supplied workflow definition and parameters and an optional system-assigned managed identity. Outputs the Logic App resource id and identity principalId.
+[DASD-15509](https://skillsfundingagency.atlassian.net/browse/DASD-15509): Added `logic-app.json` to support deploying Azure Logic Apps (`Microsoft.Logic/workflows`) with a caller-supplied workflow definition and parameters and an optional system-assigned managed identity. Outputs the Logic App resource id and identity principalId.
 
 Added an optional `additionalActionGroupIds` array parameter to `scheduled-query-alert.json` so an alert can invoke extra action groups (e.g. one that triggers a remediation Logic App) alongside the shared notification group passed as `actionGroupId`. Backward compatible (defaults to an empty array).
 
@@ -14,7 +24,7 @@ Added an optional `autoMitigate` boolean parameter to `scheduled-query-alert.jso
 
 # 3.1.0
 
-DASD-12494: CDN migration from Edgio to Azure Front Door. Added `afd-profile.json` and `afd-endpoint.json` to support Azure Front Door resources.
+[DASD-12494](https://skillsfundingagency.atlassian.net/browse/DASD-12494): CDN migration from Edgio to Azure Front Door. Added `afd-profile.json` and `afd-endpoint.json` to support Azure Front Door resources.
 
 # 3.0.0
 
