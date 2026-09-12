@@ -97,27 +97,25 @@
             "logs": [
               {
                 "category": "OperationalLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "enabled": true
               },
               {
                 "category": "VNetAndIPFilteringLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "enabled": true
               },
               {
                 "category": "RuntimeAuditLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "enabled": true
+              },
+              {
+                "category": "DiagnosticErrorLogs",
+                "enabled": true
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true
               }
             ]
           }
