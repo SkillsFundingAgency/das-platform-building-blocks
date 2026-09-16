@@ -97,11 +97,15 @@
             "logAnalyticsDestinationType": "Dedicated",
             "logs": [
               {
-                "category": "OperationalLogs",
+                "category": "ApplicationMetricsLogs",
                 "enabled": true
               },
               {
-                "category": "VNetAndIPFilteringLogs",
+                "category": "DiagnosticErrorLogs",
+                "enabled": true
+              },
+              {
+                "category": "OperationalLogs",
                 "enabled": true
               },
               {
@@ -109,7 +113,7 @@
                 "enabled": true
               },
               {
-                "category": "DiagnosticErrorLogs",
+                "category": "VNetAndIPFilteringLogs",
                 "enabled": true
               }
             ],
