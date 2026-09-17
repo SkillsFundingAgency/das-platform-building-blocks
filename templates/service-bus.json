@@ -94,30 +94,33 @@
           ],
           "properties": {
             "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logAnalyticsDestinationType": "Dedicated",
             "logs": [
               {
-                "category": "OperationalLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "category": "ApplicationMetricsLogs",
+                "enabled": true
               },
               {
-                "category": "VNetAndIPFilteringLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "category": "DiagnosticErrorLogs",
+                "enabled": true
+              },
+              {
+                "category": "OperationalLogs",
+                "enabled": true
               },
               {
                 "category": "RuntimeAuditLogs",
-                "enabled": true,
-                "retentionPolicy": {
-                  "enabled": true,
-                  "days": 90
-                }
+                "enabled": true
+              },
+              {
+                "category": "VNetAndIPFilteringLogs",
+                "enabled": true
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true
               }
             ]
           }
