@@ -191,7 +191,7 @@
         {
           "type": "vulnerabilityAssessments",
           "apiVersion": "2021-02-01-preview",
-          "name": "vulnerabilityAssessments",
+          "name": "Default",
           "properties": {
             "recurringScans": {
               "emails": [
