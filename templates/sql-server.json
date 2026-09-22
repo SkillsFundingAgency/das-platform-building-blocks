@@ -86,8 +86,8 @@
     }
   },
   "variables": {
-    "auditPolicyName": "[concat(parameters('sqlServerName'), '-DefaultAuditPolicy')]",
-    "securityAlertPolicyName": "[concat(parameters('sqlServerName'), '-DefaultSecurityAlert')]",
+    "auditPolicyName": "Default",
+    "securityAlertPolicyName": "Default",
     "diagnosticSettingName": "SQLSecurityAuditEvents_3d229c42-c7e7-4c97-9a99-ec0d0d8b86c1"
   },
   "resources": [
@@ -162,7 +162,7 @@
           "name": "[variables('securityAlertPolicyName')]",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]",
-            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/auditingSettings/', variables('AuditPolicyName'))]"
+            "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/auditingSettings/', variables('auditPolicyName'))]"
           ],
           "properties": {
             "state": "Enabled",
@@ -191,7 +191,7 @@
         {
           "type": "vulnerabilityAssessments",
           "apiVersion": "2021-02-01-preview",
-          "name": "vulnerabilityAssessments",
+          "name": "Default",
           "properties": {
             "recurringScans": {
               "emails": [
