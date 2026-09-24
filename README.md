@@ -1,5 +1,9 @@
 # Platform Building Blocks: Styles and Conventions
 
+The [Terraform catalog](templates-teraform/README.md) is in progress. Consult
+its coverage ledger before using a module; the ARM catalog and pipeline remain
+available.
+
 ## Table of contents
 1. [Usage](#Usage)
 2. [Branching](#Branching)
