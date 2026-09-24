@@ -18,7 +18,7 @@ variable "appInsightsName" {
 
 variable "appInsightsResourceGroup" {
   type        = string
-  default     = data.azurerm_resource_group.target.name
+  default     = null
   description = "The resource group that contains the application insights instance"
 }
 
@@ -34,9 +34,10 @@ variable "severity" {
 }
 
 resource "azapi_resource" "main" {
-  type      = "microsoft.alertsmanagement/smartdetectoralertrules@2019-03-01"
-  parent_id = data.azurerm_resource_group.target.id
-  name      = join("", ["Failure Anomalies - ", var.appInsightsName])
-  location  = "global"
-  body      = { "properties" = { "description" = "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.", "state" = "Enabled", "severity" = var.severity, "frequency" = "PT1M", "detector" = { "id" = "FailureAnomaliesDetector" }, "scope" = [join("/", ["/subscriptions", data.azurerm_subscription.current.subscription_id, "resourceGroups", var.appInsightsResourceGroup, "providers", "Microsoft.Insights", "components", var.appInsightsName])], "actionGroups" = { "groupIds" = [var.actionGroupResourceId] } } }
+  type                      = "microsoft.alertsmanagement/smartdetectoralertrules@2019-03-01"
+  parent_id                 = data.azurerm_resource_group.target.id
+  name                      = join("", ["Failure Anomalies - ", var.appInsightsName])
+  schema_validation_enabled = false
+  location                  = "global"
+  body                      = { "properties" = { "description" = "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.", "state" = "Enabled", "severity" = var.severity, "frequency" = "PT1M", "detector" = { "id" = "FailureAnomaliesDetector" }, "scope" = [join("/", ["/subscriptions", data.azurerm_subscription.current.subscription_id, "resourceGroups", jsondecode(var.appInsightsResourceGroup == null ? jsonencode(data.azurerm_resource_group.target.name) : jsonencode(var.appInsightsResourceGroup)), "providers", "Microsoft.Insights", "components", var.appInsightsName])], "actionGroups" = { "groupIds" = [var.actionGroupResourceId] } } }
 }

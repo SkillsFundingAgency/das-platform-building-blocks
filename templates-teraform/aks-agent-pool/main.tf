@@ -49,7 +49,7 @@ variable "virtualNetworkName" {
 
 variable "virtualNetworkResourceGroup" {
   type        = string
-  default     = data.azurerm_resource_group.target.name
+  default     = null
   description = "Name of the existing VNET resource group"
 }
 
@@ -123,10 +123,10 @@ variable "enableEncryptionAtHost" {
 }
 
 locals {
-  vnetSubnetId                  = join("/", ["/subscriptions", data.azurerm_subscription.current.subscription_id, "resourceGroups", var.virtualNetworkResourceGroup, "providers", "Microsoft.Network", "virtualNetworks", var.virtualNetworkName, "subnets", var.subnetName])
-  baseProperties                = { "count" = var.agentNodeCount, "vmSize" = var.agentVmSize, "osType" = var.osType, "osDiskSizeGB" = var.osDiskSizeGB, "storageProfile" = "ManagedDisks", "type" = "VirtualMachineScaleSets", "vnetSubnetID" = local.vnetSubnetId, "orchestratorVersion" = var.kubernetesVersion, "nodeLabels" = var.nodeLabels, "nodeTaints" = var.nodeTaints, "maxPods" = var.maxPods, "enableEncryptionAtHost" = var.enableEncryptionAtHost }
+  vnetSubnetId                  = join("/", ["/subscriptions", data.azurerm_subscription.current.subscription_id, "resourceGroups", jsondecode(var.virtualNetworkResourceGroup == null ? jsonencode(data.azurerm_resource_group.target.name) : jsonencode(var.virtualNetworkResourceGroup)), "providers", "Microsoft.Network", "virtualNetworks", var.virtualNetworkName, "subnets", var.subnetName])
+  baseProperties                = { "count" = var.agentNodeCount, "vmSize" = var.agentVMSize, "osType" = var.osType, "osDiskSizeGB" = var.osDiskSizeGB, "storageProfile" = "ManagedDisks", "type" = "VirtualMachineScaleSets", "vnetSubnetID" = local.vnetSubnetId, "orchestratorVersion" = var.kubernetesVersion, "nodeLabels" = var.nodeLabels, "nodeTaints" = var.nodeTaints, "maxPods" = var.maxPods, "enableEncryptionAtHost" = var.enableEncryptionAtHost }
   withAutoscalingNodeProperties = { "enableAutoScaling" = true, "minCount" = var.minNodeAutoScalingCount, "maxCount" = var.maxNodeAutoScalingCount, "upgradeSettings" = { "drainTimeoutInMinutes" = var.nodeDrainTimeout } }
-  agentPoolsProperties          = (var.enableNodeAutoScaling ? merge(local.baseProperties, local.withAutoscalingNodeProperties) : local.baseProperties)
+  agentPoolsProperties          = jsondecode(var.enableNodeAutoScaling ? jsonencode(merge(local.baseProperties, local.withAutoscalingNodeProperties)) : jsonencode(local.baseProperties))
 }
 
 locals { resource_name_parts = split("/", join("", [var.clusterName, "/", var.agentPoolName])) }
@@ -139,9 +139,10 @@ check "resource_name_segments" {
 }
 
 resource "azapi_resource" "main" {
-  type      = "Microsoft.ContainerService/managedClusters/agentPools@2023-06-01"
-  parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.ContainerService", "managedClusters", local.resource_name_parts[0]])
-  name      = local.resource_name_parts[1]
-  location  = data.azurerm_resource_group.target.location
-  body      = { "properties" = local.agentPoolsProperties }
+  type                      = "Microsoft.ContainerService/managedClusters/agentPools@2023-06-01"
+  parent_id                 = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.ContainerService", "managedClusters", local.resource_name_parts[0]])
+  name                      = local.resource_name_parts[1]
+  schema_validation_enabled = false
+  location                  = data.azurerm_resource_group.target.location
+  body                      = { "properties" = local.agentPoolsProperties }
 }

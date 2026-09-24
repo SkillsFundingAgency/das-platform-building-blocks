@@ -58,7 +58,7 @@ variable "nonASETier" {
 locals {
   deployToASE               = (length(var.aseHostingEnvironmentName) > 0)
   aspResourceProperties     = { "WithASE" = { "name" = var.appServicePlanName, "hostingEnvironmentProfile" = { "id" = join("", ["/subscriptions/", data.azurerm_subscription.current.subscription_id, "/resourceGroups/", var.aseResourceGroup, "/providers/Microsoft.Web/hostingEnvironments/", var.aseHostingEnvironmentName]) } }, "WithoutASE" = { "name" = var.appServicePlanName } }
-  aspSkuName                = join("", [substr(var.nonASETier, 0, 1), var.aspSize, ((var.nonASETier == "PremiumV2") ? "v2" : ""), (((var.nonASETier == "PremiumV3") || (var.nonASETier == "Premium0V3")) ? "v3" : "")])
+  aspSkuName                = join("", [substr(var.nonASETier, 0, 1), var.aspSize, jsondecode((var.nonASETier == "PremiumV2") ? jsonencode("v2") : jsonencode("")), jsondecode(((var.nonASETier == "PremiumV3") || (var.nonASETier == "Premium0V3")) ? jsonencode("v3") : jsonencode(""))])
   defaultAppServicePlanSKUs = { "NonASE" = { "name" = local.aspSkuName, "tier" = var.nonASETier, "size" = local.aspSkuName, "family" = substr(var.nonASETier, 0, 1), "capacity" = var.aspInstances }, "Isolated" = { "name" = join("", ["I", var.aspSize]), "tier" = "Isolated", "size" = join("", ["I", var.aspSize]), "family" = "I", "capacity" = var.aspInstances } }
 }
 
@@ -67,7 +67,7 @@ resource "azapi_resource" "main" {
   parent_id = data.azurerm_resource_group.target.id
   name      = var.appServicePlanName
   location  = var.aspLocation
-  body      = { "properties" = (local.DeployToASE ? local.ASPResourceProperties.WithASE : local.ASPResourceProperties.WithoutASE), "sku" = (local.DeployToASE ? local.defaultAppServicePlanSKUs.Isolated : local.defaultAppServicePlanSKUs.NonASE) }
+  body      = { "properties" = jsondecode(local.deployToASE ? jsonencode(local.aspResourceProperties.WithASE) : jsonencode(local.aspResourceProperties.WithoutASE)), "sku" = jsondecode(local.deployToASE ? jsonencode(local.defaultAppServicePlanSKUs.Isolated) : jsonencode(local.defaultAppServicePlanSKUs.NonASE)) }
 }
 
 output "appServicePlanId" { value = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.Web", "serverfarms", var.appServicePlanName]) }

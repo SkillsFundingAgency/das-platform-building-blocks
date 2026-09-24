@@ -18,7 +18,7 @@ variable "topicName" {
 
 variable "location" {
   type        = string
-  default     = data.azurerm_resource_group.target.location
+  default     = null
   description = "Location of the topic. For Defender malware scan results this must match the region of the storage account whose results it receives."
 }
 
@@ -46,7 +46,7 @@ resource "azapi_resource" "main" {
   type      = "Microsoft.EventGrid/topics@2022-06-15"
   parent_id = data.azurerm_resource_group.target.id
   name      = var.topicName
-  location  = var.location
+  location  = jsondecode(var.location == null ? jsonencode(data.azurerm_resource_group.target.location) : jsonencode(var.location))
   body      = { "properties" = { "inputSchema" = var.inputSchema, "publicNetworkAccess" = var.publicNetworkAccess } }
 }
 

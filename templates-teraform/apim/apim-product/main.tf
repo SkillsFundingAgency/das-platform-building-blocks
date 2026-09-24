@@ -61,5 +61,5 @@ resource "azapi_resource" "main" {
   type      = "Microsoft.ApiManagement/service/products@2021-08-01"
   parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.ApiManagement", "service", local.resource_name_parts[0]])
   name      = local.resource_name_parts[1]
-  body      = { "properties" = ((length(var.productSubscriptionsLimit) == 0) ? local.productBaseProperties : merge(local.productBaseProperties, { "subscriptionsLimit" = tonumber(var.productSubscriptionsLimit) })) }
+  body      = { "properties" = jsondecode((length(var.productSubscriptionsLimit) == 0) ? jsonencode(local.productBaseProperties) : jsonencode(merge(local.productBaseProperties, { "subscriptionsLimit" = tonumber(var.productSubscriptionsLimit) }))) }
 }

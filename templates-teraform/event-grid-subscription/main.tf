@@ -38,7 +38,7 @@ variable "functionResourceGroup" {
 
 variable "functionSubscriptionId" {
   type        = string
-  default     = data.azurerm_subscription.current.subscription_id
+  default     = null
   description = "Subscription ID containing the Function App. Defaults to the current subscription."
 }
 
@@ -96,7 +96,7 @@ variable "deadLetterContainerName" {
 }
 
 locals {
-  subscriptionPropertiesBase           = { "destination" = { "endpointType" = "AzureFunction", "properties" = { "resourceId" = join("/", ["/subscriptions", var.functionSubscriptionId, "resourceGroups", var.functionResourceGroup, "providers", "Microsoft.Web", "sites", var.functionAppName, "functions", var.functionName]), "maxEventsPerBatch" = var.maxEventsPerBatch, "preferredBatchSizeInKilobytes" = var.preferredBatchSizeInKilobytes } }, "filter" = { "includedEventTypes" = var.includedEventTypes }, "eventDeliverySchema" = var.eventDeliverySchema, "retryPolicy" = { "maxDeliveryAttempts" = var.maxDeliveryAttempts, "eventTimeToLiveInMinutes" = var.eventTimeToLiveInMinutes } }
+  subscriptionPropertiesBase           = { "destination" = { "endpointType" = "AzureFunction", "properties" = { "resourceId" = join("/", ["/subscriptions", jsondecode(var.functionSubscriptionId == null ? jsonencode(data.azurerm_subscription.current.subscription_id) : jsonencode(var.functionSubscriptionId)), "resourceGroups", var.functionResourceGroup, "providers", "Microsoft.Web", "sites", var.functionAppName, "functions", var.functionName]), "maxEventsPerBatch" = var.maxEventsPerBatch, "preferredBatchSizeInKilobytes" = var.preferredBatchSizeInKilobytes } }, "filter" = { "includedEventTypes" = var.includedEventTypes }, "eventDeliverySchema" = var.eventDeliverySchema, "retryPolicy" = { "maxDeliveryAttempts" = var.maxDeliveryAttempts, "eventTimeToLiveInMinutes" = var.eventTimeToLiveInMinutes } }
   deadLetterDestination                = { "endpointType" = "StorageBlob", "properties" = { "resourceId" = var.deadLetterStorageAccountResourceId, "blobContainerName" = var.deadLetterContainerName } }
   subscriptionPropertiesWithDeadLetter = merge(local.subscriptionPropertiesBase, { "deadLetterDestination" = local.deadLetterDestination })
 }
@@ -114,7 +114,7 @@ resource "azapi_resource" "main" {
   type      = "Microsoft.EventGrid/topics/eventSubscriptions@2022-06-15"
   parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.EventGrid", "topics", local.resource_name_parts[0]])
   name      = local.resource_name_parts[1]
-  body      = { "properties" = (var.enableDeadLettering ? local.subscriptionPropertiesWithDeadLetter : local.subscriptionPropertiesBase) }
+  body      = { "properties" = jsondecode(var.enableDeadLettering ? jsonencode(local.subscriptionPropertiesWithDeadLetter) : jsonencode(local.subscriptionPropertiesBase)) }
 }
 
 output "eventSubscriptionName" { value = var.eventSubscriptionName }

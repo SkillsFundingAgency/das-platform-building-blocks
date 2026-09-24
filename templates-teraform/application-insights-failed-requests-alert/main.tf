@@ -63,7 +63,7 @@ variable "evaluationFrequency" {
 
 variable "dimensions" {
   type        = list(any)
-  default     = [{ "name" = "request/resultCode", "operator" = "Include", "values" = ["500", "501", "502", "503", "504", "505", "506", "507", "508", "509"] }, { "name" = "cloud/roleName", "operator" = "Include", "values" = [var.serviceName] }]
+  default     = null
   description = "An array of metric dimensions used to filter the metric being alerted on"
 }
 
@@ -93,5 +93,5 @@ resource "azapi_resource" "main" {
   name      = local.alertName
   location  = "global"
   tags      = {}
-  body      = { "properties" = { "severity" = var.alertSeverity, "enabled" = var.enabled, "scopes" = [var.applicationInsightsResourceId], "evaluationFrequency" = var.evaluationFrequency, "windowSize" = var.windowSize, "criteria" = { "allOf" = [{ "alertSensitivity" = var.alertSensitivity, "failingPeriods" = { "numberOfEvaluationPeriods" = var.numberOfEvaluationPeriods, "minFailingPeriodsToAlert" = var.minFailingPeriodsToAlert }, "name" = "failedRequests", "metricNamespace" = "microsoft.insights/components", "metricName" = "requests/failed", "dimensions" = var.dimensions, "operator" = "GreaterOrLessThan", "timeAggregation" = "Count", "skipMetricValidation" = false, "criterionType" = "DynamicThresholdCriterion" }], "odata.type" = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria" }, "autoMitigate" = true, "targetResourceType" = "microsoft.insights/components", "targetResourceRegion" = "westeurope", "actions" = [{ "actionGroupId" = var.alertActionGroupResourceId, "webHookProperties" = {} }] } }
+  body      = { "properties" = { "severity" = var.alertSeverity, "enabled" = var.enabled, "scopes" = [var.applicationInsightsResourceId], "evaluationFrequency" = var.evaluationFrequency, "windowSize" = var.windowSize, "criteria" = { "allOf" = [{ "alertSensitivity" = var.alertSensitivity, "failingPeriods" = { "numberOfEvaluationPeriods" = var.numberOfEvaluationPeriods, "minFailingPeriodsToAlert" = var.minFailingPeriodsToAlert }, "name" = "failedRequests", "metricNamespace" = "microsoft.insights/components", "metricName" = "requests/failed", "dimensions" = jsondecode(var.dimensions == null ? jsonencode([{ "name" = "request/resultCode", "operator" = "Include", "values" = ["500", "501", "502", "503", "504", "505", "506", "507", "508", "509"] }, { "name" = "cloud/roleName", "operator" = "Include", "values" = [var.serviceName] }]) : jsonencode(var.dimensions)), "operator" = "GreaterOrLessThan", "timeAggregation" = "Count", "skipMetricValidation" = false, "criterionType" = "DynamicThresholdCriterion" }], "odata.type" = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria" }, "autoMitigate" = true, "targetResourceType" = "microsoft.insights/components", "targetResourceRegion" = "westeurope", "actions" = [{ "actionGroupId" = var.alertActionGroupResourceId, "webHookProperties" = {} }] } }
 }

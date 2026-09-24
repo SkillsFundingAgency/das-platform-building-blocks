@@ -116,7 +116,7 @@ variable "autoMitigate" {
 }
 
 locals {
-  alertActionBase = { "odata.type" = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction", "severity" = tostring(var.severity), "aznsAction" = { "actionGroup" = join("", [[var.actionGroupId], var.additionalActionGroupIds]), "emailSubject" = var.alertMessageSubject }, "trigger" = { "thresholdOperator" = var.queryMetricThresholdOperator, "threshold" = var.queryMetricThreshold, "metricTrigger" = { "thresholdOperator" = var.alertTriggerOperator, "threshold" = var.alertTriggerThreshold, "metricTriggerType" = var.alertTriggerMetricTriggerType } } }
+  alertActionBase = { "odata.type" = "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction", "severity" = tostring(var.severity), "aznsAction" = { "actionGroup" = concat([var.actionGroupId], var.additionalActionGroupIds), "emailSubject" = var.alertMessageSubject }, "trigger" = { "thresholdOperator" = var.queryMetricThresholdOperator, "threshold" = var.queryMetricThreshold, "metricTrigger" = { "thresholdOperator" = var.alertTriggerOperator, "threshold" = var.alertTriggerThreshold, "metricTriggerType" = var.alertTriggerMetricTriggerType } } }
 }
 
 resource "azapi_resource" "main" {
@@ -124,5 +124,5 @@ resource "azapi_resource" "main" {
   parent_id = data.azurerm_resource_group.target.id
   name      = var.alertResourceName
   location  = data.azurerm_resource_group.target.location
-  body      = { "properties" = { "description" = var.alertDescription, "enabled" = var.enableAlert, "autoMitigate" = var.autoMitigate, "source" = { "query" = var.kustoQuery, "dataSourceId" = var.logAnalyticsId, "queryType" = "ResultCount" }, "schedule" = { "frequencyInMinutes" = var.alertFrequency, "timeWindowInMinutes" = var.alertPeriod }, "action" = merge(local.alertActionBase, (var.autoMitigate ? jsondecode("{}") : jsondecode("{\"throttlingInMin\": 20}"))) } }
+  body      = { "properties" = { "description" = var.alertDescription, "enabled" = var.enableAlert, "autoMitigate" = var.autoMitigate, "source" = { "query" = var.kustoQuery, "dataSourceId" = var.logAnalyticsId, "queryType" = "ResultCount" }, "schedule" = { "frequencyInMinutes" = var.alertFrequency, "timeWindowInMinutes" = var.alertPeriod }, "action" = merge(local.alertActionBase, jsondecode(var.autoMitigate ? jsonencode(jsondecode("{}")) : jsonencode(jsondecode("{\"throttlingInMin\": 20}")))) } }
 }

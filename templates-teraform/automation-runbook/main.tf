@@ -23,7 +23,7 @@ variable "runbookName" {
 
 variable "location" {
   type        = string
-  default     = data.azurerm_resource_group.target.location
+  default     = null
   description = "Location for the runbook resource."
 }
 
@@ -89,7 +89,7 @@ resource "azapi_resource" "main" {
   type      = "Microsoft.Automation/automationAccounts/runbooks@2024-10-23"
   parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.Automation", "automationAccounts", local.resource_name_parts[0]])
   name      = local.resource_name_parts[1]
-  location  = var.location
+  location  = jsondecode(var.location == null ? jsonencode(data.azurerm_resource_group.target.location) : jsonencode(var.location))
   body      = { "properties" = { "description" = var.description, "logVerbose" = var.logVerbose, "logProgress" = var.logProgress, "logActivityTrace" = var.logActivityTrace, "runbookType" = var.runbookType, "publishContentLink" = { "uri" = var.publishContentUri, "version" = var.publishContentVersion } } }
 }
 

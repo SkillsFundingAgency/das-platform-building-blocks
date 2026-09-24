@@ -12,6 +12,11 @@ import re
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "templates"
 DEST = ROOT / "templates-teraform"
+PARAMETER_NAMES = {}
+VARIABLE_NAMES = {}
+ARRAY_PARAMETERS = set()
+ARRAY_VARIABLES = set()
+PARAMETER_DYNAMIC_DEFAULTS = {}
 
 
 class Unsupported(Exception):
@@ -24,17 +29,36 @@ def quoted(value):
 
 def call(name, args):
     if name == "parameters":
-        return f"var.{ast.literal_eval(args[0])}"
+        key = ast.literal_eval(args[0])
+        canonical = PARAMETER_NAMES.get(key.casefold(), key)
+        if canonical.casefold() in PARAMETER_DYNAMIC_DEFAULTS:
+            fallback = emit(PARAMETER_DYNAMIC_DEFAULTS[canonical.casefold()])
+            return f"jsondecode(var.{canonical} == null ? jsonencode({fallback}) : jsonencode(var.{canonical}))"
+        return f"var.{canonical}"
     if name == "variables":
-        return f"local.{ast.literal_eval(args[0])}"
+        key = ast.literal_eval(args[0])
+        return f"local.{VARIABLE_NAMES.get(key.casefold(), key)}"
     if name == "resourceGroup":
         return "data.azurerm_resource_group.target"
     if name == "subscription":
         return "data.azurerm_subscription.current"
     if name == "concat":
+        def is_array(arg):
+            if isinstance(arg, ast.List):
+                return True
+            if isinstance(arg, ast.Call) and isinstance(arg.func, ast.Name):
+                if arg.func.id in ("createArray", "array"):
+                    return True
+                if arg.func.id == "parameters" and isinstance(arg.args[0], ast.Constant):
+                    return arg.args[0].value.casefold() in ARRAY_PARAMETERS
+                if arg.func.id == "variables" and isinstance(arg.args[0], ast.Constant):
+                    return arg.args[0].value.casefold() in ARRAY_VARIABLES
+            return False
+        if any(is_array(arg) for arg in args):
+            return "concat(" + ", ".join(emit_ast(a) for a in args) + ")"
         return "join(\"\", [" + ", ".join(emit_ast(a) for a in args) + "])"
     if name in ("if", "_if"):
-        return f"({emit_ast(args[0])} ? {emit_ast(args[1])} : {emit_ast(args[2])})"
+        return f"jsondecode({emit_ast(args[0])} ? jsonencode({emit_ast(args[1])}) : jsonencode({emit_ast(args[2])}))"
     if name == "equals":
         return f"({emit_ast(args[0])} == {emit_ast(args[1])})"
     if name == "greater":
@@ -138,8 +162,22 @@ def emit(value):
 
 
 def convert(path):
+    global PARAMETER_NAMES, VARIABLE_NAMES, ARRAY_PARAMETERS, ARRAY_VARIABLES, PARAMETER_DYNAMIC_DEFAULTS
     text = path.read_text(encoding="utf-8-sig")
     data = json.loads(re.sub(r",\s*([}\]])", r"\1", text))
+    PARAMETER_NAMES = {key.casefold(): key for key in data.get("parameters", {})}
+    VARIABLE_NAMES = {key.casefold(): key for key in data.get("variables", {})}
+    ARRAY_PARAMETERS = {key.casefold() for key, value in data.get("parameters", {}).items() if value["type"].lower() == "array"}
+    ARRAY_VARIABLES = {key.casefold() for key, value in data.get("variables", {}).items() if isinstance(value, list)}
+    def contains_expression(value):
+        if isinstance(value, str):
+            return value.startswith("[") and value.endswith("]")
+        if isinstance(value, list):
+            return any(contains_expression(x) for x in value)
+        if isinstance(value, dict):
+            return any(contains_expression(x) for x in value.values())
+        return False
+    PARAMETER_DYNAMIC_DEFAULTS = {key.casefold(): value["defaultValue"] for key, value in data.get("parameters", {}).items() if "defaultValue" in value and contains_expression(value["defaultValue"])}
     resources = data.get("resources", [])
     if len(resources) != 1:
         raise Unsupported("requires exactly one resource")
@@ -166,7 +204,7 @@ def convert(path):
     for name, info in data.get("parameters", {}).items():
         bits = [f'type = {types[info["type"].lower()]}']
         if "defaultValue" in info:
-            bits.append("default = " + emit(info["defaultValue"]))
+            bits.append("default = " + ("null" if name.casefold() in PARAMETER_DYNAMIC_DEFAULTS else emit(info["defaultValue"])))
         if info["type"].lower().startswith("secure"):
             bits.append("sensitive = true")
         if info.get("metadata", {}).get("description"):
@@ -182,7 +220,10 @@ def convert(path):
                 subject = f"length(var.{name})" if func else f"var.{name}"
                 checks.append(f"{subject} {op} {info[key]}")
         if checks:
-            bits.append('validation {\n    condition = ' + ' && '.join(f'({c})' for c in checks) + '\n    error_message = "Value must meet the ARM parameter constraints."\n  }')
+            condition = ' && '.join(f'({c})' for c in checks)
+            if name.casefold() in PARAMETER_DYNAMIC_DEFAULTS:
+                condition = f"var.{name} == null ? true : ({condition})"
+            bits.append('validation {\n    condition = ' + condition + '\n    error_message = "Value must meet the ARM parameter constraints."\n  }')
         declarations.append(f'variable "{name}" {{\n  ' + "\n  ".join(bits) + "\n}")
     if data.get("variables"):
         declarations.append("locals {\n" + "\n".join(f"  {k} = {emit(v)}" for k, v in data["variables"].items()) + "\n}")
@@ -202,6 +243,8 @@ def convert(path):
     pieces = [f'type = {quoted(resource["type"] + "@" + resource["apiVersion"])}',
               'parent_id = ' + parent,
               'name = ' + short_name]
+    if resource["type"] in ("Microsoft.Web/sites/hostnameBindings", "Microsoft.ContainerService/managedClusters/agentPools", "microsoft.alertsmanagement/smartdetectoralertrules"):
+        pieces.append("schema_validation_enabled = false")
     for key in ("location", "tags"):
         if key in resource:
             pieces.append(f"{key} = {emit(resource[key])}")

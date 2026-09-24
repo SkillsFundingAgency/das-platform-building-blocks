@@ -38,9 +38,10 @@ check "resource_name_segments" {
 }
 
 resource "azapi_resource" "main" {
-  type      = "Microsoft.Web/sites/hostnameBindings@2022-09-01"
-  parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.Web", "sites", local.resource_name_parts[0]])
-  name      = local.resource_name_parts[1]
-  location  = data.azurerm_resource_group.target.location
-  body      = { "properties" = { "sslState" = var.sslState, "thumbprint" = var.certificateThumbprint } }
+  type                      = "Microsoft.Web/sites/hostnameBindings@2022-09-01"
+  parent_id                 = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.Web", "sites", local.resource_name_parts[0]])
+  name                      = local.resource_name_parts[1]
+  schema_validation_enabled = false
+  location                  = data.azurerm_resource_group.target.location
+  body                      = { "properties" = { "sslState" = var.sslState, "thumbprint" = var.certificateThumbprint } }
 }

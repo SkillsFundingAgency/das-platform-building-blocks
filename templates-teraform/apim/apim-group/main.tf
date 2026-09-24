@@ -37,7 +37,7 @@ locals {
   isExternal = ((length(var.tenantId) > 0) && (length(var.aadGroupObjectId) > 0))
 }
 
-locals { resource_name_parts = split("/", join("", [var.apimName, "/", (local.isExternal ? var.aadGroupObjectId : var.groupDisplayName)])) }
+locals { resource_name_parts = split("/", join("", [var.apimName, "/", jsondecode(local.isExternal ? jsonencode(var.aadGroupObjectId) : jsonencode(var.groupDisplayName))])) }
 
 check "resource_name_segments" {
   assert {
@@ -50,5 +50,5 @@ resource "azapi_resource" "main" {
   type      = "Microsoft.ApiManagement/service/groups@2019-12-01"
   parent_id = join("/", [data.azurerm_resource_group.target.id, "providers", "Microsoft.ApiManagement", "service", local.resource_name_parts[0]])
   name      = local.resource_name_parts[1]
-  body      = { "properties" = { "displayName" = var.groupDisplayName, "description" = var.groupDescription, "type" = (local.isExternal ? "external" : "custom"), "externalId" = (local.isExternal ? join("", ["aad://", var.tenantId, "/groups/", var.aadGroupObjectId]) : jsondecode("null")) } }
+  body      = { "properties" = { "displayName" = var.groupDisplayName, "description" = var.groupDescription, "type" = jsondecode(local.isExternal ? jsonencode("external") : jsonencode("custom")), "externalId" = jsondecode(local.isExternal ? jsonencode(join("", ["aad://", var.tenantId, "/groups/", var.aadGroupObjectId])) : jsonencode(jsondecode("null"))) } }
 }
