@@ -1,3 +1,15 @@
+# 4.0.0
+
+[DASD-15537](https://skillsfundingagency.atlassian.net/browse/DASD-15537): **Breaking change.** Rewrote `scheduled-query-alert.json` on the current `Microsoft.Insights/scheduledQueryRules` API (`2026-03-01`, `kind: LogAlert`) so log search alerts can use dynamic thresholds. The previous `2018-04-16` API only supported static thresholds. A search of the SkillsFundingAgency GitHub organisation found no callers of this template, so it was changed in place rather than adding a v2.
+
+- Added `thresholdType` (`Static` or `Dynamic`). `Dynamic` uses `alertSensitivity` (`Low`, `Medium`, `High`) and optional `ignoreDataBefore`, needs at least 3 days and 30 samples of data before it can fire, and does not support a `PT1M` frequency.
+- Replaced `logAnalyticsId` with a `scopes` array, so an alert can query an Application Insights component as well as a Log Analytics workspace.
+- Replaced `alertFrequency` and `alertPeriod` (minutes) with `evaluationFrequency` and `windowSize` (ISO 8601 durations, default `PT5M`).
+- Replaced `queryMetricThreshold`, `queryMetricThresholdOperator`, `alertTriggerOperator`, `alertTriggerThreshold` and `alertTriggerMetricTriggerType` with `operator`, `threshold`, `timeAggregation`, optional `metricMeasureColumn`, `numberOfEvaluationPeriods` and `minFailingPeriodsToAlert`.
+- Replaced `alertMessageSubject` with an optional `customProperties` object, added to the payload sent to the action groups.
+- Kept `actionGroupId`, `additionalActionGroupIds` and `autoMitigate`. The 20 minute action suppression is now the `muteActionsDuration` parameter (default `PT20M`) and, as before, is only applied when `autoMitigate` is `false`.
+- Added an optional `location` parameter and an `alertResourceId` output.
+
 # 3.3.0
 
 [DASD-15605](https://skillsfundingagency.atlassian.net/browse/DASD-15605): Added five templates for security and audit Log Analytics workspaces. All are new files; nothing existing is modified.
