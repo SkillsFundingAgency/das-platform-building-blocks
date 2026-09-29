@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "assignmentType": {
+            "type": "string",
+            "allowedValues": [
+                "DAS PRD Restart WebApp/WebJobs"
+            ]
+        },
+        "principalId": {
+            "type": "string"
+        },
+        "resourceName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "DAS PRD Restart WebApp/WebJobs": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ab0dc979-3a69-435b-8a2e-cfa58a7eb5fd')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites/providers/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'), parameters('resourceName'), variables(parameters('assignmentType'))), 'app-service'))]",
+            "properties": {
+                "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "[resourceId('Microsoft.Web/sites', parameters('resourceName'))]"
+            }
+        }
+    ]
+}
