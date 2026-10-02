@@ -42,7 +42,8 @@
             "allowedValues": [
                 "microsoft.insights/components",
                 "Microsoft.DataFactory/factories",
-                "Microsoft.Network/applicationGateways"
+                "Microsoft.Network/applicationGateways",
+                "Microsoft.ServiceBus/namespaces"
             ],
             "metadata": {
                 "description": "Type of target resource."
@@ -60,7 +61,8 @@
             "allowedValues": [
                 "microsoft.insights/components",
                 "Microsoft.DataFactory/factories",
-                "Microsoft.Network/applicationGateways"
+                "Microsoft.Network/applicationGateways",
+                "Microsoft.ServiceBus/namespaces"
             ],
             "metadata": {
                 "description": "Namespace of the metric."
