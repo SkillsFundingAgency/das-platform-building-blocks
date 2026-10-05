@@ -1,0 +1,145 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Defender for Cloud workflow automation (Microsoft.Security/automations)."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location of the workflow automation."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Tags to apply to the workflow automation."
+            }
+        },
+        "automationDescription": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Description shown against the workflow automation in Defender for Cloud."
+            }
+        },
+        "isEnabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Whether the workflow automation is enabled."
+            }
+        },
+        "scopePaths": {
+            "type": "array",
+            "defaultValue": [
+                "[resourceGroup().id]"
+            ],
+            "metadata": {
+                "description": "Subscription or resource group ids whose events trigger the automation. Defaults to the resource group this template is deployed into."
+            }
+        },
+        "eventSource": {
+            "type": "string",
+            "defaultValue": "Alerts",
+            "allowedValues": [
+                "Alerts",
+                "Assessments",
+                "AssessmentsSnapshot",
+                "SubAssessments",
+                "SubAssessmentsSnapshot",
+                "RegulatoryComplianceAssessment",
+                "RegulatoryComplianceAssessmentSnapshot",
+                "SecureScores",
+                "SecureScoresSnapshot",
+                "SecureScoreControls",
+                "SecureScoreControlsSnapshot",
+                "AttackPaths",
+                "AttackPathsSnapshot"
+            ],
+            "metadata": {
+                "description": "Type of Defender for Cloud event that triggers the automation."
+            }
+        },
+        "ruleSets": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Rule sets that filter the events. Rules within a set are ANDed, sets are ORed. An empty array triggers on every event from the source. Each set is { \"rules\": [ { \"propertyJPath\": \"AlertType\", \"propertyType\": \"String\", \"expectedValue\": \"...\", \"operator\": \"Equals\" } ] }."
+            }
+        },
+        "logicAppName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Logic App to trigger. Its trigger must be an HTTP request trigger (type Request, kind Http)."
+            }
+        },
+        "logicAppResourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "Resource group containing the Logic App. Defaults to the resource group this template is deployed into."
+            }
+        },
+        "logicAppTriggerName": {
+            "type": "string",
+            "defaultValue": "manual",
+            "metadata": {
+                "description": "Name of the HTTP request trigger in the Logic App workflow definition. The callback URL of this trigger is what the automation calls."
+            }
+        }
+    },
+    "variables": {
+        "logicAppResourceId": "[resourceId(parameters('logicAppResourceGroup'), 'Microsoft.Logic/workflows', parameters('logicAppName'))]",
+        "logicAppTriggerResourceId": "[resourceId(parameters('logicAppResourceGroup'), 'Microsoft.Logic/workflows/triggers', parameters('logicAppName'), parameters('logicAppTriggerName'))]",
+        "copy": [
+            {
+                "name": "scopes",
+                "count": "[length(parameters('scopePaths'))]",
+                "input": {
+                    "description": "[parameters('scopePaths')[copyIndex('scopes')]]",
+                    "scopePath": "[parameters('scopePaths')[copyIndex('scopes')]]"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Security/automations",
+            "apiVersion": "2019-01-01-preview",
+            "name": "[parameters('automationName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "properties": {
+                "description": "[parameters('automationDescription')]",
+                "isEnabled": "[parameters('isEnabled')]",
+                "scopes": "[variables('scopes')]",
+                "sources": [
+                    {
+                        "eventSource": "[parameters('eventSource')]",
+                        "ruleSets": "[parameters('ruleSets')]"
+                    }
+                ],
+                "actions": [
+                    {
+                        "actionType": "LogicApp",
+                        "logicAppResourceId": "[variables('logicAppResourceId')]",
+                        "uri": "[listCallbackUrl(variables('logicAppTriggerResourceId'), '2019-05-01').value]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "automationResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Security/automations', parameters('automationName'))]"
+        }
+    }
+}
