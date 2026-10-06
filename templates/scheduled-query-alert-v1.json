@@ -1,0 +1,171 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the action group to send the alert to as outputed by action-group.json."
+            }
+        },
+        "alertDescription": {
+            "type": "string",
+            "metadata": {
+                "description": "A friendly description for the alert."
+            }
+        },
+        "alertFrequency": {
+            "type": "int",
+            "metadata": {
+                "description": "The frequency that the queryMetricThreshold is assessed."
+            }
+        },
+        "alertMessageSubject": {
+            "type": "string",
+            "metadata": {
+                "description": "The subject of the alert email (this may also be visible in other action group types)."
+            }
+        },
+        "alertPeriod": {
+            "type": "int",
+            "metadata": {
+                "description": "The timespan over which to measure the queryMetricThreshold."
+            }
+        },
+        "alertResourceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Resource Manager resource that represents the alert."
+            }
+        },
+        "alertTriggerOperator": {
+            "type": "string",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+            ],
+            "metadata": {
+                "description": "The operator used to assess the queryMetricThreshold against the query result. Must be one of the metricTrigger thresholdOperator values supported by scheduledQueryRules (Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual)."
+            }
+        },
+        "alertTriggerMetricTriggerType": {
+            "type": "string",
+            "allowedValues": [
+                "Consecutive",
+                "Total"
+            ],
+            "metadata": {
+                "description": "Whether to trigger the alert based on the total number of breaches or the consecutive number."
+            }
+        },
+        "alertTriggerThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The threshold for the trigger."
+            }
+        },
+        "kustoQuery": {
+            "type": "string",
+            "metadata": {
+                "description": "The kusto query used to retrieve the query metric."
+            }
+        },
+        "logAnalyticsId": {
+            "type": "string",
+            "metadata": {
+                "description": "The id of the log analytics workspace as outputed by log-analtyics-workspace.json."
+            }
+        },
+        "queryMetricThreshold": {
+            "type": "int",
+            "metadata": {
+                "description": "The threshold used to assess the results of the kusto query."
+            }
+        },
+        "severity": {
+            "type": "int",
+            "minValue": 0,
+            "maxValue": 4,
+            "metadata": {
+                "description": "The alert severity, used to group alerts by Azure."
+            }
+        },
+        "enableAlert": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "queryMetricThresholdOperator": {
+            "type": "string",
+            "allowedValues": [
+                "Equal",
+                "GreaterThan",
+                "GreaterThanOrEqual",
+                "LessThan",
+                "LessThanOrEqual"
+            ],
+            "defaultValue": "GreaterThan",
+            "metadata": {
+                "description": "The operator used to assess the results of the kusto query against the threshold."
+            }
+        },
+        "additionalActionGroupIds": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Optional additional action group ids to invoke alongside actionGroupId, for example a group that triggers a remediation Logic App. Kept separate so a shared notification group can still be passed as actionGroupId."
+            }
+        },
+        "autoMitigate": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "When true, the alert is automatically resolved once the query stops breaching, sending a resolved notification to the action groups. Defaults to false to preserve the existing fire-only behaviour of alerts that do not opt in."
+            }
+        }
+    },
+    "variables": {
+        "alertActionBase": {
+            "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+            "severity": "[string(parameters('severity'))]",
+            "aznsAction": {
+                "actionGroup": "[concat(array(parameters('actionGroupId')), parameters('additionalActionGroupIds'))]",
+                "emailSubject": "[parameters('alertMessageSubject')]"
+            },
+            "trigger": {
+                "thresholdOperator": "[parameters('queryMetricThresholdOperator')]",
+                "threshold": "[parameters('queryMetricThreshold')]",
+                "metricTrigger": {
+                    "thresholdOperator": "[parameters('alertTriggerOperator')]",
+                    "threshold": "[parameters('alertTriggerThreshold')]",
+                    "metricTriggerType": "[parameters('alertTriggerMetricTriggerType')]"
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "name": "[parameters('alertResourceName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "description": "[parameters('alertDescription')]",
+                "enabled": "[parameters('enableAlert')]",
+                "autoMitigate": "[parameters('autoMitigate')]",
+                "source": {
+                    "query": "[parameters('kustoQuery')]",
+                    "dataSourceId": "[parameters('logAnalyticsId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": "[parameters('alertFrequency')]",
+                    "timeWindowInMinutes": "[parameters('alertPeriod')]"
+                },
+                "action": "[union(variables('alertActionBase'), if(parameters('autoMitigate'), json('{}'), json('{\"throttlingInMin\": 20}')))]"
+            }
+        }
+    ]
+}
