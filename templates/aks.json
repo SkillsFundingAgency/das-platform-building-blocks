@@ -143,6 +143,13 @@
       "type": "bool",
       "defaultValue": true
     },
+    "enableWorkloadIdentity": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enables the OIDC issuer and Workload Identity support for non-legacy AKS deployments."
+      }
+    },
     "networkPlugin": {
       "type": "string",
       "defaultValue": "kubenet",
@@ -277,11 +284,21 @@
     },
     "servicePrincipalProperties": "[if(empty(parameters('servicePrincipalClientId')), variables('emptyObject'), variables('servicePrincipalProfile'))]",
     "windowsProfileProperties": "[if(empty(parameters('windowsProfile')), variables('emptyObject'), variables('windowsProfile'))]",
-    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'))]"
+    "workloadIdentityProperties": {
+      "oidcIssuerProfile": {
+        "enabled": true
+      },
+      "securityProfile": {
+        "workloadIdentity": {
+          "enabled": true
+        }
+      }
+    },
+    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'), if(and(not(parameters('legacyDeployment')), parameters('enableWorkloadIdentity')), variables('workloadIdentityProperties'), variables('emptyObject')))]"
   },
   "resources": [
     {
-      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', '2022-11-01')]",
+      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', if(parameters('enableWorkloadIdentity'), '2023-07-01', '2022-11-01'))]",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
@@ -314,5 +331,10 @@
       ]
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "AksOidcIssuerUrl": {
+      "type": "string",
+      "value": "[if(and(not(parameters('legacyDeployment')), parameters('enableWorkloadIdentity')), reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName')), '2023-07-01').oidcIssuerProfile.issuerUrl, '')]"
+    }
+  }
 }
