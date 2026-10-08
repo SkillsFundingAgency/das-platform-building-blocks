@@ -139,15 +139,11 @@
         "documentation": "https://docs.microsoft.com/en-gb/azure/aks/managed-aad"
       }
     },
-    "legacyDeployment": {
-      "type": "bool",
-      "defaultValue": true
-    },
     "enableWorkloadIdentity": {
       "type": "bool",
       "defaultValue": false,
       "metadata": {
-        "description": "Enables the OIDC issuer and Workload Identity support for non-legacy AKS deployments."
+        "description": "Enables the OIDC issuer and Workload Identity support for the cluster."
       }
     },
     "networkPlugin": {
@@ -191,37 +187,23 @@
     }
   },
   "variables": {
-    "agentPoolProfile": {
-      "withMode": [
-        {
-          "name": "[parameters('agentPoolName')]",
-          "count": "[parameters('agentNodeCount')]",
-          "vmSize": "[parameters('agentVMSize')]",
-          "osType": "Linux",
-          "mode": "System",
-          "vnetSubnetID": "[variables('vnetSubnetID')]",
-          "type": "VirtualMachineScaleSets",
-          "storageProfile": "ManagedDisks",
-          "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
-        }
-      ],
-      "withoutMode": [
-        {
-          "name": "[parameters('agentPoolName')]",
-          "count": "[parameters('agentNodeCount')]",
-          "vmSize": "[parameters('agentVMSize')]",
-          "osType": "Linux",
-          "vnetSubnetID": "[variables('vnetSubnetID')]",
-          "type": "VirtualMachineScaleSets",
-          "storageProfile": "ManagedDisks",
-          "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
-        }
-      ]
-    },
+    "agentPoolProfile": [
+      {
+        "name": "[parameters('agentPoolName')]",
+        "count": "[parameters('agentNodeCount')]",
+        "vmSize": "[parameters('agentVMSize')]",
+        "osType": "Linux",
+        "mode": "System",
+        "vnetSubnetID": "[variables('vnetSubnetID')]",
+        "type": "VirtualMachineScaleSets",
+        "storageProfile": "ManagedDisks",
+        "enableEncryptionAtHost": "[parameters('enableEncryptionAtHost')]"
+      }
+    ],
     "aksBaseProperties": {
       "kubernetesVersion": "[parameters('kubernetesVersion')]",
       "dnsPrefix": "[parameters('clusterName')]",
-      "agentPoolProfiles": "[if(parameters('legacyDeployment'), variables('agentPoolProfile').withoutMode, variables('agentPoolProfile').withMode)]",
+      "agentPoolProfiles": "[variables('agentPoolProfile')]",
       "addonProfiles": {
         "azurepolicy": {
           "enabled": true
@@ -294,11 +276,11 @@
         }
       }
     },
-    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'), if(and(not(parameters('legacyDeployment')), parameters('enableWorkloadIdentity')), variables('workloadIdentityProperties'), variables('emptyObject')))]"
+    "aksProperties": "[union(variables('aksBaseProperties'), variables('servicePrincipalProperties'), variables('windowsProfileProperties'), if(parameters('enableWorkloadIdentity'), variables('workloadIdentityProperties'), variables('emptyObject')))]"
   },
   "resources": [
     {
-      "apiVersion": "[if(parameters('legacyDeployment'), '2019-08-01', if(parameters('enableWorkloadIdentity'), '2023-07-01', '2022-11-01'))]",
+      "apiVersion": "[if(parameters('enableWorkloadIdentity'), '2023-07-01', '2022-11-01')]",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[parameters('clusterName')]",
