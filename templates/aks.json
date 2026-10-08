@@ -331,10 +331,5 @@
       ]
     }
   ],
-  "outputs": {
-    "AksOidcIssuerUrl": {
-      "type": "string",
-      "value": "[if(and(not(parameters('legacyDeployment')), parameters('enableWorkloadIdentity')), reference(resourceId('Microsoft.ContainerService/managedClusters', parameters('clusterName')), '2023-07-01').oidcIssuerProfile.issuerUrl, '')]"
-    }
-  }
+  "outputs": {}
 }
