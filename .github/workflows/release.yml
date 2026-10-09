@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v2
@@ -24,6 +26,6 @@ jobs:
           useConfigFile: true
       - name: Create Release
         id: create_release
-        run: gh release create ${{ steps.gitversion.outputs.majorMinorPatch }} --title "${{ steps.gitversion.outputs.majorMinorPatch }} - ${{ github.event.head_commit.message }}" --generate-notes
+        run: gh release create ${{ steps.gitversion.outputs.majorMinorPatch }} --title "${{ steps.gitversion.outputs.majorMinorPatch }} - ${{ github.event.head_commit.message }}" --generate-notes --target "$GITHUB_SHA"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
