@@ -1,3 +1,7 @@
+# 4.1.0
+
+[DASD-13201](https://skillsfundingagency.atlassian.net/browse/DASD-13201): Added `defender-workflow-automation.json` to deploy a Defender for Cloud workflow automation (`Microsoft.Security/automations`) that triggers a Logic App when matching Defender events (alerts by default) are raised. The automation calls the callback URL of the Logic App's HTTP request trigger (`manual` by default), so the workflow does not need a `Microsoft.Web/connections` API connection. Scope defaults to the deployment resource group and events are filtered with caller-supplied `ruleSets`. This is a new file; nothing existing is modified.
+
 # 4.0.0
 
 [DASD-15537](https://skillsfundingagency.atlassian.net/browse/DASD-15537): **Breaking change.** Rewrote `scheduled-query-alert.json` on the current `Microsoft.Insights/scheduledQueryRules` API (`2026-03-01`, `kind: LogAlert`) so log search alerts can use dynamic thresholds. The previous `2018-04-16` API only supported static thresholds. A search of the SkillsFundingAgency GitHub organisation found no callers of this template, so it was changed in place rather than adding a v2.
