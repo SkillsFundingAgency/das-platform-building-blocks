@@ -28,6 +28,4 @@ jobs:
         id: create_release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_VERSION: ${{ steps.gitversion.outputs.majorMinorPatch }}
-          RELEASE_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        run: gh release create "$RELEASE_VERSION" --title "$RELEASE_VERSION - $RELEASE_COMMIT_MESSAGE" --generate-notes --target "$GITHUB_SHA"
+        run: gh release create ${{ steps.gitversion.outputs.majorMinorPatch }} --title "${{ steps.gitversion.outputs.majorMinorPatch }} - ${{ github.event.head_commit.message }}" --generate-notes --target "$GITHUB_SHA"
