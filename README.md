@@ -1,5 +1,8 @@
 # Platform Building Blocks: Styles and Conventions
 
+The [Bicep catalog](templates-bicep/README.md) mirrors the ARM templates in
+`templates/`. The ARM catalog and its existing pipeline remain available.
+
 ## Table of contents
 1. [Usage](#Usage)
 2. [Branching](#Branching)
