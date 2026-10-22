@@ -1,3 +1,10 @@
+# 4.1.0
+
+[DASD-16646](https://skillsfundingagency.atlassian.net/browse/DASD-16646): Added building blocks for Azure Functions on the [Flex Consumption plan](https://learn.microsoft.com/azure/azure-functions/flex-consumption-plan). Both are new files; nothing existing is modified. Flex apps can't be created by `function-app-v2.json`, which targets Windows App Service and Premium plans, and existing apps can't be moved to Flex in place, so callers deploy a new app.
+
+- `function-app-flex.json` - creates the FC1 plan, the Linux function app and its deployment package container in an existing storage account in the same resource group. A Flex plan can only host one app, so the plan and app are created together rather than through a separate plan template. Parameters cover runtime and version, `maximumInstanceCount`, `instanceMemoryMB`, `alwaysReady` instances and optional vNet integration; the subnet must be delegated to `Microsoft.App/environments`. The deployment container is read with a connection string app setting by default, or with the app's system-assigned identity (`deploymentStorageAuthenticationType`), which also grants it Storage Blob Data Contributor on the account. Outputs `managedServiceIdentityId`, matching `function-app-v2.json`, so the existing role assignment templates work unchanged.
+- `azure-pipelines-templates/deploy/step/function-deploy-flex.yml` - deploys a package with `AzureFunctionApp@2` and `isFlexConsumption: true`. `function-deploy.yml` uses `AzureFunctionApp@1`, which can't deploy to Flex, and a restart step that Flex doesn't need.
+
 # 4.0.0
 
 [DASD-15537](https://skillsfundingagency.atlassian.net/browse/DASD-15537): **Breaking change.** Rewrote `scheduled-query-alert.json` on the current `Microsoft.Insights/scheduledQueryRules` API (`2026-03-01`, `kind: LogAlert`) so log search alerts can use dynamic thresholds. The previous `2018-04-16` API only supported static thresholds. A search of the SkillsFundingAgency GitHub organisation found no callers of this template, so it was changed in place rather than adding a v2.

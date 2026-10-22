@@ -1,0 +1,16 @@
+parameters:
+  ServiceConnection: ''
+  FunctionAppName: ''
+  DeploymentPackagePath: ''
+
+# Flex Consumption apps only. The platform restarts the app as part of the deployment,
+# so unlike function-deploy.yml there's no separate restart step.
+steps:
+- task: AzureFunctionApp@2
+  displayName: Azure Function App Deploy (Flex Consumption) - ${{ parameters.FunctionAppName }}
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    appType: functionAppLinux
+    isFlexConsumption: true
+    appName: ${{ parameters.FunctionAppName }}
+    package: ${{ parameters.DeploymentPackagePath }}
