@@ -1,0 +1,161 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "functionAppName": {
+      "type": "string"
+    },
+    "flexConsumptionPlanName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "deploymentContainerName": {
+      "type": "string",
+      "defaultValue": "app-package"
+    },
+    "functionAppAppSettings": {
+      "type": "secureObject",
+      "defaultValue": {
+        "array": []
+      }
+    },
+    "ipSecurityRestrictions": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "subnetResourceId": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "vnetRouteAllEnabled": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "This causes all outbound traffic to have Virtual Network Security Groups and User Defined Routes applied when enabled"
+      }
+    },
+    "functionAppRuntime": {
+      "type": "string",
+      "defaultValue": "dotnet-isolated",
+      "allowedValues": [
+        "dotnet-isolated"
+      ]
+    },
+    "functionAppRuntimeVersion": {
+      "type": "string",
+      "defaultValue": "10.0"
+    },
+    "maximumInstanceCount": {
+      "type": "int",
+      "defaultValue": 100,
+      "minValue": 1,
+      "maxValue": 1000,
+      "metadata": {
+        "description": "Maximum on-demand instances, applied to each per-function scale group."
+      }
+    },
+    "instanceMemoryMB": {
+      "type": "int",
+      "defaultValue": 2048,
+      "allowedValues": [
+        512,
+        2048,
+        4096
+      ]
+    },
+    "alwaysReady": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Always ready instances per scale group. Defaults to zero, meaning the app cold-starts and incurs no idle cost"
+      }
+    }
+  },
+  "variables": {
+    "functionAppApiVersion": "2023-12-01",
+    "baseSiteProperties": {
+      "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('flexConsumptionPlanName'))]",
+      "clientAffinityEnabled": false,
+      "httpsOnly": true,
+      "vnetRouteAllEnabled": "[parameters('vnetRouteAllEnabled')]",
+      "siteConfig": {
+        "appSettings": "[parameters('functionAppAppSettings').array]",
+        "ipSecurityRestrictions": "[parameters('ipSecurityRestrictions')]",
+        "minTlsVersion": "1.2",
+        "ftpsState": "Disabled"
+      },
+      "functionAppConfig": {
+        "deployment": {
+          "storage": {
+            "type": "blobContainer",
+            "value": "[concat('https://', parameters('storageAccountName'), '.blob.', environment().suffixes.storage, '/', parameters('deploymentContainerName'))]",
+            "authentication": {
+              "type": "SystemAssignedIdentity"
+            }
+          }
+        },
+        "scaleAndConcurrency": {
+          "maximumInstanceCount": "[parameters('maximumInstanceCount')]",
+          "instanceMemoryMB": "[parameters('instanceMemoryMB')]",
+          "alwaysReady": "[parameters('alwaysReady')]"
+        },
+        "runtime": {
+          "name": "[parameters('functionAppRuntime')]",
+          "version": "[parameters('functionAppRuntimeVersion')]"
+        }
+      }
+    },
+    "siteProperties": "[if(greater(length(parameters('subnetResourceId')), 0), union(variables('baseSiteProperties'), createObject('virtualNetworkSubnetId', parameters('subnetResourceId'))), variables('baseSiteProperties'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[concat(parameters('storageAccountName'), '/default/', parameters('deploymentContainerName'))]",
+      "properties": {
+        "publicAccess": "None"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "[variables('functionAppApiVersion')]",
+      "name": "[parameters('flexConsumptionPlanName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "sku": {
+        "name": "FC1",
+        "tier": "FlexConsumption"
+      },
+      "properties": {
+        "reserved": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "[variables('functionAppApiVersion')]",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp,linux",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": "[variables('siteProperties')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('flexConsumptionPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', parameters('deploymentContainerName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "managedServiceIdentityId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', parameters('functionAppName')), variables('functionAppApiVersion'), 'Full').identity.principalId]"
+    }
+  }
+}
