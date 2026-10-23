@@ -40,14 +40,14 @@
         "description": "This causes all outbound traffic to have Virtual Network Security Groups and User Defined Routes applied when enabled"
       }
     },
-    "runtimeName": {
+    "functionAppRuntime": {
       "type": "string",
       "defaultValue": "dotnet-isolated",
       "allowedValues": [
         "dotnet-isolated"
       ]
     },
-    "runtimeVersion": {
+    "functionAppRuntimeVersion": {
       "type": "string",
       "defaultValue": "10.0"
     },
@@ -73,8 +73,9 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "Always ready instances per scale group, e.g. [{\"name\": \"durable\", \"instanceCount\": 1}]. Group names are http, blob, durable or function:<FunctionName>. Billed while idle."
+        "description": "Always ready instances per scale group. Defaults to zero, meaning the app cold-starts and incurs no idle cost"
       }
+    }
   },
   "variables": {
     "functionAppApiVersion": "2023-12-01",
@@ -105,8 +106,8 @@
           "alwaysReady": "[parameters('alwaysReady')]"
         },
         "runtime": {
-          "name": "[parameters('runtimeName')]",
-          "version": "[parameters('runtimeVersion')]"
+          "name": "[parameters('functionAppRuntime')]",
+          "version": "[parameters('functionAppRuntimeVersion')]"
         }
       }
     },
