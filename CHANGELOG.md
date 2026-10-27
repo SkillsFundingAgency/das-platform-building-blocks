@@ -1,3 +1,10 @@
+# 4.1.0
+
+[DASD-16646](https://skillsfundingagency.atlassian.net/browse/DASD-16646): Added building blocks for Azure Functions on the [Flex Consumption plan](https://learn.microsoft.com/azure/azure-functions/flex-consumption-plan). Flex apps cannot be created by `function-app-v2.json`, which targets Windows App Service and Premium plans. A Flex plan can only host one app, so the plan and app are created together rather than through a separate plan template.
+
+- `function-app-flex.json` - creates the FC1 plan, the Linux function app and its deployment package container "app-package" in an existing storage account in the same RG. Parameters cover `functionAppRuntime` and `functionAppRuntimeVersion`, `maximumInstanceCount`, `instanceMemoryMB`, `alwaysReady` instances. `alwaysReady` is empty by default, so the app scales to zero and cold-starts with no idle cost, which can be overridden by pipeline parameters. The deployment container is read using the app's system-assigned identity, which requires the Storage Blob Data Contributor role to be granted on the storage account.
+- `azure-pipelines-templates/deploy/step/function-deploy-flex.yml` - The existing templates use AzureFunctionApp@1, which does not support Flex Consumption Linux Function Apps. 
+
 # 4.0.0
 
 [DASD-15537](https://skillsfundingagency.atlassian.net/browse/DASD-15537): **Breaking change.** Rewrote `scheduled-query-alert.json` on the current `Microsoft.Insights/scheduledQueryRules` API (`2026-03-01`, `kind: LogAlert`) so log search alerts can use dynamic thresholds. The previous `2018-04-16` API only supported static thresholds. A search of the SkillsFundingAgency GitHub organisation found no callers of this template, so it was changed in place rather than adding a v2.

@@ -1,0 +1,14 @@
+parameters:
+  ServiceConnection: ''
+  FunctionAppName: ''
+  DeploymentPackagePath: ''
+
+steps:
+- task: AzureFunctionApp@2
+  displayName: Azure Function App Deploy (Flex Consumption) - ${{ parameters.FunctionAppName }}
+  inputs:
+    azureSubscription: ${{ parameters.ServiceConnection }}
+    appType: functionAppLinux
+    isFlexConsumption: true
+    appName: ${{ parameters.FunctionAppName }}
+    package: ${{ parameters.DeploymentPackagePath }}
