@@ -74,6 +74,7 @@
       "defaultValue": [],
       "metadata": {
         "description": "Always-ready instances per scale group. Default is 0, so the app cold-starts with no idle cost"
+      }
     }
   },
   "variables": {
