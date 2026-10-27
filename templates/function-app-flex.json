@@ -12,7 +12,7 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
     },
-    "storageAccountName": {
+    "flexStorageAccountName": {
       "type": "string"
     },
     "deploymentContainerName": {
@@ -49,11 +49,11 @@
     },
     "functionAppRuntimeVersion": {
       "type": "string",
-      "defaultValue": "10.0"
+      "defaultValue": "10"
     },
     "maximumInstanceCount": {
       "type": "int",
-      "defaultValue": 100,
+      "defaultValue": 20,
       "minValue": 1,
       "maxValue": 1000,
       "metadata": {
@@ -73,8 +73,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "Always ready instances per scale group. Defaults to zero, meaning the app cold-starts and incurs no idle cost"
-      }
+        "description": "Always-ready instances per scale group. Default is 0, so the app cold-starts with no idle cost"
     }
   },
   "variables": {
@@ -94,7 +93,7 @@
         "deployment": {
           "storage": {
             "type": "blobContainer",
-            "value": "[concat('https://', parameters('storageAccountName'), '.blob.', environment().suffixes.storage, '/', parameters('deploymentContainerName'))]",
+            "value": "[concat('https://', parameters('flexStorageAccountName'), '.blob.', environment().suffixes.storage, '/', parameters('deploymentContainerName'))]",
             "authentication": {
               "type": "SystemAssignedIdentity"
             }
@@ -117,7 +116,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2023-01-01",
-      "name": "[concat(parameters('storageAccountName'), '/default/', parameters('deploymentContainerName'))]",
+      "name": "[concat(parameters('flexStorageAccountName'), '/default/', parameters('deploymentContainerName'))]",
       "properties": {
         "publicAccess": "None"
       }
@@ -148,7 +147,7 @@
       "properties": "[variables('siteProperties')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('flexConsumptionPlanName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', parameters('deploymentContainerName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('flexStorageAccountName'), 'default', parameters('deploymentContainerName'))]"
       ]
     }
   ],
