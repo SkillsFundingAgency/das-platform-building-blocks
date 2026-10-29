@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "schedulerName": {
+      "type": "string"
+    },
+    "taskHubName": {
+      "type": "string"
+    },
+    "schedulerLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "schedulerSkuName": {
+      "type": "string",
+      "defaultValue": "Consumption"
+    },
+    "schedulerSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "metadata": {
+        "description": "Number of capacity units to provision for the scheduler."
+      }
+    },
+    "schedulerIpAllowlist": {
+      "type": "array"
+    }
+  },
+  "variables": {
+    "schedulerApiVersion": "2026-02-01"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DurableTask/schedulers",
+      "apiVersion": "[variables('schedulerApiVersion')]",
+      "name": "[parameters('schedulerName')]",
+      "location": "[parameters('schedulerLocation')]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('schedulerSkuName')]",
+          "capacity": "[parameters('schedulerSkuCapacity')]"
+        },
+        "ipAllowlist": "[parameters('schedulerIpAllowlist')]"
+      }
+    },
+    {
+      "type": "Microsoft.DurableTask/schedulers/taskHubs",
+      "apiVersion": "[variables('schedulerApiVersion')]",
+      "name": "[concat(parameters('schedulerName'), '/', parameters('taskHubName'))]",
+      "properties": {},
+      "dependsOn": [
+        "[resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "SchedulerName": {
+      "type": "string",
+      "value": "[parameters('schedulerName')]"
+    },
+    "SchedulerResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName'))]"
+    },
+    "SchedulerEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName')), variables('schedulerApiVersion')).endpoint]"
+    },
+    "TaskHubName": {
+      "type": "string",
+      "value": "[parameters('taskHubName')]"
+    }
+  }
+}
