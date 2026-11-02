@@ -18,23 +18,24 @@
     },
     "schedulerSkuCapacity": {
       "type": "int",
-      "defaultValue": 1,
-      "minValue": 1,
-      "metadata": {
-        "description": "Number of capacity units to provision for the scheduler."
-      }
+      "defaultValue": 1
     },
     "schedulerIpAllowlist": {
       "type": "array"
+    },
+    "schedulerPublicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
     }
-  },
-  "variables": {
-    "schedulerApiVersion": "2026-02-01"
   },
   "resources": [
     {
       "type": "Microsoft.DurableTask/schedulers",
-      "apiVersion": "[variables('schedulerApiVersion')]",
+      "apiVersion": "2026-02-01",
       "name": "[parameters('schedulerName')]",
       "location": "[parameters('schedulerLocation')]",
       "properties": {
@@ -42,12 +43,13 @@
           "name": "[parameters('schedulerSkuName')]",
           "capacity": "[parameters('schedulerSkuCapacity')]"
         },
-        "ipAllowlist": "[parameters('schedulerIpAllowlist')]"
+        "ipAllowlist": "[parameters('schedulerIpAllowlist')]",
+        "publicNetworkAccess": "[parameters('schedulerPublicNetworkAccess')]"
       }
     },
     {
       "type": "Microsoft.DurableTask/schedulers/taskHubs",
-      "apiVersion": "[variables('schedulerApiVersion')]",
+      "apiVersion": "2026-02-01",
       "name": "[concat(parameters('schedulerName'), '/', parameters('taskHubName'))]",
       "properties": {},
       "dependsOn": [
@@ -66,7 +68,7 @@
     },
     "SchedulerEndpoint": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName')), variables('schedulerApiVersion')).endpoint]"
+      "value": "[reference(resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName')), '2026-02-01').endpoint]"
     },
     "TaskHubName": {
       "type": "string",
