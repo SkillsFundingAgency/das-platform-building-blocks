@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "schedulerName": {
+      "type": "string"
+    },
+    "schedulerLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "schedulerSkuName": {
+      "type": "string",
+      "defaultValue": "Consumption"
+    },
+    "schedulerSkuCapacity": {
+      "type": "int",
+      "defaultValue": 1
+    },
+    "schedulerIpAllowlist": {
+      "type": "array"
+    },
+    "schedulerPublicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ]
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DurableTask/schedulers",
+      "apiVersion": "2026-02-01",
+      "name": "[parameters('schedulerName')]",
+      "location": "[parameters('schedulerLocation')]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('schedulerSkuName')]",
+          "capacity": "[parameters('schedulerSkuCapacity')]"
+        },
+        "ipAllowlist": "[parameters('schedulerIpAllowlist')]",
+        "publicNetworkAccess": "[parameters('schedulerPublicNetworkAccess')]"
+      }
+    }
+  ],
+  "outputs": {
+    "SchedulerName": {
+      "type": "string",
+      "value": "[parameters('schedulerName')]"
+    },
+    "SchedulerResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName'))]"
+    },
+    "SchedulerEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.DurableTask/schedulers', parameters('schedulerName')), '2026-02-01').endpoint]"
+    }
+  }
+}

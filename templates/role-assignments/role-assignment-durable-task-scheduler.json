@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "principalId": {
+      "type": "string"
+    },
+    "assignmentType": {
+      "type": "string",
+      "allowedValues": [
+        "DurableTaskDataContributor"
+      ]
+    },
+    "resourceName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "DurableTaskDataContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '0ad04412-c4d5-4796-b79c-f76d14c8d402')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DurableTask/schedulers/providers/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[concat(parameters('resourceName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('principalId'), parameters('resourceName'), last(split(variables(parameters('assignmentType')), '/')))))]",
+      "properties": {
+        "roleDefinitionId": "[variables(parameters('assignmentType'))]",
+        "principalId": "[parameters('principalId')]"
+      }
+    }
+  ]
+}
