@@ -49,7 +49,7 @@
     },
     "functionAppRuntimeVersion": {
       "type": "string",
-      "defaultValue": "10"
+      "defaultValue": "10.0"
     },
     "maximumInstanceCount": {
       "type": "int",
